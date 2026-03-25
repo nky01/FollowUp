@@ -55,7 +55,7 @@
         android:contentDescription="@string/logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/img" />
+        app:srcCompat="@mipmap/logo" />
 
     <TextView
         android:id="@+id/tv_Correo"

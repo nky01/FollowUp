@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="FollowUp.RegistrarCuenta">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="188dp"
+        android:layout_height="41dp"
+        app:srcCompat="@mipmap/logo"
+        tools:layout_editor_absoluteX="111dp"
+        tools:layout_editor_absoluteY="68dp" />
+
+    <TextView
+        android:id="@+id/tv_crearCuenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear Cuenta"
+        android:textColor="#1E2939"
+        android:textSize="27dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.218"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <EditText
+        android:id="@+id/et_contrasenia"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:background="@drawable/editext_border"
+        android:ems="10"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="354dp" />
+
+    <TextView
+        android:id="@+id/tv_confirmarContrasenia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CONFIRMAR CONTRASEÑA:"
+        android:textColor="#6A7282"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.587"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <EditText
+        android:id="@+id/et_confirmarContrasenia"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:background="@drawable/editext_border"
+        android:ems="10"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="451dp" />
+
+    <EditText
+        android:id="@+id/et_correoEletronico"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/editext_border"
+        android:ems="10"
+        android:hint="correoelectronico@gmail.com"
+        android:inputType="textEmailAddress"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.364"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <TextView
+        android:id="@+id/tv_correoElectronico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CORREO ELECTRÓNICO:"
+        android:textColor="#6A7282"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <TextView
+        android:id="@+id/tv_contrasenia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CONTRASEÑA:"
+        android:textColor="#6A7282"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.456"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <Button
+        android:id="@+id/btn_Registrarse"
+        android:layout_width="330dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_border"
+        android:backgroundTint="#4087C4"
+        android:text="Registrarse"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.782"
+        tools:layout_editor_absoluteX="40dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
