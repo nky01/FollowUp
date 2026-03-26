@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    // Colores de Material Design para el tema de la app
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +8,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary_blue">#4087C4</color>
+    <color name="text_primary">#1E2939</color>
+    <color name="text_secondary">#6C757D</color>
+    <color name="input_background">#F5F5F5</color>
+    <color name="input_border">#E0E0E0</color>
+    <color name="hint_color">#999999</color>
 </resources>

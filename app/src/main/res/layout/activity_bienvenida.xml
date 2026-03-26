@@ -5,13 +5,34 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="FollowUp.Bienvenida">
 
     <ImageView
-        android:id="@+id/iv_FollowUp"
-        android:layout_width="wrap_content"
+        android:id="@+id/iv_Logo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="@string/logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@mipmap/logo" />
+
+    <TextView
+        android:id="@+id/tv_Bienvenida"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/logo"
-        tools:layout_editor_absoluteX="69dp"
-        tools:layout_editor_absoluteY="333dp" />
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="@string/bienvenida_mensaje"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_Logo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

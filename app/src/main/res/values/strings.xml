@@ -1,12 +1,17 @@
 <resources>
     <string name="app_name">FollowUp</string>
+    <string name="logo">FollowUp</string>
     <string name="login">Login</string>
-    <string name="logo">LOGO</string>
-    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="bienvenida_mensaje">¡Bienvenido a FollowUp! Tu aliado en ventas</string>
+    <string name="correo_electronico">CORREO ELECTRÓNICO</string>
+    <string name="contrasenia">CONTRASEÑA</string>
+    <string name="email_hint">Correoelectronico@gmail.com</string>
+    <string name="password_placeholder">••••••••</string>
+    <string name="ingresar">Iniciar sesión</string>
     <string name="olvidaste_tu_contrasenia">¿Olvidaste tu contraseña?</string>
     <string name="aun_no_tenes_una_cuenta">Aún no tenes una cuenta?</string>
-    <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
-    <string name="correo_electronico">CORREO ELECTRONICO</string>
-    <string name="contrasenia">CONTRASEÑA</string>
+    <string name="registrate">Crear cuenta</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="crear_cuenta">Crear cuenta</string>
+    <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
 </resources>
