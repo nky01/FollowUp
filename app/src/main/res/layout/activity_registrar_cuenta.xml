@@ -5,110 +5,149 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingBottom="32dp"
     tools:context="FollowUp.RegistrarCuenta">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="188dp"
-        android:layout_height="41dp"
-        app:srcCompat="@mipmap/logo"
-        tools:layout_editor_absoluteX="111dp"
-        tools:layout_editor_absoluteY="68dp" />
+        android:id="@+id/iv_Logo"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/logo" />
 
     <TextView
-        android:id="@+id/tv_crearCuenta"
+        android:id="@+id/tv_RegisterTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="48dp"
         android:text="Crear Cuenta"
-        android:textColor="#1E2939"
-        android:textSize="27dp"
+        android:textColor="@color/text_primary"
+        android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.218"
-        tools:layout_editor_absoluteX="40dp" />
-
-    <EditText
-        android:id="@+id/et_contrasenia"
-        android:layout_width="330dp"
-        android:layout_height="50dp"
-        android:background="@drawable/editext_border"
-        android:ems="10"
-        android:inputType="textPassword"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="354dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_Logo" />
 
     <TextView
-        android:id="@+id/tv_confirmarContrasenia"
+        android:id="@+id/tv_EmailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CONFIRMAR CONTRASEÑA:"
-        android:textColor="#6A7282"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:letterSpacing="0.05"
+        android:text="@string/correo_electronico"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.587"
-        tools:layout_editor_absoluteX="40dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_RegisterTitle" />
 
-    <EditText
-        android:id="@+id/et_confirmarContrasenia"
-        android:layout_width="330dp"
-        android:layout_height="50dp"
-        android:background="@drawable/editext_border"
-        android:ems="10"
-        android:inputType="textPassword"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="451dp" />
-
-    <EditText
-        android:id="@+id/et_correoEletronico"
-        android:layout_width="330dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_Email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/editext_border"
-        android:ems="10"
-        android:hint="correoelectronico@gmail.com"
-        android:inputType="textEmailAddress"
-        android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.364"
-        tools:layout_editor_absoluteX="40dp" />
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="8dp"
+        app:boxBackgroundColor="@color/input_background"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_EmailLabel"
+        app:startIconDrawable="@android:drawable/ic_dialog_email"
+        app:startIconTint="@color/hint_color">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tiet_Email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/correoelectronico_gmail_com"
+            android:inputType="textEmailAddress"
+            android:paddingVertical="18dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/hint_color"
+            android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/tv_correoElectronico"
+        android:id="@+id/tv_PasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CORREO ELECTRÓNICO:"
-        android:textColor="#6A7282"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:letterSpacing="0.05"
+        android:text="@string/contrasenia"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"
-        tools:layout_editor_absoluteX="40dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_Email" />
 
-    <TextView
-        android:id="@+id/tv_contrasenia"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_Password"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="CONTRASEÑA:"
-        android:textColor="#6A7282"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.456"
-        tools:layout_editor_absoluteX="40dp" />
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="8dp"
+        app:boxBackgroundColor="@color/input_background"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/hint_color"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_PasswordLabel"
+        app:startIconDrawable="@android:drawable/ic_lock_lock"
+        app:startIconTint="@color/hint_color">
 
-    <Button
-        android:id="@+id/btn_Registrarse"
-        android:layout_width="330dp"
-        android:layout_height="50dp"
-        android:background="@drawable/btn_border"
-        android:backgroundTint="#4087C4"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tiet_Password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
+            android:paddingVertical="18dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/hint_color"
+            android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_Register"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="48dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:text="Registrarse"
+        android:textAllCaps="false"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.782"
-        tools:layout_editor_absoluteX="40dp" />
+        android:textSize="16sp"
+        app:backgroundTint="@color/primary_blue"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_Password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

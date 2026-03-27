@@ -6,7 +6,7 @@
     <string name="correo_electronico">CORREO ELECTRÓNICO</string>
     <string name="contrasenia">CONTRASEÑA</string>
     <string name="email_hint">Correoelectronico@gmail.com</string>
-    <string name="password_placeholder">••••••••</string>
+    <string name="password_hint">••••••••</string>
     <string name="ingresar">Iniciar sesión</string>
     <string name="olvidaste_tu_contrasenia">¿Olvidaste tu contraseña?</string>
     <string name="aun_no_tenes_una_cuenta">Aún no tenes una cuenta?</string>
