@@ -14,4 +14,7 @@
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="crear_cuenta">Crear cuenta</string>
     <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
+    <string name="nombre">NOMBRE</string>
+    <string name="nombre_hint">Juan Pérez</string>
+    <string name="confirmar_contrasenia">CONFIRMAR CONTRASEÑA</string>
 </resources>
