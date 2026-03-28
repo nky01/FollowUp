@@ -1,4 +1,4 @@
-package FollowUp
+package com.followup.presentation
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
