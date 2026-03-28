@@ -1,4 +1,4 @@
-package com.followup.presentation
+package com.followup.presentation.register
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
