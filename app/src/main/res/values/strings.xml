@@ -17,4 +17,13 @@
     <string name="nombre">NOMBRE</string>
     <string name="nombre_hint">Juan Pérez</string>
     <string name="confirmar_contrasenia">CONFIRMAR CONTRASEÑA</string>
+    <string name="buenos_aires_argentina">Buenos Aires, Argentina</string>
+    <string name="informaci_n_personal">Información Personal</string>
+    <string name="cuenta">Cuenta</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="seguridad">Seguridad</string>
+    <string name="aplicacion">Aplicacion</string>
+    <string name="apariencia">Apariencia</string>
+    <string name="usuario_01">Usuario 01</string>
+    <string name="cambiar_mail">Cambiar mail</string>
 </resources>

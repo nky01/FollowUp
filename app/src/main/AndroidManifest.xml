@@ -11,28 +11,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FollowUp">
-        
         <activity
-            android:name=".presentation.Bienvenida"
+            android:name="FollowUp.Login"
+            android:exported="false" />
+        <activity
+            android:name="FollowUp.Bienvenida"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".presentation.Login"
-            android:exported="false" />
-
-        <activity
-            android:name=".presentation.RegistrarCuenta"
-            android:exported="false" />
-
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.FollowUp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
