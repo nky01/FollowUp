@@ -13,7 +13,7 @@
         android:theme="@style/Theme.FollowUp">
         
         <activity
-            android:name=".presentation.Bienvenida"
+            android:name=".presentation.login.Bienvenida"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,11 +22,11 @@
         </activity>
 
         <activity
-            android:name=".presentation.Login"
+            android:name=".presentation.login.Login"
             android:exported="false" />
 
         <activity
-            android:name=".presentation.RegistrarCuenta"
+            android:name=".presentation.register.RegistrarCuenta"
             android:exported="false" />
 
         <activity
