@@ -28,7 +28,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@mipmap/logo" />
+                app:srcCompat="@mipmap/logo_and_name" />
 
             <TextView
                 android:id="@+id/tv_RegisterTitle"
@@ -41,7 +41,8 @@
                 android:textSize="32sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_Logo" />
+                app:layout_constraintTop_toBottomOf="@+id/iv_Logo"
+                tools:ignore="HardcodedText" />
 
             <!-- Campo Nombre -->
             <TextView
@@ -251,7 +252,7 @@
                 android:layout_marginTop="48dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="Registrarse"
+                android:text="@string/registrarse"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="16sp"

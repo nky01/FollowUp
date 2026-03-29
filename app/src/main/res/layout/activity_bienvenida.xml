@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3"
-        app:srcCompat="@mipmap/logo" />
+        app:srcCompat="@mipmap/logo_and_name" />
 
     <TextView
         android:id="@+id/tv_Bienvenida"

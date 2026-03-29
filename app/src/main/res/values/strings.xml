@@ -26,4 +26,5 @@
     <string name="apariencia">Apariencia</string>
     <string name="usuario_01">Usuario 01</string>
     <string name="cambiar_mail">Cambiar mail</string>
+    <string name="registrarse">Registrarse</string>
 </resources>
