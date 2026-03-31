@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FollowUp">
         <activity
+            android:name=".fragments.ReestablecerFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.CodigoFragment"
+            android:exported="false" />
+        <activity
             android:name=".fragments.PrincipalActivity"
             android:exported="false" />
         <activity
