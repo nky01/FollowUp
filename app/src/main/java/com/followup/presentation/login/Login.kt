@@ -108,7 +108,7 @@ class Login : AppCompatActivity() {
                     // Verificar contraseña
                     if (usuario.contraseniaHash == password) {
                         // Ir al Home
-                        val intent = Intent(this@Login, MainActivity::class.java)
+                        val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
                         startActivity(intent)
                         finish() // Cerrar el login para que no se pueda volver atrás
                     } else {
