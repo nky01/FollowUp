@@ -15,7 +15,7 @@ interface UsuarioDao {
     @Query("SELECT * FROM Usuario_Tabla ORDER BY id DESC")
     fun leerUsuarios(): Flow<List<Usuario>>
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun crearUsuario(usuario: Usuario)
 
     @Delete
@@ -26,4 +26,7 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM Usuario_Tabla WHERE mail = :mail LIMIT 1")
     suspend fun obtenerPorMail(mail:String): Usuario?
+
+    @Query("UPDATE Usuario_Tabla SET contraseniaHash = :password WHERE mail = :mail")
+    suspend fun actualizarContrasenia(mail: String, password: String)
 }

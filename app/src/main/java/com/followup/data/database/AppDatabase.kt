@@ -9,13 +9,9 @@ import com.followup.data.entity.Usuario
 
 @Database(entities = [Usuario::class], version = 1)
 abstract class AppDatabase: RoomDatabase(){
-
     abstract fun usuarioDao(): UsuarioDao
-
    companion object{
-
        @Volatile private var INSTANCIA: AppDatabase?=null
-
        fun getDatabase(context: Context):AppDatabase{
            return INSTANCIA?:synchronized(this){
 

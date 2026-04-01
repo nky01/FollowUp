@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.followup.R
 import com.followup.data.database.AppDatabase
 import com.followup.MainActivity
+import com.followup.fragments.ReestablecerFragment
 import com.followup.presentation.register.RegistrarCuenta
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -37,6 +38,7 @@ class Login : AppCompatActivity() {
         val tietPassword = findViewById<TextInputEditText>(R.id.tiet_Password)
         val btnLogin = findViewById<MaterialButton>(R.id.btn_Login)
         val tvRegister = findViewById<TextView>(R.id.tv_Register)
+        val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
 
         // Ir a la pantalla de Registro
         tvRegister.setOnClickListener {
@@ -52,6 +54,17 @@ class Login : AppCompatActivity() {
             if (validarFront(email, password, tilEmail, tilPassword)) {
                 ejecutarLogin(email, password)
             }
+        }
+
+        tvForgotPassword.setOnClickListener {
+            val email = tietEmail.text.toString().trim()
+            if (email.isEmpty()) {
+                tilEmail.error = "Ingresá tu email primero"
+                return@setOnClickListener
+            }
+            val intent = Intent(this, ReestablecerFragment::class.java)
+            intent.putExtra("email", email)
+            startActivity(intent)
         }
     }
 
@@ -87,10 +100,10 @@ class Login : AppCompatActivity() {
             try {
                 val database = AppDatabase.getDatabase(this@Login)
                 val dao = database.usuarioDao()
-                
+
                 // Buscar usuario en la DB
                 val usuario = dao.obtenerPorMail(email)
-                
+
                 if (usuario != null) {
                     // Verificar contraseña
                     if (usuario.contraseniaHash == password) {
