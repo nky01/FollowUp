@@ -27,6 +27,4 @@
     <string name="usuario_01">Usuario 01</string>
     <string name="cambiar_mail">Cambiar mail</string>
     <string name="registrarse">Registrarse</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
