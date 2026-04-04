@@ -1,4 +1,4 @@
-package com.followup.presentation
+package com.followup.presentation.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle
