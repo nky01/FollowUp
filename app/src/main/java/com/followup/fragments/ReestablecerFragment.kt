@@ -24,8 +24,8 @@ class ReestablecerFragment : AppCompatActivity() {
             insets
         }
 
-        val etNueva = findViewById<EditText>(R.id.et_NuevaContraseña)
-        val etConfirmar = findViewById<EditText>(R.id.et_Confirmar)
+        val etNueva = findViewById<EditText>(R.id.tiet_NuevaContrasena)
+        val etConfirmar = findViewById<EditText>(R.id.tiet_ConfirmPassword)
         val btnConfirmar = findViewById<MaterialButton>(R.id.btn_Confirmar)
         val email = intent.getStringExtra("email")
 

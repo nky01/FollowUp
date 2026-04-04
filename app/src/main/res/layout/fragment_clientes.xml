@@ -1,17 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ClientesFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.ClientesFragment"
+    android:background="@color/primary_blue">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Contenedor interno -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Icono arriba izquierda -->
+        <ImageView
+            android:id="@+id/iconCheck"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@mipmap/logo"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Circulo arriba derecha -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_profile_picture"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@android:color/darker_gray"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gestión de\nClientes"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/iconCheck"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Buscador -->
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Buscar cliente..."
+            android:background="@color/white"
+            android:padding="12dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Filtros -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/search"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:weightSum="4">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Todos"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:backgroundTint="#E0E0E0"
+                android:layout_marginEnd="6dp"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Vendidos"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:backgroundTint="#E0E0E0"
+                android:layout_marginEnd="6dp"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Pendiente"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:backgroundTint="#E0E0E0"
+                android:layout_marginEnd="6dp"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="No Asignado"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                android:textColor="#000000"
+                android:backgroundTint="#E0E0E0"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Clientes Fragment"
-        android:textSize="32sp"
-        android:textColor="@color/primary_blue"
-        android:gravity="center"/>
+        android:layout_marginTop="280dp"
+        android:background="@drawable/background_content_top_rounded"
+        android:padding="16dp">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
