@@ -27,4 +27,12 @@
     <string name="usuario_01">Usuario 01</string>
     <string name="cambiar_mail">Cambiar mail</string>
     <string name="registrarse">Registrarse</string>
+    <string name="imagen_perfil">Imagen de perfil</string>
+    <string name="gestion_clientes_titulo">Gestión de\nClientes</string>
+    <string name="buscar_cliente">Buscar cliente...</string>
+    <string name="todos">Todos</string>
+    <string name="vendidos">Vendidos</string>
+    <string name="pendiente">Pendiente</string>
+    <string name="no_asignado">No Asignado</string>
+    <string name="nuevo_cliente">Nuevo cliente</string>
 </resources>

@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.followup.data.entity.Cliente
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClienteDao {
@@ -24,6 +23,11 @@ interface ClienteDao {
     @Delete
     suspend fun delete(cliente: Cliente)
 
-    /* Agregar Abajo los métodos de Filtrado */
+    // Obtener todos los clientes, ordenados por fecha
+    @Query("SELECT * FROM Cliente_Tabla ORDER BY fecha DESC") // Falta implementar
+    suspend fun obtenerTodos(): List<Cliente>
 
+    // Obtener un cliente por su email
+    @Query("SELECT * FROM Cliente_Tabla WHERE email = :email LIMIT 1") // Se tendria que cambiar en un futuro?
+    suspend fun obtenerPorEmail(email: String): Cliente?
 }
