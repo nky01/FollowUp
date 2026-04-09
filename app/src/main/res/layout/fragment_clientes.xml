@@ -174,7 +174,74 @@
         android:background="@drawable/background_content_top_rounded"
         android:padding="16dp">
 
+        <com.google.android.material.card.MaterialCardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvNombre"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cliente 1"
+                        android:textStyle="bold"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tvEstado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pendiente"
+                        android:padding="6dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="[Descripción]"
+                    android:layout_marginTop="4dp"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:text="Contacto:"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvTelefono"
+                        android:text="Teléfono: +54 9..." />
+
+                    <TextView
+                        android:id="@+id/tvEmail"
+                        android:text="Correo: ejemplo@gmail.com"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     <View
         android:id="@+id/fab_overlay"
