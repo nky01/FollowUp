@@ -2,6 +2,7 @@ package com.followup.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.followup.data.adapter.ClienteAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -52,9 +54,17 @@ class ClientesFragment : Fragment() {
         // Conectar RecyclerView
         recyclerView = view.findViewById(R.id.rvClientes)
 
-        adapter = ClienteAdapter(emptyList(), object : ClienteAdapter.OnClienteClickListener {
+        // Conectar Adapter
+        adapter = ClienteAdapter(object : ClienteAdapter.OnClienteClickListener {
+
+            // Hace el clic en el botón de eliminar y muestra un dialogo de confirmacion
             override fun onDeleteClick(cliente: Cliente) {
                 mostrarDialogoEliminar(cliente)
+            }
+
+            // Hace el clic en el botón de editar y muestra un dialogo de edicion
+            override fun onEditClick(cliente: Cliente) {
+                mostrarDialogoEditar(cliente)
             }
         })
 
@@ -68,6 +78,35 @@ class ClientesFragment : Fragment() {
 
         db.clienteDao().obtenerClientes().observe(viewLifecycleOwner) { lista ->
             adapter.actualizarLista(lista)
+        }
+
+        val filterGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.filter_group)
+
+        filterGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+
+            // Cambiar colores
+            actualizarEstilosBotones(group, checkedId)
+
+            // Filtrar
+            when (checkedId) {
+
+                R.id.btn_filter_todos -> {
+                    adapter.filtrar("TODOS")
+                }
+
+                R.id.btn_filter_vendidos -> {
+                    adapter.filtrar("Vendido")
+                }
+
+                R.id.btn_filter_pendiente -> {
+                    adapter.filtrar("Pendiente")
+                }
+
+                R.id.btn_filter_no_asignado -> {
+                    adapter.filtrar("No Asignado")
+                }
+            }
         }
 
         fabMain = view.findViewById(R.id.fab_main)
@@ -264,7 +303,7 @@ class ClientesFragment : Fragment() {
 
                 val db = AppDatabase.getDatabase(requireContext())
 
-                // 🔥 ACÁ ESTÁ LA CLAVE
+                // ELIMINAR EL CLIENTE DE LA BASE DE DATOS
                 lifecycleScope.launch {
                     db.clienteDao().delete(cliente)
                 }
@@ -278,4 +317,88 @@ class ClientesFragment : Fragment() {
         super.onDestroyView()
         isFabMenuOpen = false
     }
+
+    private fun mostrarDialogoEditar(cliente: Cliente) {
+
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_edit_cliente, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        dialog.show()
+
+        // Referencias
+        val nombre = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.tiet_cliente_nombre)
+        val telefono = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.tiet_cliente_telefono)
+        val email = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.tiet_cliente_email)
+        val descripcion = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.tiet_cliente_descripcion)
+        val estado = dialogView.findViewById<AutoCompleteTextView>(R.id.actv_cliente_estado)
+
+        val btnGuardar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_guardar_cliente)
+        val btnCancelar = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_cancelar_cliente)
+
+        // Cargar datos actuales
+        nombre.setText(cliente.nombre)
+        telefono.setText(cliente.telefono)
+        email.setText(cliente.email)
+        descripcion.setText(cliente.descripcion)
+
+        // Dropdown estado
+        val estados = listOf("Pendiente", "En proceso", "Finalizado")
+
+        val adapterEstados = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            estados
+        )
+
+        estado.setAdapter(adapterEstados)
+        estado.setText(cliente.estado, false)
+
+        // Cancelar
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Guardar cambios
+        btnGuardar.setOnClickListener {
+
+            val db = AppDatabase.getDatabase(requireContext())
+
+            val clienteActualizado = cliente.copy(
+                nombre = nombre.text.toString(),
+                telefono = telefono.text.toString(),
+                email = email.text.toString(),
+                descripcion = descripcion.text.toString(),
+                estado = estado.text.toString()
+            )
+
+            lifecycleScope.launch {
+                db.clienteDao().update(clienteActualizado)
+            }
+
+            dialog.dismiss()
+        }
+
+    }
+
+    private fun actualizarEstilosBotones(group: MaterialButtonToggleGroup, checkedId: Int) {
+
+        for (i in 0 until group.childCount) {
+            val button = group.getChildAt(i) as MaterialButton
+
+            if (button.id == checkedId) {
+                // SELECCIONADO (Azul)
+                button.setBackgroundColor(resources.getColor(R.color.primary_blue))
+                button.setTextColor(resources.getColor(R.color.white))
+            } else {
+                // NO SELECCIONADO (Blanco)
+                button.setBackgroundColor(Color.parseColor("#F0F0F0"))
+                button.setTextColor(Color.parseColor("#475467"))
+            }
+        }
+    }
+
 }

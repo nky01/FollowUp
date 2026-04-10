@@ -11,9 +11,12 @@ import com.followup.R
 import com.followup.data.entity.Cliente
 
 class ClienteAdapter(
-    private var listaClientes: List<Cliente>,
     private val listener: OnClienteClickListener
 ) : RecyclerView.Adapter<ClienteAdapter.ViewHolder>() {
+
+    // 🔥 LISTAS IMPORTANTES
+    private var listaOriginal: List<Cliente> = emptyList()
+    private var listaMostrada: List<Cliente> = emptyList()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nombre = view.findViewById<TextView>(R.id.tvNombre)
@@ -26,6 +29,7 @@ class ClienteAdapter(
         val arrow = view.findViewById<ImageView>(R.id.imgArrow)
 
         val delete = view.findViewById<ImageView>(R.id.btnEliminar)
+        val edit = view.findViewById<ImageView>(R.id.btnEditar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,7 +39,7 @@ class ClienteAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cliente = listaClientes[position]
+        val cliente = listaMostrada[position] // 🔥 IMPORTANTE
 
         holder.nombre.text = cliente.nombre
         holder.descripcion.text = cliente.descripcion
@@ -57,16 +61,34 @@ class ClienteAdapter(
         holder.delete.setOnClickListener {
             listener.onDeleteClick(cliente)
         }
+
+        holder.edit.setOnClickListener {
+            listener.onEditClick(cliente)
+        }
     }
 
-    override fun getItemCount(): Int = listaClientes.size
+    override fun getItemCount(): Int = listaMostrada.size // 🔥 IMPORTANTE
 
+    // 🔹 CUANDO VIENE DE LA DB
     fun actualizarLista(nuevaLista: List<Cliente>) {
-        listaClientes = nuevaLista
+        listaOriginal = nuevaLista
+        listaMostrada = nuevaLista
+        notifyDataSetChanged()
+    }
+
+    // 🔹 FILTRO
+    fun filtrar(estado: String) {
+        listaMostrada = when (estado) {
+            "TODOS" -> listaOriginal
+            else -> listaOriginal.filter {
+                it.estado.equals(estado, ignoreCase = true)
+            }
+        }
         notifyDataSetChanged()
     }
 
     interface OnClienteClickListener {
         fun onDeleteClick(cliente: Cliente)
+        fun onEditClick(cliente: Cliente)
     }
 }

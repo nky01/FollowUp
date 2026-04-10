@@ -84,84 +84,78 @@
                 android:textColorHint="@color/hint_color" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/filter_group"
-            android:layout_width="0dp"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:scrollbars="none"
             app:layout_constraintTop_toBottomOf="@id/til_search"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:singleSelection="true"
-            app:selectionRequired="true">
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_filter_todos"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Todos"
-                android:textAllCaps="false"
-                android:textSize="12sp"
-                app:backgroundTint="#286DFF"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp"
-                app:rippleColor="#1AFFFFFF"
-                android:textColor="@color/white" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/filter_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_filter_vendidos"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Vendidos"
-                android:textAllCaps="false"
-                android:textSize="12sp"
-                app:backgroundTint="#F0F0F0"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp"
-                app:rippleColor="#14000000"
-                android:textColor="#475467" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_filter_todos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Todos"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="#286DFF"
+                    app:cornerRadius="20dp"
+                    app:strokeWidth="0dp"
+                    android:textColor="@color/white"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_filter_pendiente"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="Pendiente"
-                android:textAllCaps="false"
-                android:textSize="12sp"
-                app:backgroundTint="#F0F0F0"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp"
-                app:rippleColor="#14000000"
-                android:textColor="#475467" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_filter_vendidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Vendidos"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="#F0F0F0"
+                    app:cornerRadius="20dp"
+                    app:strokeWidth="0dp"
+                    android:textColor="#475467"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_filter_no_asignado"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:text="No Asignado"
-                android:textAllCaps="false"
-                android:textSize="11sp"
-                app:backgroundTint="#F0F0F0"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp"
-                app:rippleColor="#14000000"
-                android:textColor="#475467" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_filter_pendiente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Pendiente"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="#F0F0F0"
+                    app:cornerRadius="20dp"
+                    app:strokeWidth="0dp"
+                    android:textColor="#475467"/>
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_filter_no_asignado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="No Asignado"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    app:backgroundTint="#F0F0F0"
+                    app:cornerRadius="20dp"
+                    app:strokeWidth="0dp"
+                    android:textColor="#475467"/>
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </HorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
