@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_blue"
@@ -11,7 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/iconCheck"
@@ -19,9 +20,9 @@
             android:layout_height="56dp"
             android:layout_margin="16dp"
             android:src="@mipmap/logo"
-            app:tint="#FDFDFD"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#FDFDFD" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profile_picture"
@@ -30,11 +31,11 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:src="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
             app:strokeColor="@color/white"
-            app:strokeWidth="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:strokeWidth="2dp" />
 
         <TextView
             android:id="@+id/title"
@@ -63,11 +64,11 @@
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintEnabled="false"
-            app:startIconDrawable="@android:drawable/ic_menu_search"
-            app:startIconTint="@color/hint_color"
-            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:startIconTint="@color/hint_color">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/search"
@@ -76,8 +77,7 @@
                 android:hint="Buscar venta..."
                 android:inputType="text"
                 android:paddingVertical="14dp"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/hint_color" />
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButtonToggleGroup
@@ -87,11 +87,13 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            app:layout_constraintTop_toBottomOf="@id/til_search"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:singleSelection="true"
-            app:selectionRequired="true">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_search"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_filter_todos"
@@ -111,12 +113,12 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:text="Vendidos"
                 android:textAllCaps="false"
                 android:textColor="#475467"
-                app:backgroundTint="@color/white"
+                app:backgroundTint="#F0F0F0"
                 app:cornerRadius="20dp"
                 app:strokeWidth="0dp" />
 
@@ -125,15 +127,14 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:text="Pendiente"
                 android:textAllCaps="false"
                 android:textColor="#475467"
-                app:backgroundTint="@color/white"
+                app:backgroundTint="#F0F0F0"
                 app:cornerRadius="20dp"
                 app:strokeWidth="0dp" />
-
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -141,41 +142,204 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="300dp"
+        android:layout_height="0dp"
         android:background="@drawable/background_content_top_rounded"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/header_container">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_ventas"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_venta_ejemplo"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/iv_venta_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#E8F1FF"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_clients"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="#4A90E2" />
+
+                <TextView
+                    android:id="@+id/tvVentaID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Venta $ID_Venta"
+                    android:textColor="@color/text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/iv_venta_icon"
+                    app:layout_constraintTop_toTopOf="@+id/iv_venta_icon" />
+
+                <TextView
+                    android:id="@+id/tvClienteNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cliente $Nombre_Cliente"
+                    android:textColor="@color/hint_color"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/tvVentaID"
+                    app:layout_constraintTop_toBottomOf="@+id/tvVentaID" />
+
+                <TextView
+                    android:id="@+id/tvEstadoVenta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#FFF4E5"
+                    android:drawableEnd="@android:drawable/arrow_down_float"
+                    android:drawablePadding="4dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:text="Pendiente"
+                    android:textColor="#D4850D"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tvVentaID" />
+
+                <TextView
+                    android:id="@+id/tvFechaVenta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="25 Feb"
+                    android:textColor="@color/hint_color"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@+id/tvEstadoVenta"
+                    app:layout_constraintTop_toBottomOf="@+id/tvEstadoVenta" />
+
+                <TextView
+                    android:id="@+id/tvMontoTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Monto a pagar"
+                    android:textColor="@color/text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_venta_icon" />
+
+                <ProgressBar
+                    android:id="@+id/pb_pago"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:max="100"
+                    android:progress="80"
+                    android:progressTint="#D4850D"
+                    android:progressBackgroundTint="#F0E0C9"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPorcentaje"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMontoTitulo" />
+
+                <TextView
+                    android:id="@+id/tvPorcentaje"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="80%"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/pb_pago"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/pb_pago" />
+
+                <TextView
+                    android:id="@+id/tvMontoCalculo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="$40.000/50.000"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pb_pago" />
+
+                <TextView
+                    android:id="@+id/tvSeguimiento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Fecha de Seguimiento:  25 Mar"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMontoCalculo" />
+
+                <TextView
+                    android:id="@+id/tvDescVenta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="[Descripción]"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento" />
+
+                <ImageView
+                    android:id="@+id/ivDeleteVenta"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento"
+                    app:tint="#F04438" />
+
+                <ImageView
+                    android:id="@+id/ivEditVenta"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivDeleteVenta"
+                    app:layout_constraintEnd_toStartOf="@+id/ivDeleteVenta"
+                    app:layout_constraintTop_toTopOf="@+id/ivDeleteVenta"
+                    app:tint="@color/text_primary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_venta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="16dp"
             android:src="@android:drawable/ic_input_add"
             app:backgroundTint="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@color/white" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_menu" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:itemIconSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
