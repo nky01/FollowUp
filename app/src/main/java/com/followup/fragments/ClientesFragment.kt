@@ -1,5 +1,6 @@
 package com.followup.fragments
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Patterns
@@ -9,10 +10,14 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
+import com.followup.data.adapter.ClienteAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.google.android.material.button.MaterialButton
@@ -28,6 +33,9 @@ class ClientesFragment : Fragment() {
     private lateinit var fabOverlay: View // Vista de superposición para oscurecer el fondo cuando el menú está abierto
     private var isFabMenuOpen = false // Bandera para controlar el estado del menú del botón flotante
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ClienteAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +48,27 @@ class ClientesFragment : Fragment() {
     //
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Conectar RecyclerView
+        recyclerView = view.findViewById(R.id.rvClientes)
+
+        adapter = ClienteAdapter(emptyList(), object : ClienteAdapter.OnClienteClickListener {
+            override fun onDeleteClick(cliente: Cliente) {
+                mostrarDialogoEliminar(cliente)
+            }
+        })
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        val delete = view.findViewById<ImageView>(R.id.btnEliminar)
+
+        // BASE DE DATOS
+        val db = AppDatabase.getDatabase(requireContext())
+
+        db.clienteDao().obtenerClientes().observe(viewLifecycleOwner) { lista ->
+            adapter.actualizarLista(lista)
+        }
 
         fabMain = view.findViewById(R.id.fab_main)
         fabMenuContainer = view.findViewById(R.id.fab_menu_container)
@@ -225,6 +254,23 @@ class ClientesFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error al guardar cliente", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun mostrarDialogoEliminar(cliente: Cliente) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar cliente")
+            .setMessage("¿Seguro que deseas eliminar este cliente?")
+            .setPositiveButton("Sí") { _, _ ->
+
+                val db = AppDatabase.getDatabase(requireContext())
+
+                // 🔥 ACÁ ESTÁ LA CLAVE
+                lifecycleScope.launch {
+                    db.clienteDao().delete(cliente)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     // onDestreoyView lo recomienda usar, por un tema de memoria

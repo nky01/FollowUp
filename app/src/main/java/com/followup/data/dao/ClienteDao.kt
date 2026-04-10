@@ -1,5 +1,6 @@
 package com.followup.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -30,4 +31,9 @@ interface ClienteDao {
     // Obtener un cliente por su email
     @Query("SELECT * FROM Cliente_Tabla WHERE email = :email LIMIT 1") // Se tendria que cambiar en un futuro?
     suspend fun obtenerPorEmail(email: String): Cliente?
+
+    // Obtener Una lista de todos los clientes
+        // Usado Para: Mostrar Clientes en el RecyclerView de ClientesFragment
+    @Query("SELECT * FROM Cliente_Tabla")
+    fun obtenerClientes(): LiveData<List<Cliente>> // LiveData --> para mantener los datos actualizados
 }
