@@ -2,6 +2,7 @@ package com.followup.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
@@ -21,9 +22,11 @@ import com.followup.R
 import com.followup.data.adapter.ClienteAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
+import com.followup.presentation.settings.Perfil
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -113,6 +116,7 @@ class ClientesFragment : Fragment() {
         fabMenuContainer = view.findViewById(R.id.fab_menu_container)
         fabOverlay = view.findViewById(R.id.fab_overlay)
         val btnNuevoCliente = view.findViewById<MaterialButton>(R.id.btn_nuevo_cliente)
+        val profilePicture = view.findViewById<ShapeableImageView>(R.id.iv_profile_picture)
 
         fabMain.setOnClickListener { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
@@ -120,6 +124,10 @@ class ClientesFragment : Fragment() {
         btnNuevoCliente.setOnClickListener {
             closeFabMenu()
             showNuevoClienteDialog()
+        }
+
+        profilePicture.setOnClickListener {
+            startActivity(Intent(requireContext(), Perfil::class.java))
         }
     }
 

@@ -36,6 +36,15 @@
             android:name=".presentation.register.RegistrarCuenta"
             android:exported="false" />
         <activity
+            android:name=".presentation.settings.CambiarMail"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.settings.VerificarCambioMail"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.settings.Perfil"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>

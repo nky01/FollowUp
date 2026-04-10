@@ -1,7 +1,8 @@
 [versions]
-agp = "8.13.2"
+agp = "9.1.0"
 circleimageview = "3.1.0"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
+room = "2.7.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -13,8 +14,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.13.0"
 constraintlayout = "2.1.4"
-room = "2.6.1"
-ksp = "2.0.21-1.0.27"
+ksp = "2.1.0-1.0.29"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

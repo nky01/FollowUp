@@ -1,6 +1,8 @@
 package com.followup.presentation.login
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.TextView
@@ -21,10 +23,13 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
 class Login : AppCompatActivity() {
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
+        sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -107,6 +112,9 @@ class Login : AppCompatActivity() {
                 if (usuario != null) {
                     // Verificar contraseña
                     if (usuario.contraseniaHash == password) {
+                        sharedPreferences.edit()
+                            .putString("USER_MAIL", email)
+                            .apply()
                         // Ir al Home
                         val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
                         startActivity(intent)
