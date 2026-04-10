@@ -1,6 +1,7 @@
 package com.followup.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.followup.R
+import com.followup.presentation.settings.Perfil
+import de.hdodenhof.circleimageview.CircleImageView
 
 // sharedPreferences para mostrar el nombre del usuario en el saludo, es una añternativa que encontre a ViewModel.
 // Seria como un localStorage de Android
@@ -25,6 +28,11 @@ class InicioFragment : Fragment() {
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
         val saludoTextView = view.findViewById<TextView>(R.id.tv_saludo)
         saludoTextView.text = "Hola, $userName"
+
+        val profilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
+        profilePicture.setOnClickListener {
+            startActivity(Intent(requireContext(), Perfil::class.java))
+        }
 
         return view
     }

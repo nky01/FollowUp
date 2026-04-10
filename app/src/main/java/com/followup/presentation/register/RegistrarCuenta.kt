@@ -2,6 +2,7 @@ package com.followup.presentation.register
 
 import android.os.Bundle
 import android.util.Patterns
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,11 @@ class RegistrarCuenta : AppCompatActivity() {
         val tilConfirmPassword = findViewById<TextInputLayout>(R.id.til_ConfirmPassword)
         val tietConfirmPassword = findViewById<TextInputEditText>(R.id.tiet_ConfirmPassword)
         val btnRegister = findViewById<MaterialButton>(R.id.btn_Register)
+        val btnBack = findViewById<ImageButton>(R.id.btn_Back)
+
+        btnBack.setOnClickListener {
+            finish()
+        }
 
         btnRegister.setOnClickListener {
             val nombre = tietName.text.toString().trim()
