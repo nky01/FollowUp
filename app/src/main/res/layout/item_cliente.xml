@@ -1,0 +1,163 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- CARD -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:strokeColor="#F5F5F5"
+        app:strokeWidth="2dp"
+        app:cardCornerRadius="12dp">
+
+        <!-- CONTENEDOR GENERAL -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layoutPrincipal"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- ICONO -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_client"
+                    android:tint="@color/white"
+                    android:background="@color/primary_blue"
+                    android:layout_marginEnd="8dp"
+                    android:scaleType="centerInside"
+                    app:shapeAppearanceOverlay="@style/Radius"/>
+
+                <!-- TEXTO -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvNombre"
+                        android:text="Cliente"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/tvDescripcion"
+                        android:text="Breve descripción..."
+                        android:textSize="12sp"
+                        android:textColor="#888"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- ESTADO -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvEstado"
+                        android:text="Vendido"
+                        android:textSize="12sp"
+                        android:padding="6dp"
+                        android:background="#C8E6C9"
+                        android:textColor="#2E7D32"
+                        android:layout_marginEnd="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"/>
+
+                    <!-- FLECHA -->
+                    <ImageView
+                        android:id="@+id/imgArrow"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/arrow_down_float"
+                        android:layout_gravity="end"
+                        android:layout_marginRight="10dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 🔽 EXPANDIBLE -->
+            <LinearLayout
+                android:id="@+id/layoutExpandible"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Descripción -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="[Descripción]"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Contacto -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Contacto:"
+                    android:textStyle="bold"
+                    android:textSize="18dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvTelefono"
+                    android:text="Teléfono: +54 9 112233445"
+                    android:textSize="14dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvEmail"
+                    android:text="Correo electrónico: usuario@gmail.com"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="14dp"/>
+
+                <!-- Acciones -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/btnEditar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_edit"
+                        android:layout_marginEnd="12dp"/>
+
+                    <ImageView
+                        android:id="@+id/btnEliminar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_delete"
+                        app:tint="#F44336" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

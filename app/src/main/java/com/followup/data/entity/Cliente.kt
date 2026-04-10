@@ -13,5 +13,7 @@ data class Cliente(
     val email: String,
     val estado: String, // "Pendiente", "Vendido", "No Asignado"
 
-    val fecha: Long // Tiempo en milisegundos
+    val fecha: Long, // Tiempo en milisegundos
+
+    var expandido: Boolean = false // ¡IMPORTANTE PARA EL BOTÓN EXPANDIR! ¡NO SE CARGA EN BD!
 )
