@@ -1,6 +1,7 @@
 package com.followup.fragments
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -9,9 +10,14 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
@@ -19,6 +25,9 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 class ClientesFragment : Fragment() {
@@ -27,6 +36,10 @@ class ClientesFragment : Fragment() {
     private lateinit var fabMenuContainer: View // Contenedor del menú del botón flotante
     private lateinit var fabOverlay: View // Vista de superposición para oscurecer el fondo cuando el menú está abierto
     private var isFabMenuOpen = false // Bandera para controlar el estado del menú del botón flotante
+    private lateinit var rvClientes: RecyclerView
+    private lateinit var searchInput: TextInputEditText
+    private val clientesCargados = mutableListOf<Cliente>()
+    private var filtroActual: String? = null
 
 
     override fun onCreateView(
@@ -46,6 +59,18 @@ class ClientesFragment : Fragment() {
         fabOverlay = view.findViewById(R.id.fab_overlay)
         val btnNuevoCliente = view.findViewById<MaterialButton>(R.id.btn_nuevo_cliente)
 
+        fabOverlay.isClickable = false
+        fabOverlay.isFocusable = false
+
+        rvClientes = view.findViewById(R.id.rv_clientes)
+        searchInput = view.findViewById(R.id.search)
+        val btnFiltroTodos = view.findViewById<MaterialButton>(R.id.btn_filter_todos)
+        val btnFiltroVendidos = view.findViewById<MaterialButton>(R.id.btn_filter_vendidos)
+        val btnFiltroPendiente = view.findViewById<MaterialButton>(R.id.btn_filter_pendiente)
+
+        setupClientesList()
+        cargarClientes()
+
         fabMain.setOnClickListener { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
 
@@ -53,6 +78,66 @@ class ClientesFragment : Fragment() {
             closeFabMenu()
             showNuevoClienteDialog()
         }
+
+        searchInput.doAfterTextChanged { texto ->
+            if (isFabMenuOpen) closeFabMenu()
+            aplicarBusquedaYRender(texto?.toString().orEmpty())
+        }
+
+        btnFiltroTodos.setOnClickListener {
+            if (isFabMenuOpen) closeFabMenu()
+            filtroActual = null
+            cargarClientes()
+        }
+
+        btnFiltroVendidos.setOnClickListener {
+            if (isFabMenuOpen) closeFabMenu()
+            filtroActual = "Vendido"
+            cargarClientes()
+        }
+
+        btnFiltroPendiente.setOnClickListener {
+            if (isFabMenuOpen) closeFabMenu()
+            filtroActual = "Pendiente"
+            cargarClientes()
+        }
+    }
+
+    private fun setupClientesList() {
+        rvClientes.layoutManager = LinearLayoutManager(requireContext())
+        rvClientes.adapter = ClientesAdapter()
+    }
+
+    // cargarClientes se encarga de obtener la lista de clientes desde la base de datos, aplicando el filtro de estado si es necesario, y dsp actualiza la vista
+    private fun cargarClientes() {
+        lifecycleScope.launch {
+            val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
+            val clientes = if (filtroActual == null) {
+                dao.obtenerTodos()
+            } else {
+                dao.obtenerPorEstado(filtroActual!!)
+            }
+
+            clientesCargados.clear()
+            clientesCargados.addAll(clientes)
+            aplicarBusquedaYRender(searchInput.text?.toString().orEmpty())
+        }
+    }
+
+    private fun aplicarBusquedaYRender(query: String) {
+        val texto = query.trim().lowercase()
+        if (texto.isEmpty()) {
+            (rvClientes.adapter as ClientesAdapter).submitList(clientesCargados)
+            return
+        }
+
+        val filtrados = clientesCargados.filter { cliente ->
+            cliente.nombre.lowercase().contains(texto) ||
+                cliente.email.lowercase().contains(texto) ||
+                cliente.telefono.lowercase().contains(texto) ||
+                cliente.descripcion.lowercase().contains(texto)
+        }
+        (rvClientes.adapter as ClientesAdapter).submitList(filtrados)
     }
 
     // toggleFabMenu se encarga de alternar entre abrir y cerrar el btn flotante
@@ -69,6 +154,13 @@ class ClientesFragment : Fragment() {
         isFabMenuOpen = true
         fabOverlay.visibility = View.VISIBLE
         fabMenuContainer.visibility = View.VISIBLE
+        fabOverlay.isClickable = true
+        fabOverlay.isFocusable = true
+
+        // Fuerza el orden visual correcto en tiempo de ejecución.
+        fabOverlay.bringToFront()
+        fabMenuContainer.bringToFront()
+        fabMain.bringToFront()
 
         fabOverlay.alpha = 0f
         fabOverlay.animate().alpha(1f).setDuration(150).start()
@@ -85,6 +177,8 @@ class ClientesFragment : Fragment() {
         if (!isFabMenuOpen) return
 
         isFabMenuOpen = false
+        fabOverlay.isClickable = false
+        fabOverlay.isFocusable = false
         fabOverlay.animate().alpha(0f).setDuration(120).withEndAction {
             fabOverlay.visibility = View.GONE
         }.start()
@@ -93,6 +187,7 @@ class ClientesFragment : Fragment() {
             fabMenuContainer.visibility = View.GONE
         }.start()
 
+        fabMain.bringToFront()
         fabMain.setImageResource(android.R.drawable.ic_input_add)
     }
 
@@ -216,13 +311,81 @@ class ClientesFragment : Fragment() {
                             fecha = System.currentTimeMillis()
                         )
                     )
+                    cargarClientes()
                     Toast.makeText(requireContext(), "Cliente guardado con exito", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 } else {
                     tilEmail.error = "Este correo ya esta en uso"
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
                 Toast.makeText(requireContext(), "Error al guardar cliente", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // ClientesAdapter es el adaptador del RecyclerView que muestra la lista de clientes,
+    // yo lo desarrolle de esta forma para mantenerlo dentro del mismo archivo,
+    // pero se podria extraer a un archivo separado si se quisiera. Es lo mas recomendable.
+    private class ClientesAdapter : RecyclerView.Adapter<ClientesAdapter.ClienteViewHolder>() {
+        private val items = mutableListOf<Cliente>()
+        private val dateFormatter = SimpleDateFormat("dd MMM", Locale.forLanguageTag("es-AR"))
+
+        fun submitList(clientes: List<Cliente>) {
+            items.clear()
+            items.addAll(clientes)
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClienteViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cliente, parent, false)
+            return ClienteViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ClienteViewHolder, position: Int) {
+            holder.bind(items[position], dateFormatter)
+        }
+
+        override fun getItemCount(): Int = items.size
+
+        // ClienteViewHolder es la clase que representa cada item de cliente en el RecyclerView.
+        class ClienteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
+            private val tvSubtitulo: TextView = itemView.findViewById(R.id.tvSubtitulo)
+            private val tvEstado: TextView = itemView.findViewById(R.id.tvEstado)
+            private val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
+            private val tvDescTag: TextView = itemView.findViewById(R.id.tvDescTag)
+            private val tvTelefonoValue: TextView = itemView.findViewById(R.id.tvTelefonoValue)
+            private val tvEmailValue: TextView = itemView.findViewById(R.id.tvEmailValue)
+            private val ivEdit: ImageView = itemView.findViewById(R.id.ivEdit)
+            private val ivDelete: ImageView = itemView.findViewById(R.id.ivDelete)
+
+            // bind se encarga de asignar los datos del cliente a las vistas del item, y de configurar los colores y acciones segun el estado del cliente
+            fun bind(cliente: Cliente, formatter: SimpleDateFormat) {
+                tvNombre.text = cliente.nombre
+                tvSubtitulo.text = ""
+                tvDescTag.text = if (cliente.descripcion.isBlank()) "Sin descripcion" else cliente.descripcion
+                tvEstado.text = cliente.estado
+                tvFecha.text = formatter.format(Date(cliente.fecha))
+                tvTelefonoValue.text = cliente.telefono
+                tvEmailValue.text = cliente.email
+
+                val colors = estadoColors(cliente.estado)
+                tvEstado.setBackgroundColor(colors.first)
+                tvEstado.setTextColor(colors.second)
+
+                // Por ahora solo se muestra visualmente; las acciones se implementaran luego.
+                ivEdit.setOnClickListener(null)
+                ivDelete.setOnClickListener(null)
+            }
+
+            // estadoColors devuelve un par de colores (fondo y texto) segun el estado del cliente.
+            private fun estadoColors(estado: String): Pair<Int, Int> {
+                return when (estado.lowercase(Locale.ROOT)) {
+                    "vendido" -> Pair(Color.parseColor("#E8F5E9"), Color.parseColor("#2E7D32"))
+                    "pendiente" -> Pair(Color.parseColor("#FFF4E5"), Color.parseColor("#D4850D"))
+                    else -> Pair(Color.parseColor("#F2F4F7"), Color.parseColor("#475467"))
+                }
             }
         }
     }

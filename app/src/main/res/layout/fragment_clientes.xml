@@ -146,167 +146,57 @@
         app:layout_constraintTop_toBottomOf="@id/header_container"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_cliente_ejemplo"
-            android:layout_width="match_parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_clientes"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="96dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/fab_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0"
+            android:background="@android:color/transparent"
+            android:elevation="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/fab_menu_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="104dp"
+            android:alpha="0"
+            android:elevation="12dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_nuevo_cliente"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp">
-
-                <ImageView
-                    android:id="@+id/iv_user_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="#E8F1FF"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_clients"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="#4A90E2" />
-
-                <TextView
-                    android:id="@+id/tvNombre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Cliente 1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/iv_user_icon"
-                    app:layout_constraintTop_toTopOf="@+id/iv_user_icon" />
-
-                <TextView
-                    android:id="@+id/tvSubtitulo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fabricación de 20..."
-                    android:textColor="@color/hint_color"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tvNombre"
-                    app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
-
-                <TextView
-                    android:id="@+id/tvEstado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#FFF4E5"
-                    android:drawableEnd="@android:drawable/arrow_down_float"
-                    android:drawablePadding="4dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Pendiente"
-                    android:textColor="#D4850D"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tvNombre" />
-
-                <TextView
-                    android:id="@+id/tvFecha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="25 Feb"
-                    android:textColor="@color/hint_color"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/tvEstado"
-                    app:layout_constraintTop_toBottomOf="@+id/tvEstado" />
-
-                <TextView
-                    android:id="@+id/tvDescTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="[Descripción]"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_user_icon" />
-
-                <TextView
-                    android:id="@+id/tvContactoTitulo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Contacto:"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvDescTag" />
-
-                <LinearLayout
-                    android:id="@+id/layoutTel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/tvContactoTitulo">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Teléfono:  "
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView
-                        android:id="@+id/tvTelefonoValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+54 9 112233445"
-                        android:textColor="@color/text_primary"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layoutMail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutTel">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Correo electrónico:  "
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView
-                        android:id="@+id/tvEmailValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="usuario01@gmail.com"
-                        android:textColor="@color/text_primary"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivDelete"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutMail"
-                    app:tint="#F04438" />
-
-                <ImageView
-                    android:id="@+id/ivEdit"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/ivDelete"
-                    app:layout_constraintEnd_toStartOf="@+id/ivDelete"
-                    app:layout_constraintTop_toTopOf="@+id/ivDelete"
-                    app:tint="@color/text_primary" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:minHeight="48dp"
+                android:text="Agregar cliente"
+                android:textAllCaps="false"
+                android:textColor="@color/primary_blue"
+                app:backgroundTint="#E8F1FF"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconPadding="8dp"
+                app:iconTint="@color/primary_blue" />
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_main"
@@ -314,6 +204,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:elevation="16dp"
             android:src="@android:drawable/ic_input_add"
             app:backgroundTint="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
