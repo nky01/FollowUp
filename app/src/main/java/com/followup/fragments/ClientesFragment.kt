@@ -35,15 +35,16 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 
 class ClientesFragment : Fragment() {
 
-/* ------------------------------------------------------------------------------------
-                                        ATRIBUTOS
------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------
+                                            ATRIBUTOS
+    ------------------------------------------------------------------------------------ */
     // lateinit -> Indica que la variable sera inicializada mas adelante, pero no inmediatamente.
 
     private lateinit var fabMain: FloatingActionButton // Referencia al botón flotante principal
     private lateinit var fabMenuContainer: View // Contenedor del menú del botón flotante
     private lateinit var fabOverlay: View // Vista de superposición para oscurecer el fondo cuando el menú está abierto
-    private var isFabMenuOpen = false // Bandera para controlar el estado del menú del botón flotante
+    private var isFabMenuOpen =
+        false // Bandera para controlar el estado del menú del botón flotante
     private lateinit var rvClientes: RecyclerView
     private lateinit var searchInput: TextInputEditText
     private val clientesCargados = mutableListOf<Cliente>()
@@ -58,9 +59,9 @@ class ClientesFragment : Fragment() {
 
     private lateinit var adapter: ClientesAdapter
 
-/* ------------------------------------------------------------------------------------
-                                  MÉTODOS DEL FRAGMENT
------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------
+                                      MÉTODOS DEL FRAGMENT
+    ------------------------------------------------------------------------------------ */
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,14 +102,14 @@ class ClientesFragment : Fragment() {
 
     }
 
-/* ------------------------------------------------------------------------------------
-                                  MÉTODOS PROPIOS
------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------
+                                      MÉTODOS PROPIOS
+    ------------------------------------------------------------------------------------ */
 
     /* --------------------------------------------------
           INICIALIZADOR DE COMPONENTES DE LA VISTA
     -------------------------------------------------- */
-    private fun initComponents(view: View){ // Recibe la vista del fragmento
+    private fun initComponents(view: View) { // Recibe la vista del fragmento
 
         fabMain = view.findViewById(R.id.fab_main)
         fabMenuContainer = view.findViewById(R.id.fab_menu_container)
@@ -124,7 +125,8 @@ class ClientesFragment : Fragment() {
         btnFiltroVendidos = view.findViewById<MaterialButton>(R.id.btn_filter_vendidos)
         btnFiltroPendiente = view.findViewById<MaterialButton>(R.id.btn_filter_pendiente)
 
-        filterGroup = view.findViewById(R.id.filter_group) // INICIALIZA EL GRUPO DE BOTONES PARA FILTRAR CLIENTES
+        filterGroup =
+            view.findViewById(R.id.filter_group) // INICIALIZA EL GRUPO DE BOTONES PARA FILTRAR CLIENTES
     }
 
     /* --------------------------------------------------
@@ -273,19 +275,39 @@ class ClientesFragment : Fragment() {
     -------------------------------------------------- */
     private fun eliminarCliente(cliente: Cliente) {
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Eliminar cliente")
-            .setMessage("¿Deseas eliminar este cliente?")
+        val view =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eliminar_cliente, null)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(view)
 
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
+        dialog.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+            setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+            attributes.gravity = android.view.Gravity.CENTER
+        }
 
-            .setPositiveButton("Eliminar") { _, _ ->
-                eliminarClienteConfirmado(cliente)
-            }
+        val btnCancelar = view.findViewById<MaterialButton>(R.id.btn_cancelar_cliente)
+        val btnEliminar = view.findViewById<MaterialButton>(R.id.btn_eliminar_cliente)
+        val tvTitulo = view.findViewById<TextView>(R.id.tv_titulo_eliminar)
 
-            .show()
+        tvTitulo.text = "¿Eliminar a ${cliente.nombre}?"
+
+        btnCancelar.setOnClickListener {
+            btnCancelar.setBackgroundColor(Color.parseColor("#286DFF"))
+            btnCancelar.setTextColor(Color.WHITE)
+
+            view.postDelayed({ dialog.dismiss() }, 100)
+        }
+
+        btnEliminar.setOnClickListener {
+            eliminarClienteConfirmado(cliente)
+            dialog.dismiss()
+        }
+
+        if (isAdded && !requireActivity().isFinishing) {
+            dialog.show()
+        }
     }
 
     /* --------------------------------------------------
@@ -327,9 +349,9 @@ class ClientesFragment : Fragment() {
 
         val filtrados = clientesCargados.filter { cliente ->
             cliente.nombre.lowercase().contains(texto) ||
-                cliente.email.lowercase().contains(texto) ||
-                cliente.telefono.lowercase().contains(texto) ||
-                cliente.descripcion.lowercase().contains(texto)
+                    cliente.email.lowercase().contains(texto) ||
+                    cliente.telefono.lowercase().contains(texto) ||
+                    cliente.descripcion.lowercase().contains(texto)
         }
         (rvClientes.adapter as ClientesAdapter).submitList(filtrados)
     }
@@ -405,7 +427,13 @@ class ClientesFragment : Fragment() {
         val btnGuardar = dialog.findViewById<MaterialButton>(R.id.btn_guardar_cliente)
 
         val estados = listOf("Pendiente", "Vendido", "No Asignado")
-        actvEstado.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, estados))
+        actvEstado.setAdapter(
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                estados
+            )
+        )
 
         btnCancelar.setOnClickListener { dialog.dismiss() }
         btnGuardar.setOnClickListener {
@@ -415,7 +443,17 @@ class ClientesFragment : Fragment() {
             val estado = actvEstado.text.toString().trim()
             val descripcion = tietDescripcion.text.toString().trim()
 
-            if (validarClienteFrontend(nombre, telefono, email, estado, tilNombre, tilTelefono, tilEmail, tilEstado)) {
+            if (validarClienteFrontend(
+                    nombre,
+                    telefono,
+                    email,
+                    estado,
+                    tilNombre,
+                    tilTelefono,
+                    tilEmail,
+                    tilEstado
+                )
+            ) {
                 registrarCliente(nombre, telefono, email, estado, descripcion, dialog, tilEmail)
             }
         }
@@ -506,14 +544,19 @@ class ClientesFragment : Fragment() {
                         )
                     )
                     cargarClientes()
-                    Toast.makeText(requireContext(), "Cliente guardado con exito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Cliente guardado con exito",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     dialog.dismiss()
                 } else {
                     tilEmail.error = "Este correo ya esta en uso"
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "Error al guardar cliente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error al guardar cliente", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
