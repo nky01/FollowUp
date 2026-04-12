@@ -18,9 +18,9 @@ interface VentaDao {
     @Query("SELECT * FROM Ventas_Tabla ORDER BY Fecha DESC")
     suspend fun obtenerTodas(): List<Venta>
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE ID_Cliente_Venta = :clienteId")
+    @Query("SELECT * FROM Ventas_Tabla WHERE idClienteVenta = :clienteId")
     suspend fun obtenerVentasPorCliente(clienteId: Int): List<Venta>
 
-    @Query("SELECT SUM(Total) FROM Ventas_Tabla WHERE Estado = 'Pagado'")
+    @Query("SELECT SUM(Total) FROM Ventas_Tabla WHERE estado = 'Pagado'")
     suspend fun obtenerIngresosTotales(): Double
 }
