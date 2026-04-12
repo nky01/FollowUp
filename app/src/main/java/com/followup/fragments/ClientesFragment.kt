@@ -280,6 +280,7 @@ class ClientesFragment : Fragment() {
         val dialog = Dialog(requireContext())
         dialog.setContentView(view)
 
+        // centraliza el dialog
         dialog.window?.apply {
             setBackgroundDrawableResource(android.R.color.transparent)
             val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
@@ -305,6 +306,7 @@ class ClientesFragment : Fragment() {
             dialog.dismiss()
         }
 
+        // Verifica que el Fragment este vinculado y solo muestra el diálogo si la pantalla aun existe y no se está cerrando
         if (isAdded && !requireActivity().isFinishing) {
             dialog.show()
         }
