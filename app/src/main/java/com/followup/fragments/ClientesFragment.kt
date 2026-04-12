@@ -207,10 +207,14 @@ class ClientesFragment : Fragment() {
         /* --------- CREACIÓN DEL DIALOG END */
         /* --------- REFERENCIAR CAMPOS */
 
+        val tilNombre = view.findViewById<TextInputLayout>(R.id.til_cliente_nombre)
         val nombre = view.findViewById<TextInputEditText>(R.id.tiet_cliente_nombre)
+        val tilTelefono = view.findViewById<TextInputLayout>(R.id.til_cliente_telefono)
         val telefono = view.findViewById<TextInputEditText>(R.id.tiet_cliente_telefono)
+        val tilEmail = view.findViewById<TextInputLayout>(R.id.til_cliente_email)
         val email = view.findViewById<TextInputEditText>(R.id.tiet_cliente_email)
         val descripcion = view.findViewById<TextInputEditText>(R.id.tiet_cliente_descripcion)
+        val tilEstado = view.findViewById<TextInputLayout>(R.id.til_cliente_estado)
         val estado = view.findViewById<AutoCompleteTextView>(R.id.actv_cliente_estado)
 
         val btnGuardar = view.findViewById<MaterialButton>(R.id.btn_guardar_cliente)
@@ -219,11 +223,26 @@ class ClientesFragment : Fragment() {
         /* --------- REFERENCIAR CAMPOS END */
         /* --------- CARGAR DATOS ACTUALES */
 
+        val estados = listOf("Pendiente", "Vendido", "No Asignado")
+        estado.setAdapter(
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                estados
+            )
+        )
+
         nombre.setText(cliente.nombre)
         telefono.setText(cliente.telefono)
         email.setText(cliente.email)
         descripcion.setText(cliente.descripcion)
         estado.setText(cliente.estado, false)
+
+        // Limpia errores al corregir cada campo.
+        nombre.doAfterTextChanged { tilNombre.error = null }
+        telefono.doAfterTextChanged { tilTelefono.error = null }
+        email.doAfterTextChanged { tilEmail.error = null }
+        estado.doAfterTextChanged { tilEstado.error = null }
 
         /* --------- CARGAR DATOS ACTUALES END */
         /* --------- BOTÓN CANCELAR */
@@ -237,16 +256,34 @@ class ClientesFragment : Fragment() {
 
         btnGuardar.setOnClickListener {
 
-            val clienteActualizado = cliente.copy(
-                nombre = nombre.text.toString(),
-                telefono = telefono.text.toString(),
-                email = email.text.toString(),
-                descripcion = descripcion.text.toString(),
-                estado = estado.text.toString()
+            val nombreValue = nombre.text.toString().trim()
+            val telefonoValue = telefono.text.toString().trim()
+            val emailValue = email.text.toString().trim()
+            val estadoValue = estado.text.toString().trim()
+            val descripcionValue = descripcion.text.toString().trim()
+
+            val esValido = validarClienteFrontend(
+                nombre = nombreValue,
+                telefono = telefonoValue,
+                email = emailValue,
+                estado = estadoValue,
+                tilNombre = tilNombre,
+                tilTelefono = tilTelefono,
+                tilEmail = tilEmail,
+                tilEstado = tilEstado
             )
 
-            actualizarCliente(clienteActualizado)
-            dialog.dismiss()
+            if (!esValido) return@setOnClickListener
+
+            val clienteActualizado = cliente.copy(
+                nombre = nombreValue,
+                telefono = telefonoValue,
+                email = emailValue,
+                descripcion = descripcionValue,
+                estado = estadoValue
+            )
+
+            actualizarCliente(clienteActualizado, cliente.email, tilEmail, dialog)
         }
 
         /* --------- BOTÓN GUARDAR END */
@@ -259,14 +296,27 @@ class ClientesFragment : Fragment() {
     /* --------------------------------------------------
               ACTUALIZAR CLIENTE BASE DE DATOS
     -------------------------------------------------- */
-    private fun actualizarCliente(cliente: Cliente) {
+    private fun actualizarCliente(
+        cliente: Cliente,
+        emailOriginal: String,
+        tilEmail: TextInputLayout,
+        dialog: AlertDialog
+    ) {
         lifecycleScope.launch {
             val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
+
+            if (!cliente.email.equals(emailOriginal, ignoreCase = true)) {
+                val emailExistente = dao.obtenerPorEmail(cliente.email)
+                if (emailExistente != null) {
+                    tilEmail.error = "Este correo ya esta en uso"
+                    return@launch
+                }
+            }
+
             dao.update(cliente)
-
             cargarClientes()
-
             Toast.makeText(requireContext(), "Cliente actualizado", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
         }
     }
 
