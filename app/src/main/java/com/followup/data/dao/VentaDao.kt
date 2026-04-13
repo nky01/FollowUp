@@ -15,12 +15,15 @@ interface VentaDao {
     @Delete
     suspend fun delete(venta: Venta)
 
-    @Query("SELECT * FROM Ventas_Tabla ORDER BY Fecha DESC")
+    @Query("SELECT * FROM Ventas_Tabla ORDER BY fecha DESC")
     suspend fun obtenerTodas(): List<Venta>
 
     @Query("SELECT * FROM Ventas_Tabla WHERE idClienteVenta = :clienteId")
     suspend fun obtenerVentasPorCliente(clienteId: Int): List<Venta>
 
-    @Query("SELECT SUM(Total) FROM Ventas_Tabla WHERE estado = 'Pagado'")
-    suspend fun obtenerIngresosTotales(): Double
+    @Query("SELECT * FROM Ventas_Tabla WHERE estado = :estado ORDER BY fecha DESC")
+    suspend fun obtenerPorEstado(estado: String): List<Venta>
+
+    @Query("SELECT SUM(total) FROM Ventas_Tabla WHERE estado = 'Pagado'")
+    suspend fun obtenerIngresosTotales(): Double?
 }

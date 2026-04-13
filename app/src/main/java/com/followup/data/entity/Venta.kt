@@ -6,8 +6,14 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Ventas_Tabla")
 data class Venta(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-
     val idClienteVenta: Int,
+    val nombreCliente: String,
+    val montoTotal: Double,
+    val pagoTotal: Double,
+    val fechaVenta: Long,
+    val fechaSeguimiento: Long,
+    val descripcion: String,
+    // Campos legacy mantenidos para no romper vistas/consultas existentes durante la transicion.
     val total: Double,
     val fecha: Long,
     val formaPago: String,

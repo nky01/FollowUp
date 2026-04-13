@@ -12,7 +12,7 @@ import com.followup.data.entity.Usuario
 import com.followup.data.entity.Venta
 
 // tuve que cambiarlo porque me daba error al crear un nuevo cliente, no se si es por el cambio de version o por el cambio de nombre de la tabla, pero lo importante es que ahora funciona
-@Database(entities = [Usuario::class, Cliente::class, Venta::class], version = 3)
+@Database(entities = [Usuario::class, Cliente::class, Venta::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao

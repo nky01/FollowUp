@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#D0D5DD"
+    app:strokeWidth="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/iv_venta_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="#E8F1FF"
+            android:contentDescription="Icono venta"
+            android:padding="8dp"
+            android:src="@drawable/ic_clients"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#4A90E2" />
+
+        <TextView
+            android:id="@+id/tvVentaId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/iv_venta_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_venta_icon"
+            tools:text="Venta #31" />
+
+        <TextView
+            android:id="@+id/tvClienteId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/hint_color"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tvVentaId"
+            app:layout_constraintTop_toBottomOf="@id/tvVentaId"
+            tools:text="Cliente ID: 4" />
+
+        <TextView
+            android:id="@+id/tvEstadoVenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:textColor="#D4850D"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvVentaId"
+            tools:text="Pendiente" />
+
+        <TextView
+            android:id="@+id/tvFechaVenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/hint_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/tvEstadoVenta"
+            app:layout_constraintTop_toBottomOf="@id/tvEstadoVenta"
+            tools:text="25 Feb" />
+
+        <TextView
+            android:id="@+id/tvTotalVenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_venta_icon"
+            tools:text="$ 120.000,00" />
+
+        <TextView
+            android:id="@+id/tvFormaPago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalVenta"
+            tools:text="Pago: Transferencia" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="end"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvFormaPago">
+
+            <ImageView
+                android:id="@+id/ivEditVenta"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="Editar venta"
+                android:src="@android:drawable/ic_menu_edit"
+                app:tint="@color/text_primary" />
+
+            <ImageView
+                android:id="@+id/ivDeleteVenta"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Eliminar venta"
+                android:src="@android:drawable/ic_menu_delete"
+                app:tint="#F04438" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
+

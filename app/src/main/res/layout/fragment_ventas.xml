@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_blue"
-    tools:context=".fragments.VentasFragment">
+    tools:context=".fragments.VentasFragment"
+    tools:ignore="ContentDescription">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
@@ -14,15 +15,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <View
             android:id="@+id/iconCheck"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_margin="16dp"
-            android:src="@mipmap/logo"
+            android:background="@mipmap/logo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#FDFDFD" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profile_picture"
@@ -30,6 +30,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:contentDescription="@string/imagen_perfil"
             android:src="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Gestión de\nVentas"
+            android:text="@string/gestion_ventas_titulo"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -67,6 +68,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
+            app:startIconContentDescription="@string/buscar_venta"
             app:startIconDrawable="@android:drawable/ic_menu_search"
             app:startIconTint="@color/hint_color">
 
@@ -74,7 +76,7 @@
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Buscar venta..."
+                android:hint="@string/buscar_venta"
                 android:inputType="text"
                 android:paddingVertical="14dp"
                 android:textColor="@color/text_primary" />
@@ -101,7 +103,7 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Todos"
+                android:text="@string/todos"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:backgroundTint="#286DFF"
@@ -115,7 +117,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Vendidos"
+                android:text="@string/pagadas"
                 android:textAllCaps="false"
                 android:textColor="#475467"
                 app:backgroundTint="#F0F0F0"
@@ -129,7 +131,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Pendiente"
+                android:text="@string/pendiente"
                 android:textAllCaps="false"
                 android:textColor="#475467"
                 app:backgroundTint="#F0F0F0"
@@ -152,7 +154,6 @@
             android:id="@+id/card_venta_ejemplo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             app:cardCornerRadius="24dp"
             app:cardElevation="4dp"
             app:layout_constraintTop_toTopOf="parent">
@@ -162,23 +163,20 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp">
 
-                <ImageView
+                <View
                     android:id="@+id/iv_venta_icon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="#E8F1FF"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_clients"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="#4A90E2" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tvVentaID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Venta $ID_Venta"
+                    android:text="@string/card_venta_titulo"
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -189,7 +187,7 @@
                     android:id="@+id/tvClienteNombre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cliente $Nombre_Cliente"
+                    android:text="@string/card_venta_cliente"
                     android:textColor="@color/hint_color"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="@+id/tvVentaID"
@@ -200,14 +198,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#FFF4E5"
-                    android:drawableEnd="@android:drawable/arrow_down_float"
-                    android:drawablePadding="4dp"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
-                    android:text="Pendiente"
+                    android:text="@string/card_venta_estado"
                     android:textColor="#D4850D"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    tools:ignore="ContentDescription"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tvVentaID" />
 
@@ -216,7 +213,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="25 Feb"
+                    android:text="@string/card_venta_fecha"
                     android:textColor="@color/hint_color"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/tvEstadoVenta"
@@ -227,56 +224,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Monto a pagar"
+                    android:text="@string/card_venta_monto_titulo"
                     android:textColor="@color/text_primary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/iv_venta_icon" />
 
-                <ProgressBar
-                    android:id="@+id/pb_pago"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:max="100"
-                    android:progress="80"
-                    android:progressTint="#D4850D"
-                    android:progressBackgroundTint="#F0E0C9"
-                    app:layout_constraintEnd_toStartOf="@+id/tvPorcentaje"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvMontoTitulo" />
-
-                <TextView
-                    android:id="@+id/tvPorcentaje"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="80%"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/pb_pago"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/pb_pago" />
-
                 <TextView
                     android:id="@+id/tvMontoCalculo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="$40.000/50.000"
+                    android:text="@string/card_venta_monto_calculo"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/pb_pago" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvMontoTitulo" />
 
                 <TextView
                     android:id="@+id/tvSeguimiento"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Fecha de Seguimiento:  25 Mar"
+                    android:text="@string/card_venta_seguimiento"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -287,42 +258,65 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="[Descripción]"
+                    android:text="@string/card_venta_descripcion"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento" />
 
-                <ImageView
-                    android:id="@+id/ivDeleteVenta"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento"
-                    app:tint="#F04438" />
-
-                <ImageView
-                    android:id="@+id/ivEditVenta"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/ivDeleteVenta"
-                    app:layout_constraintEnd_toStartOf="@+id/ivDeleteVenta"
-                    app:layout_constraintTop_toTopOf="@+id/ivDeleteVenta"
-                    app:tint="@color/text_primary" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <View
+            android:id="@+id/fab_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0"
+            android:background="@android:color/transparent"
+            android:elevation="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/fab_menu_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="104dp"
+            android:alpha="0"
+            android:elevation="12dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_nueva_venta"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:contentDescription="@string/agregar_venta"
+                android:text="@string/agregar_venta"
+                android:textAllCaps="false"
+                android:textColor="@color/primary_blue"
+                app:backgroundTint="#E8F1FF"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconPadding="8dp"
+                app:iconTint="@color/primary_blue" />
+        </LinearLayout>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_venta"
+            android:id="@+id/fab_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:contentDescription="@string/nueva_venta_cd"
+            android:elevation="16dp"
             android:src="@android:drawable/ic_input_add"
             app:backgroundTint="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
