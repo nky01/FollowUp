@@ -8,8 +8,10 @@ data class Venta(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
     val idClienteVenta: Int,
+    val clienteNombre: String,
     val total: Double,
-    val fecha: Long,
-    val formaPago: String,
+    val pagoTotal: Double,
+    val fecha: String,
+    val fechaSeguimiento: String,
     val estado: String
 )

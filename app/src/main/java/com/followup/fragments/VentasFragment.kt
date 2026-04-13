@@ -1,60 +1,98 @@
 package com.followup.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.followup.R
+import com.followup.data.entity.Venta
+import com.followup.data.database.AppDatabase
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [VentasFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class VentasFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ventas, container, false)
+        val view = inflater.inflate(R.layout.fragment_ventas, container, false)
+
+        val fabAddVenta = view.findViewById<FloatingActionButton>(R.id.fab_add_venta)
+
+        fabAddVenta.setOnClickListener {
+            showAgregarVentaDialog()
+        }
+
+        return view
+    }
+    private fun showAgregarVentaDialog() {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_agregar_venta, null)
+
+        val tietNombre = dialogView.findViewById<TextInputEditText>(R.id.tiet_cliente_nombre)
+        val tietMonto = dialogView.findViewById<TextInputEditText>(R.id.tiet_monto_total)
+        val tietPago = dialogView.findViewById<TextInputEditText>(R.id.tiet_pago_total)
+        val tietFechaVenta = dialogView.findViewById<TextInputEditText>(R.id.tiet_fecha_venta)
+        val tietFechaSeg = dialogView.findViewById<TextInputEditText>(R.id.tiet_fecha_seguimiento)
+
+        val btnGuardar = dialogView.findViewById<Button>(R.id.btn_guardar_cliente)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btn_cancelar_cliente)
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        btnCancelar.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        btnGuardar.setOnClickListener {
+            val nombre = tietNombre.text.toString().trim()
+            val montoStr = tietMonto.text.toString()
+            val pagoStr = tietPago.text.toString()
+            val fechaVenta = tietFechaVenta.text.toString()
+            val fechaSeguimiento = tietFechaSeg.text.toString()
+
+            if (nombre.isNotEmpty() && fechaVenta.isNotEmpty() && montoStr.isNotEmpty()) {
+                val monto = montoStr.toDoubleOrNull() ?: 0.0
+                val pago = pagoStr.toDoubleOrNull() ?: 0.0
+
+                val nuevaVenta = Venta(
+                    idClienteVenta = 0,
+                    clienteNombre = nombre,
+                    total = monto,
+                    pagoTotal = pago,
+                    fecha = fechaVenta,
+                    fechaSeguimiento = fechaSeguimiento,
+                    estado = if (pago >= monto) "Pagado" else "Pendiente"
+                )
+
+                guardarVentaEnBD(nuevaVenta)
+                alertDialog.dismiss()
+            } else {
+                Toast.makeText(context, "Por favor completa los campos obligatorios", Toast.LENGTH_SHORT).show()
+            }
+        }
+        alertDialog.show()
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment VentasFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            VentasFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun guardarVentaEnBD(venta: Venta) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val db = AppDatabase.getDatabase(requireContext())
+                db.ventaDao().insert(venta)
+
+                Toast.makeText(context, "Venta guardada con éxito", Toast.LENGTH_SHORT).show()
+
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error al guardar: ${e.message}", Toast.LENGTH_LONG).show()
             }
+        }
     }
 }
