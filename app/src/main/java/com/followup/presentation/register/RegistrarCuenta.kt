@@ -15,14 +15,21 @@ import com.followup.data.entity.Usuario
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class RegistrarCuenta : AppCompatActivity() {
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var database: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_registrar_cuenta)
         
+        firebaseAuth = FirebaseAuth.getInstance()
+        database = AppDatabase.getDatabase(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -100,22 +107,43 @@ class RegistrarCuenta : AppCompatActivity() {
     }
 
     private fun registrarUsuario(nombre: String, email: String, password: String) {
-        lifecycleScope.launch {
-            try {
-                val database = AppDatabase.getDatabase(this@RegistrarCuenta)
-                val dao = database.usuarioDao()
-
-                val existe = dao.obtenerPorMail(email)
-                if (existe == null) {
-                    dao.crearUsuario(Usuario(nombre = nombre, mail = email, contraseniaHash = password, codigo2FA = null))
-                    Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
-                    finish()
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    lifecycleScope.launch {
+                        try {
+                            val dao = database.usuarioDao()
+                            val existe = dao.obtenerPorMail(email)
+                            if (existe == null) {
+                                dao.crearUsuario(
+                                    Usuario(
+                                        nombre = nombre,
+                                        mail = email,
+                                        contraseniaHash = password,
+                                        codigo2FA = null
+                                    )
+                                )
+                            }
+                            Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
+                            finish()
+                        } catch (_: Exception) {
+                            Toast.makeText(this@RegistrarCuenta, "Error al guardar en base de datos local", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } else {
-                    findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya está en uso"
+                    val errorMessage = task.exception?.message
+                    when {
+                        errorMessage?.contains("email already in use", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya está en uso"
+                        }
+                        errorMessage?.contains("weak password", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña muy débil"
+                        }
+                        else -> {
+                            Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@RegistrarCuenta, "Error al registrar", Toast.LENGTH_SHORT).show()
             }
-        }
     }
 }

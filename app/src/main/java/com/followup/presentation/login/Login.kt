@@ -1,6 +1,5 @@
 package com.followup.presentation.login
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,27 +8,33 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.followup.R
 import com.followup.data.database.AppDatabase
-import com.followup.MainActivity
+import com.followup.fragments.PrincipalActivity
 import com.followup.fragments.ReestablecerFragment
 import com.followup.presentation.register.RegistrarCuenta
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class Login : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
-        sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
+        firebaseAuth = FirebaseAuth.getInstance()
+        database = AppDatabase.getDatabase(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -45,13 +50,11 @@ class Login : AppCompatActivity() {
         val tvRegister = findViewById<TextView>(R.id.tv_Register)
         val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
 
-        // Ir a la pantalla de Registro
         tvRegister.setOnClickListener {
             val intent = Intent(this, RegistrarCuenta::class.java)
             startActivity(intent)
         }
 
-        // Lógica de Inicio de Sesión
         btnLogin.setOnClickListener {
             val email = tietEmail.text.toString().trim()
             val password = tietPassword.text.toString().trim()
@@ -76,7 +79,6 @@ class Login : AppCompatActivity() {
     private fun validarFront(email: String, password: String, tilEmail: TextInputLayout, tilPassword: TextInputLayout): Boolean {
         var esValido = true
 
-        // Validar Email
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
             esValido = false
@@ -87,7 +89,6 @@ class Login : AppCompatActivity() {
             tilEmail.error = null
         }
 
-        // Validar Password
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
             esValido = false
@@ -99,36 +100,41 @@ class Login : AppCompatActivity() {
     }
 
     private fun ejecutarLogin(email: String, password: String) {
-        // lifecycleScope para ejecutar la consulta Db y evitar bloquear la UI,
-        // por ejemplo: si la DB tarda en responder o hay un error de conexión, no se congela la app y se muestra un Toast de error
-        lifecycleScope.launch {
-            try {
-                val database = AppDatabase.getDatabase(this@Login)
-                val dao = database.usuarioDao()
-
-                // Buscar usuario en la DB
-                val usuario = dao.obtenerPorMail(email)
-
-                if (usuario != null) {
-                    // Verificar contraseña
-                    if (usuario.contraseniaHash == password) {
-                        sharedPreferences.edit()
-                            .putString("USER_MAIL", email)
-                            .apply()
-                        // Ir al Home
-                        val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
-                        startActivity(intent)
-                        finish() // Cerrar el login para que no se pueda volver atrás
-                    } else {
-                        findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    lifecycleScope.launch {
+                        try {
+                            val dao = database.usuarioDao()
+                            val usuario = dao.obtenerPorMail(email)
+                            
+                            sharedPreferences.edit {
+                                putString("USER_MAIL", email)
+                                    .putString("USER_NAME", usuario?.nombre ?: "Usuario")
+                            }
+                            
+                            val intent = Intent(this@Login, PrincipalActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } catch (_: Exception) {
+                            Toast.makeText(this@Login, "Error al cargar datos del usuario", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } else {
-                    findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
+                    val errorMessage = task.exception?.message
+                    when {
+                        errorMessage?.contains("no user record", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
+                        }
+                        errorMessage?.contains("wrong password", ignoreCase = true) == true ||
+                        errorMessage?.contains("password", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
+                        }
+                        else -> {
+                            Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
-                // toast es una notificación breve que aparece en la pantalla
-            } catch (e: Exception) {
-                Toast.makeText(this@Login, "Error al conectar con la base de datos", Toast.LENGTH_SHORT).show()
             }
-        }
     }
 }
