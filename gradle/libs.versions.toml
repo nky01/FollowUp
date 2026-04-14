@@ -1,7 +1,7 @@
 [versions]
-agp = "9.1.0"
+agp = "9.1.1"
 circleimageview = "3.1.0"
-kotlin = "2.1.0"
+kotlin = "2.2.10"
 room = "2.7.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -14,7 +14,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.13.0"
 constraintlayout = "2.1.4"
-ksp = "2.1.0-1.0.29"
+ksp = "2.3.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,3 +45,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }

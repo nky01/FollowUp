@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-}
+    alias(libs.plugins.google.services)}
 
 android {
     namespace = "com.followup"
@@ -55,6 +55,18 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.circleimageview)
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    // Google Firebase para usar el servicio de autenticación de Google
+
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-auth")
+
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation("com.google.android.gms:play-services-auth:21.5.1")
     
     // Room
     implementation(libs.androidx.room.runtime)
