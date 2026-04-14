@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +47,11 @@ class CambiarMail : AppCompatActivity() {
     }
 
     private fun configurarClickListener() {
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            startActivity(Intent(this, Configuracion::class.java))
+            finish()
+        }
+
         btnEnviarMail.setOnClickListener {
             validarYEnviarCodigo()
         }
