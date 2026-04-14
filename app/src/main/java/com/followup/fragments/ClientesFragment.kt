@@ -22,7 +22,7 @@ import com.followup.R
 import com.followup.data.adapter.ClienteAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
-import com.followup.presentation.settings.Perfil
+import com.followup.presentation.settings.Configuracion
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -127,7 +127,7 @@ class ClientesFragment : Fragment() {
         }
 
         profilePicture.setOnClickListener {
-            startActivity(Intent(requireContext(), Perfil::class.java))
+            startActivity(Intent(requireContext(), Configuracion::class.java))
         }
     }
 
