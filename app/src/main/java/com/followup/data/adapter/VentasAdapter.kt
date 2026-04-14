@@ -14,6 +14,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.widget.ProgressBar
 
 class VentasAdapter(
     private val listener: OnVentaClickListener
@@ -36,7 +37,7 @@ class VentasAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VentaViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cliente, parent, false)
+            .inflate(R.layout.item_venta, parent, false)
         return VentaViewHolder(view, listener)
     }
 
@@ -51,42 +52,62 @@ class VentasAdapter(
         private val listener: OnVentaClickListener
     ) : RecyclerView.ViewHolder(itemView) {
 
-        private val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
-        private val tvSubtitulo: TextView = itemView.findViewById(R.id.tvSubtitulo)
-        private val tvEstado: TextView = itemView.findViewById(R.id.tvEstado)
+        private val tvVentaId: TextView = itemView.findViewById(R.id.tvVentaId)
+        private val tvCliente: TextView = itemView.findViewById(R.id.tvClienteId)
+        private val tvEstado: TextView = itemView.findViewById(R.id.tvEstadoVenta)
         private val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
-        private val tvDescTag: TextView = itemView.findViewById(R.id.tvDescTag)
-        private val tvTelefonoValue: TextView = itemView.findViewById(R.id.tvTelefonoValue)
-        private val tvEmailValue: TextView = itemView.findViewById(R.id.tvEmailValue)
-        private val ivEdit: ImageView = itemView.findViewById(R.id.ivEdit)
-        private val ivDelete: ImageView = itemView.findViewById(R.id.ivDelete)
+        private val tvMonto: TextView = itemView.findViewById(R.id.tvMonto)
+        private val tvSeguimiento: TextView = itemView.findViewById(R.id.tvSeguimiento)
+        private val tvDescripcion: TextView = itemView.findViewById(R.id.tvDescVenta)
+        private val progressPago: ProgressBar = itemView.findViewById(R.id.progressPago)
+
+        private val ivEdit: ImageView = itemView.findViewById(R.id.ivEditVenta)
+        private val ivDelete: ImageView = itemView.findViewById(R.id.ivDeleteVenta)
+
         private val ivToggle: ImageView = itemView.findViewById(R.id.ivToggle)
-        private val layoutContacto: LinearLayout = itemView.findViewById(R.id.layoutContacto)
+        private val layoutMontoVenta: LinearLayout = itemView.findViewById(R.id.layoutMontoVenta)
 
         fun bind(venta: Venta, formatter: SimpleDateFormat, moneyFormatter: DecimalFormat) {
-            tvNombre.text = "Venta #${venta.id}"
-            tvSubtitulo.text = venta.nombreCliente
-            tvSubtitulo.visibility = View.VISIBLE
+
+            tvVentaId.text = "Venta #${venta.id}"
+            tvCliente.text = venta.nombreCliente
             tvEstado.text = venta.estado
             tvFecha.text = formatter.format(Date(venta.fechaVenta))
-            tvDescTag.text = if (venta.descripcion.isBlank()) "Sin descripcion" else venta.descripcion
-            tvTelefonoValue.text = "Pago: ${moneyFormatter.format(venta.pagoTotal)} / ${moneyFormatter.format(venta.montoTotal)}"
-            tvEmailValue.text = "Seguimiento: ${formatter.format(Date(venta.fechaSeguimiento))}"
 
+            layoutMontoVenta.visibility = View.GONE
+            ivToggle.rotation = 0f
+
+            tvMonto.text = "$${moneyFormatter.format(venta.pagoTotal)} / ${moneyFormatter.format(venta.montoTotal)}"
+            tvSeguimiento.text = "Seguimiento: ${formatter.format(Date(venta.fechaSeguimiento))}"
+            tvDescripcion.text = if (venta.descripcion.isBlank()) "[Sin descripción]" else venta.descripcion
+
+            // PROGRESS BAR
+            val porcentaje = ((venta.pagoTotal.toFloat() / venta.montoTotal) * 100).toInt()
+            progressPago.progress = porcentaje
+
+            // COLOR ESTADO
             val colors = estadoColors(venta.estado)
             tvEstado.setBackgroundColor(colors.first)
             tvEstado.setTextColor(colors.second)
 
+            // BOTONES
             ivEdit.setOnClickListener { listener.onEditClick(venta) }
             ivDelete.setOnClickListener { listener.onDeleteClick(venta) }
 
-            layoutContacto.visibility = View.GONE
-            ivToggle.rotation = 0f
-
+            // OCULTAR / MOSTRAR MAS INFO DE LA VENTA
             ivToggle.setOnClickListener {
-                val expanded = layoutContacto.visibility == View.VISIBLE
-                layoutContacto.visibility = if (expanded) View.GONE else View.VISIBLE
-                ivToggle.animate().rotation(if (expanded) 0f else 90f).setDuration(200).start()
+
+                val expanded = layoutMontoVenta.visibility == View.VISIBLE
+
+                if (expanded) {
+                    // CERRAR
+                    layoutMontoVenta.visibility = View.GONE
+                    ivToggle.animate().rotation(0f).setDuration(200).start()
+                } else {
+                    // ABRIR
+                    layoutMontoVenta.visibility = View.VISIBLE
+                    ivToggle.animate().rotation(90f).setDuration(200).start()
+                }
             }
         }
 
@@ -98,4 +119,5 @@ class VentasAdapter(
             }
         }
     }
+
 }

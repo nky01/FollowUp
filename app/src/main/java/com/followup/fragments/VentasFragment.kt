@@ -1,5 +1,6 @@
 package com.followup.fragments
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -12,7 +13,10 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
+import com.followup.data.adapter.VentasAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.followup.data.entity.Venta
@@ -31,6 +35,9 @@ class VentasFragment : Fragment() {
     private lateinit var fabOverlay: View
     private lateinit var btnNuevaVenta: MaterialButton
     private var isFabMenuOpen = false
+
+    private lateinit var recyclerVentas: RecyclerView // RECYCLERVIEW
+    private lateinit var adapter: VentasAdapter // ADAPTADOR
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("es-AR"))
 
@@ -58,6 +65,51 @@ class VentasFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initComponents(view)
         initListeners()
+
+        adapter = VentasAdapter(object : VentasAdapter.OnVentaClickListener {
+
+            override fun onDeleteClick(venta: Venta) {
+                mostrarDialogoEliminar(venta)
+            }
+
+            override fun onEditClick(venta: Venta) {
+                Toast.makeText(requireContext(), "Editar venta", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+        recyclerVentas.layoutManager = LinearLayoutManager(requireContext())
+        recyclerVentas.adapter = adapter
+
+        cargarVentas()
+
+    }
+
+    private fun cargarVentas() {
+        lifecycleScope.launch {
+            val ventas = AppDatabase.getDatabase(requireContext())
+                .ventaDao()
+                .obtenerTodas()
+
+            adapter.submitList(ventas)
+        }
+    }
+
+    private fun mostrarDialogoEliminar(venta: Venta) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar venta")
+            .setMessage("¿Estás seguro que querés eliminar esta venta?")
+            .setPositiveButton("Sí") { _, _ ->
+                lifecycleScope.launch {
+                    AppDatabase.getDatabase(requireContext())
+                        .ventaDao()
+                        .delete(venta)
+
+                    cargarVentas()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun initComponents(view: View) {
@@ -68,6 +120,8 @@ class VentasFragment : Fragment() {
 
         fabOverlay.isClickable = false
         fabOverlay.isFocusable = false
+
+        recyclerVentas = view.findViewById(R.id.rvVentas) // RECYCLERVIEW
     }
 
     private fun initListeners() {
@@ -298,9 +352,12 @@ class VentasFragment : Fragment() {
             )
 
             AppDatabase.getDatabase(requireContext()).ventaDao().insert(venta)
+            cargarVentas()
             Toast.makeText(requireContext(), "Venta guardada con exito", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
+
+        cargarVentas()
     }
 
     private fun toggleFabMenu() {

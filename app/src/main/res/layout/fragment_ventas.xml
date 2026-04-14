@@ -15,28 +15,27 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
+        <ImageView
             android:id="@+id/iconCheck"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_margin="16dp"
-            android:background="@mipmap/logo"
+            android:src="@mipmap/logo"
+            app:tint="#FDFDFD"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profile_picture"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:contentDescription="@string/imagen_perfil"
             android:src="@android:color/darker_gray"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="2dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-            app:strokeColor="@color/white"
-            app:strokeWidth="2dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title"
@@ -150,122 +149,11 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintTop_toBottomOf="@id/header_container">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_venta_ejemplo"
+        <!-- RECYCLER VIEW -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVentas"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp">
-
-                <View
-                    android:id="@+id/iv_venta_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="#E8F1FF"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvVentaID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/card_venta_titulo"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/iv_venta_icon"
-                    app:layout_constraintTop_toTopOf="@+id/iv_venta_icon" />
-
-                <TextView
-                    android:id="@+id/tvClienteNombre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/card_venta_cliente"
-                    android:textColor="@color/hint_color"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tvVentaID"
-                    app:layout_constraintTop_toBottomOf="@+id/tvVentaID" />
-
-                <TextView
-                    android:id="@+id/tvEstadoVenta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#FFF4E5"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="@string/card_venta_estado"
-                    android:textColor="#D4850D"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    tools:ignore="ContentDescription"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tvVentaID" />
-
-                <TextView
-                    android:id="@+id/tvFechaVenta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/card_venta_fecha"
-                    android:textColor="@color/hint_color"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/tvEstadoVenta"
-                    app:layout_constraintTop_toBottomOf="@+id/tvEstadoVenta" />
-
-                <TextView
-                    android:id="@+id/tvMontoTitulo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/card_venta_monto_titulo"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_venta_icon" />
-
-                <TextView
-                    android:id="@+id/tvMontoCalculo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/card_venta_monto_calculo"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvMontoTitulo" />
-
-                <TextView
-                    android:id="@+id/tvSeguimiento"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/card_venta_seguimiento"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvMontoCalculo" />
-
-                <TextView
-                    android:id="@+id/tvDescVenta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="@string/card_venta_descripcion"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_height="match_parent"/>
 
         <View
             android:id="@+id/fab_overlay"
