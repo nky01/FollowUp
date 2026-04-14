@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.followup.R
-import com.followup.presentation.settings.Perfil
+import com.followup.presentation.settings.Configuracion
 import de.hdodenhof.circleimageview.CircleImageView
 
 // sharedPreferences para mostrar el nombre del usuario en el saludo, es una añternativa que encontre a ViewModel.
@@ -31,7 +31,7 @@ class InicioFragment : Fragment() {
 
         val profilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
         profilePicture.setOnClickListener {
-            startActivity(Intent(requireContext(), Perfil::class.java))
+            startActivity(Intent(requireContext(), Configuracion::class.java))
         }
 
         return view

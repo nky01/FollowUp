@@ -42,7 +42,7 @@
             android:name=".presentation.settings.VerificarCambioMail"
             android:exported="false" />
         <activity
-            android:name=".presentation.settings.Perfil"
+            android:name=".presentation.settings.Configuracion"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
