@@ -13,8 +13,6 @@ import com.followup.R
 import com.followup.presentation.settings.Configuracion
 import de.hdodenhof.circleimageview.CircleImageView
 
-// sharedPreferences para mostrar el nombre del usuario en el saludo, es una añternativa que encontre a ViewModel.
-// Seria como un localStorage de Android
 class InicioFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -26,8 +24,7 @@ class InicioFragment : Fragment() {
         sharedPreferences = requireActivity().getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
 
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
-        val saludoTextView = view.findViewById<TextView>(R.id.tv_saludo)
-        saludoTextView.text = "Hola, $userName"
+        view.findViewById<TextView>(R.id.tv_saludo).text = "Hola, $userName"
 
         val profilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
         profilePicture.setOnClickListener {
@@ -35,5 +32,12 @@ class InicioFragment : Fragment() {
         }
 
         return view
+    }
+
+    // Refresh name when returning from Configuracion
+    override fun onResume() {
+        super.onResume()
+        val userName = sharedPreferences.getString("USER_NAME", "Usuario")
+        view?.findViewById<TextView>(R.id.tv_saludo)?.text = "Hola, $userName"
     }
 }
