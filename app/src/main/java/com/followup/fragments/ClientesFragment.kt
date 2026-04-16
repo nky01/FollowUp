@@ -102,6 +102,13 @@ class ClientesFragment : Fragment() {
 
     }
 
+    // OnResume -> SE EJECUTA CADA VEZ QUE EL FRAGMENT SE HACE VISIBLE
+        // [1] - USADO PARA CARGAR LA LISTA DE CLIENTES Y QUE SE ACTUALICE EL ESTADO CUANDO SE VUELVE DE OTRO FRAGMENT (VENTAS)
+    override fun onResume() {
+        super.onResume()
+        cargarClientes()
+    }
+
     /* ------------------------------------------------------------------------------------
                                       MÉTODOS PROPIOS
     ------------------------------------------------------------------------------------ */

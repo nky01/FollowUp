@@ -26,4 +26,9 @@ interface VentaDao {
 
     @Query("SELECT SUM(total) FROM Ventas_Tabla WHERE estado = 'Pagado'")
     suspend fun obtenerIngresosTotales(): Double?
+
+    // QUERY PARA OBTENER LOS ESTADOS POR CLIENTE Y NO POR VENTA
+        // [1] - SE UTILIZA PARA ACTUALIZAR EL ESTADO DEL CLIENTE CUANDO SE LE ASIGNA UNA VENTA
+    @Query("SELECT estado FROM Ventas_Tabla WHERE idClienteVenta = :clienteId")
+    suspend fun obtenerEstadosPorCliente(clienteId: Int): List<String>
 }

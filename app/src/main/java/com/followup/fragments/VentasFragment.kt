@@ -106,6 +106,7 @@ class VentasFragment : Fragment() {
                         .ventaDao()
                         .delete(venta)
 
+                    actualizarEstadoCliente(venta.idClienteVenta) // ACTUALIZA EL ESTADO DEL CLIENTE
                     cargarVentas()
                 }
             }
@@ -353,6 +354,7 @@ class VentasFragment : Fragment() {
             )
 
             AppDatabase.getDatabase(requireContext()).ventaDao().insert(venta)
+            actualizarEstadoCliente(form.clienteId) // ACTUALIZA EL ESTADO DEL CLIENTE
             cargarVentas()
             Toast.makeText(requireContext(), "Venta guardada con exito", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
@@ -403,6 +405,32 @@ class VentasFragment : Fragment() {
 
         fabMain.bringToFront()
         fabMain.setImageResource(android.R.drawable.ic_input_add)
+    }
+
+    /* --------------------------------------------------
+              ACTUALIZAR EL ESTADO DEL CLIENTE
+    -------------------------------------------------- */
+
+    private suspend fun actualizarEstadoCliente(clienteId: Int) {
+
+        val db = AppDatabase.getDatabase(requireContext())
+
+        val estados = db.ventaDao().obtenerEstadosPorCliente(clienteId)
+
+        val nuevoEstado = when {
+            estados.isEmpty() -> "No Asignado"
+            estados.any { it.lowercase() == "pendiente" } -> "Pendiente"
+            else -> "Vendido"
+        }
+
+        val cliente = db.clienteDao().obtenerTodos()
+            .find { it.id == clienteId }
+
+        if (cliente != null) {
+            db.clienteDao().update(
+                cliente.copy(estado = nuevoEstado)
+            )
+        }
     }
 
     override fun onDestroyView() {
