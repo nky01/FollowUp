@@ -35,7 +35,7 @@
     <string name="pendiente">Pendiente</string>
     <string name="no_asignado">No Asignado</string>
     <string name="nuevo_cliente">Nuevo cliente</string>
-    <string name="gestion_ventas_titulo">Gestion de\nVentas</string>
+    <string name="gestion_ventas_titulo">Gestión de\nVentas</string>
     <string name="buscar_venta">Buscar venta...</string>
     <string name="pagadas">Pagadas</string>
     <string name="agregar_venta">Agregar venta</string>
