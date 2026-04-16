@@ -53,7 +53,6 @@ class PrincipalActivity : AppCompatActivity() {
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
 
-        // Opcional: Esto evita recargar el mismo fragmento si ya está visible
         val currentFragment = fragmentManager.findFragmentById(R.id.frame_container)
         if (currentFragment?.javaClass == fragment.javaClass) return
 
