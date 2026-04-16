@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class VentasFragment : Fragment() {
     private lateinit var fabMain: FloatingActionButton
@@ -67,14 +68,17 @@ class VentasFragment : Fragment() {
         initComponents(view)
         initListeners()
 
+        // CONFIGURAR EL ADAPTADOR
         adapter = VentasAdapter(object : VentasAdapter.OnVentaClickListener {
 
+            // DISPARADOR QUE SE EJECUTA CUANDO SE HACE CLICK EN EL BOTÓN DE ELIMINAR VENTA
             override fun onDeleteClick(venta: Venta) {
                 mostrarDialogoEliminar(venta)
             }
 
+            // DISPARADOR QUE SE EJECUTA CUANDO SE HACE CLICK EN EL BOTÓN DE EDITAR VENTA
             override fun onEditClick(venta: Venta) {
-                Toast.makeText(requireContext(), "Editar venta", Toast.LENGTH_SHORT).show()
+                mostrarDialogoEditar(venta) // MUESTRA EL DIALOGO DE EDICIÓN
             }
 
         })
@@ -96,6 +100,123 @@ class VentasFragment : Fragment() {
         }
     }
 
+    /* --------------------------------------------------
+                    MOSTRAR DIALOG EDITAR
+    -------------------------------------------------- */
+
+    private fun mostrarDialogoEditar(venta: Venta) {
+
+        // CREAR EL DIALOG
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_editar_venta, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        dialog.show()
+
+        // REFERENCIAR CAMPOS
+        val montoTotal = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_monto_total)
+        val pagoTotal = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_pago_total)
+        val fechaVenta = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_fecha_venta)
+        val fechaSeguimiento = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_fecha_seguimiento)
+        val descripcion = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_descripcion)
+
+        val btnCancelar = dialogView.findViewById<MaterialButton>(R.id.btn_cancelar_venta)
+        val btnGuardar = dialogView.findViewById<MaterialButton>(R.id.btn_guardar_venta)
+
+        val formato = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // CARGA SEGURA
+        fechaVenta.setText(formato.format(Date(venta.fechaVenta)))
+        fechaVenta.tag = venta.fechaVenta
+
+        fechaSeguimiento.setText(formato.format(Date(venta.fechaSeguimiento)))
+        fechaSeguimiento.tag = venta.fechaSeguimiento
+
+        montoTotal.setText(venta.montoTotal.toString())
+        pagoTotal.setText(venta.pagoTotal.toString())
+        descripcion.setText(venta.descripcion)
+
+        // ABRIR DATAPICKER (PARA LA FECHA DE VENTA)
+        setupDateField(fechaVenta, venta.fechaVenta)
+        setupDateField(fechaSeguimiento, venta.fechaSeguimiento)
+
+        // BOTÓN CANCELAR
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // BOTÓN GUARDAR
+        btnGuardar.setOnClickListener {
+
+            val monto = montoTotal.text.toString().toDoubleOrNull()
+            val pago = pagoTotal.text.toString().toDoubleOrNull()
+
+            val fechaVentaLong = fechaVenta.tag as? Long
+            val fechaSeguimientoLong = fechaSeguimiento.tag as? Long
+
+            val desc = descripcion.text.toString()
+
+            // VALIDACIONES
+            if (monto == null || monto <= 0) {
+                Toast.makeText(requireContext(), "Monto inválido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (pago == null || pago < 0) {
+                Toast.makeText(requireContext(), "Pago inválido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (pago > monto) {
+                Toast.makeText(requireContext(), "El pago no puede ser mayor al monto", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (fechaVentaLong == null || fechaSeguimientoLong == null) {
+                Toast.makeText(requireContext(), "Seleccioná las fechas", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (desc.isEmpty()) {
+                Toast.makeText(requireContext(), "Ingresá una descripción", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // ACTUALIZAR EL ESTADO CORRECTO
+            val estado = when {
+                pago < monto -> "Pendiente"
+                pago == monto -> "Vendido"
+                else -> "Error"
+            }
+
+            val ventaActualizada = venta.copy(
+                montoTotal = monto,
+                pagoTotal = pago,
+                fechaVenta = fechaVentaLong,
+                fechaSeguimiento = fechaSeguimientoLong,
+                descripcion = desc,
+                estado = estado
+            )
+
+            lifecycleScope.launch {
+                AppDatabase.getDatabase(requireContext())
+                    .ventaDao()
+                    .update(ventaActualizada)
+
+                actualizarEstadoCliente(venta.idClienteVenta) // 🔥 IMPORTANTE
+
+                dialog.dismiss()
+                cargarVentas()
+            }
+        }
+    }
+
+    /* --------------------------------------------------
+                    MOSTRAR DIALOG ELIMINAR
+    -------------------------------------------------- */
     private fun mostrarDialogoEliminar(venta: Venta) {
         AlertDialog.Builder(requireContext())
             .setTitle("Eliminar venta")

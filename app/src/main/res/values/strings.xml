@@ -59,4 +59,5 @@
     <string name="card_venta_seguimiento">Fecha de Seguimiento: 25 Mar</string>
     <string name="card_venta_descripcion">[Descripcion]</string>
     <string name="icono_venta">Icono de venta</string>
+    <string name="editar_venta">Editar Venta</string>
 </resources>

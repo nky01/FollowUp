@@ -91,8 +91,8 @@ class VentasAdapter(
             tvEstado.setTextColor(colors.second)
 
             // BOTONES
-            ivEdit.setOnClickListener { listener.onEditClick(venta) }
-            ivDelete.setOnClickListener { listener.onDeleteClick(venta) }
+            ivEdit.setOnClickListener { listener.onEditClick(venta) } // BOTÓN EDITAR
+            ivDelete.setOnClickListener { listener.onDeleteClick(venta) } // BOTÓN ELIMINAR
 
             // OCULTAR / MOSTRAR MAS INFO DE LA VENTA
             ivToggle.setOnClickListener {
