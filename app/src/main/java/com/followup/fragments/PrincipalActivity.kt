@@ -38,6 +38,10 @@ class PrincipalActivity : AppCompatActivity() {
                     replaceFragment(HistorialFragment())
                     true
                 }
+                R.id.bottom_Perfil -> {
+                    replaceFragment(PerfilFragment())
+                    true
+                }
                 else -> false
             }
         }

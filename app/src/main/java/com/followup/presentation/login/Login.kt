@@ -1,7 +1,9 @@
 package com.followup.presentation.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.TextView
 import android.widget.Toast
@@ -40,13 +42,11 @@ class Login : AppCompatActivity() {
         val tvRegister = findViewById<TextView>(R.id.tv_Register)
         val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
 
-        // Ir a la pantalla de Registro
         tvRegister.setOnClickListener {
             val intent = Intent(this, RegistrarCuenta::class.java)
             startActivity(intent)
         }
 
-        // Lógica de Inicio de Sesión
         btnLogin.setOnClickListener {
             val email = tietEmail.text.toString().trim()
             val password = tietPassword.text.toString().trim()
@@ -70,8 +70,6 @@ class Login : AppCompatActivity() {
 
     private fun validarFront(email: String, password: String, tilEmail: TextInputLayout, tilPassword: TextInputLayout): Boolean {
         var esValido = true
-
-        // Validar Email
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
             esValido = false
@@ -81,44 +79,60 @@ class Login : AppCompatActivity() {
         } else {
             tilEmail.error = null
         }
-
-        // Validar Password
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
             esValido = false
         } else {
             tilPassword.error = null
         }
-
         return esValido
     }
 
     private fun ejecutarLogin(email: String, password: String) {
-        // lifecycleScope para ejecutar la consulta Db y evitar bloquear la UI,
-        // por ejemplo: si la DB tarda en responder o hay un error de conexión, no se congela la app y se muestra un Toast de error
         lifecycleScope.launch {
             try {
                 val database = AppDatabase.getDatabase(this@Login)
                 val dao = database.usuarioDao()
 
-                // Buscar usuario en la DB
                 val usuario = dao.obtenerPorMail(email)
 
                 if (usuario != null) {
-                    // Verificar contraseña
                     if (usuario.contraseniaHash == password) {
-                        // Ir al Home
+                        
+                        // LIMPIAR PREFERENCIAS ANTERIORES PARA EVITAR CONFLICTOS
+                        val oldPrefs = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+                        oldPrefs.edit().clear().apply()
+                        val oldFollowUpPrefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+                        oldFollowUpPrefs.edit().clear().apply()
+
+                        // GUARDAR NUEVOS DATOS
+                        val prefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+                        prefs.edit().apply {
+                            putInt("USER_ID", usuario.id)
+                            putString("USER_NAME", usuario.nombre)
+                            putString("USER_EMAIL", usuario.mail)
+                            apply()
+                        }
+                        
+                        val userDataPrefs = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+                        userDataPrefs.edit().apply {
+                            putString("profile_image_uri", usuario.imagenPerfil)
+                            apply()
+                        }
+
+                        Log.d("LOGIN_DEBUG", "Usuario ID: ${usuario.id}, Imagen: ${usuario.imagenPerfil}")
+
                         val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
                         startActivity(intent)
-                        finish() // Cerrar el login para que no se pueda volver atrás
+                        finish() 
                     } else {
                         findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
                     }
                 } else {
                     findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
                 }
-                // toast es una notificación breve que aparece en la pantalla
             } catch (e: Exception) {
+                Log.e("LOGIN_ERROR", e.message ?: "Error desconocido")
                 Toast.makeText(this@Login, "Error al conectar con la base de datos", Toast.LENGTH_SHORT).show()
             }
         }

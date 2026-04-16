@@ -15,4 +15,5 @@
     <color name="input_border">#E0E0E0</color>
     <color name="hint_color">#999999</color>
     <color name="red">#F04438</color>
+    <color name="text_dark">#1E2939</color>
 </resources>

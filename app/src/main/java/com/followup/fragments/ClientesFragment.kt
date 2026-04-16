@@ -3,6 +3,7 @@ package com.followup.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -32,6 +33,8 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 import com.followup.data.adapter.ClientesAdapter
 import com.google.android.material.button.MaterialButtonToggleGroup
+import android.content.Context
+import de.hdodenhof.circleimageview.CircleImageView
 
 class ClientesFragment : Fragment() {
 
@@ -77,6 +80,7 @@ class ClientesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initComponents(view) // INICIALIZA LOS COMPONENTES DE LA VISTA
+        loadProfileImage(view) // CARGA LA IMAGEN DE PERFIL
 
         setupClientesList()
         cargarClientes()
@@ -102,11 +106,26 @@ class ClientesFragment : Fragment() {
 
     }
 
+    private fun loadProfileImage(view: View) {
+        val sharedPref = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        val savedUriString = sharedPref.getString("profile_image_uri", null)
+        val ivProfilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
+        
+        if (savedUriString != null && ivProfilePicture != null) {
+            try {
+                ivProfilePicture.setImageURI(Uri.parse(savedUriString))
+            } catch (e: Exception) {
+                ivProfilePicture.setImageResource(android.R.color.darker_gray)
+            }
+        }
+    }
+
     // OnResume -> SE EJECUTA CADA VEZ QUE EL FRAGMENT SE HACE VISIBLE
         // [1] - USADO PARA CARGAR LA LISTA DE CLIENTES Y QUE SE ACTUALICE EL ESTADO CUANDO SE VUELVE DE OTRO FRAGMENT (VENTAS)
     override fun onResume() {
         super.onResume()
         cargarClientes()
+        view?.let { loadProfileImage(it) } // ACTUALIZA LA FOTO AL VOLVER
     }
 
     /* ------------------------------------------------------------------------------------

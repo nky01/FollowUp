@@ -21,4 +21,9 @@
         android:title="Historial"
         android:icon="@drawable/ic_history"/>
 
+    <item
+        android:id="@+id/bottom_Perfil"
+        android:title="Perfil"
+        android:icon="@drawable/ic_person"/>
+
 </menu>

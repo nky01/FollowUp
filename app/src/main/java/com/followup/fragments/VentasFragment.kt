@@ -3,6 +3,8 @@ package com.followup.fragments
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
-import androidx.compose.material3.FloatingActionButton
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -65,6 +67,7 @@ class VentasFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initComponents(view)
+        loadProfileImage(view)
         initListeners()
 
         adapter = VentasAdapter(object : VentasAdapter.OnVentaClickListener {
@@ -84,6 +87,26 @@ class VentasFragment : Fragment() {
 
         cargarVentas()
 
+    }
+
+    private fun loadProfileImage(view: View) {
+        val sharedPref = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        val savedUriString = sharedPref.getString("profile_image_uri", null)
+        val ivProfilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
+        
+        if (savedUriString != null && ivProfilePicture != null) {
+            try {
+                ivProfilePicture.setImageURI(Uri.parse(savedUriString))
+            } catch (e: Exception) {
+                ivProfilePicture.setImageResource(android.R.color.darker_gray)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cargarVentas()
+        view?.let { loadProfileImage(it) }
     }
 
     private fun cargarVentas() {

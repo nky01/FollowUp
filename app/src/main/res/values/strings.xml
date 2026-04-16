@@ -59,4 +59,10 @@
     <string name="card_venta_seguimiento">Fecha de Seguimiento: 25 Mar</string>
     <string name="card_venta_descripcion">[Descripcion]</string>
     <string name="icono_venta">Icono de venta</string>
+    <string name="back">Atrás</string>
+    <string name="settings">Configuración</string>
+    <string name="profile_picture">Foto de perfil</string>
+    <string name="informacion_personal">Información Personal</string>
+    <string name="cambiar_email">Cambiar email</string>
+    <string name="next">Siguiente</string>
 </resources>

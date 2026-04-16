@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="6dp">
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,168 +24,214 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Nuevo Cliente"
                 android:textColor="@color/text_primary"
-                android:textSize="34sp"
-                android:textStyle="bold" />
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp"/>
 
+            <!-- Nombre -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:text="Nombre de cliente"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_cliente_nombre"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp">
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="#F2F4F7"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
+                app:startIconDrawable="@android:drawable/ic_menu_edit"
+                app:startIconTint="@color/hint_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_cliente_nombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName" />
+                    android:hint="Ej: Juan Pérez"
+                    android:inputType="textPersonName"
+                    android:paddingVertical="16dp"
+                    android:textSize="14sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Teléfono -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="Numero de telefono"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:text="Número de teléfono"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_cliente_telefono"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp">
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="#F2F4F7"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
+                app:startIconDrawable="@android:drawable/stat_sys_phone_call"
+                app:startIconTint="@color/hint_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_cliente_telefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
+                    android:hint="Ej: +54 9 11..."
+                    android:inputType="phone"
+                    android:paddingVertical="16dp"
+                    android:textSize="14sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Email -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="Correo electronico"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:text="Correo electrónico"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_cliente_email"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp">
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="#F2F4F7"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
+                app:startIconDrawable="@android:drawable/ic_dialog_email"
+                app:startIconTint="@color/hint_color">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_cliente_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
+                    android:hint="correo@ejemplo.com"
+                    android:inputType="textEmailAddress"
+                    android:paddingVertical="16dp"
+                    android:textSize="14sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Estado -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
                 android:text="Estado"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_cliente_estado"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp"
-                app:endIconMode="dropdown_menu">
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="#F2F4F7"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false">
 
                 <AutoCompleteTextView
                     android:id="@+id/actv_cliente_estado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:inputType="none" />
+                    android:hint="Seleccionar estado"
+                    android:inputType="none"
+                    android:paddingVertical="16dp"
+                    android:textSize="14sp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Descripción -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="Descripcion"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp" />
+                android:text="Descripción / Notas"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_cliente_descripcion"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp">
+                android:layout_marginBottom="24dp"
+                app:boxBackgroundColor="#F2F4F7"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_cliente_descripcion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="Información adicional del cliente..."
                     android:inputType="textMultiLine"
-                    android:minLines="3" />
+                    android:minLines="3"
+                    android:paddingVertical="16dp"
+                    android:textSize="14sp"/>
             </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_cancelar_cliente"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginTop="24dp"
-                android:text="Cancelar"
-                android:textAllCaps="false"
-                android:textColor="@color/primary_blue"
-                app:backgroundTint="@android:color/transparent"
-                app:cornerRadius="8dp"
-                app:strokeColor="@color/primary_blue"
-                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_guardar_cliente"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginTop="12dp"
-                android:text="Guardar"
+                android:layout_height="56dp"
+                android:text="Guardar Cliente"
                 android:textAllCaps="false"
+                android:textSize="16sp"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/primary_blue"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancelar_cliente"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textColor="@color/primary_blue" />
 
         </LinearLayout>
     </ScrollView>
 
-</androidx.cardview.widget.CardView>
-
+</com.google.android.material.card.MaterialCardView>
