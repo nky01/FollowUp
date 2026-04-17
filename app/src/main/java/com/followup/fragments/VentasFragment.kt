@@ -55,6 +55,9 @@ class VentasFragment : Fragment() {
 
     private var listaOriginal: List<Venta> = listOf() // LISTA ORIGINAL DE VENTAS
 
+    // BUSCADOR PARA FILTRAR VENTAS POR [ NOMBRE, MAIL, TELÉFONO ]
+    private lateinit var inputBuscar: TextInputEditText
+
     private data class VentaFormData(
         val clienteId: Int,
         val nombreCliente: String,
@@ -121,7 +124,7 @@ class VentasFragment : Fragment() {
             val listaFiltrada = when (selectedId) {
 
                 R.id.btn_filter_vendidos -> ventas.filter {
-                    it.estado.equals("Vendido", true)
+                    it.estado.equals("Pagado", true)
                 }
 
                 R.id.btn_filter_pendiente -> ventas.filter {
@@ -223,7 +226,7 @@ class VentasFragment : Fragment() {
             // ACTUALIZAR EL ESTADO CORRECTO
             val estado = when {
                 pago < monto -> "Pendiente"
-                pago == monto -> "Vendido"
+                pago == monto -> "Pagado"
                 else -> "Error"
             }
 
@@ -286,6 +289,9 @@ class VentasFragment : Fragment() {
         btnFilterTodos = view.findViewById(R.id.btn_filter_todos)
         btnFilterVendidos = view.findViewById(R.id.btn_filter_vendidos)
         btnFilterPendiente = view.findViewById(R.id.btn_filter_pendiente)
+
+        // INICIALIZAR BUSCADOR
+        inputBuscar = view.findViewById(R.id.search)
     }
 
     /* --------------------------------------------------
@@ -307,6 +313,8 @@ class VentasFragment : Fragment() {
 
             actualizarEstilosFiltro(checkedId) // ACTUALIZA LOS ESTILOS DE LOS BOTONES
 
+            filtrarVentas() // FILTRA LA LISTA DE VENTAS
+
             when (checkedId) {
 
                 R.id.btn_filter_todos -> {
@@ -315,7 +323,7 @@ class VentasFragment : Fragment() {
 
                 R.id.btn_filter_vendidos -> {
                     val filtrados = listaOriginal.filter {
-                        it.estado.equals("Vendido", ignoreCase = true)
+                        it.estado.equals("Pagado", ignoreCase = true)
                     }
                     adapter.submitList(filtrados)
                 }
@@ -328,6 +336,58 @@ class VentasFragment : Fragment() {
                 }
             }
         }
+
+        // BUSCADOR DE VENTAS
+            // [1] - SE FILTRA LA LISTA DE VENTAS CUANDO SE ESCRIBE EN EL BUSCADOR
+        inputBuscar.doAfterTextChanged { texto ->
+            filtrarVentas()
+        }
+
+    }
+
+    /* --------------------------------------------------
+                        FILTRAR VENTAS
+    -------------------------------------------------- */
+    private fun filtrarVentas() {
+
+        val query = inputBuscar.text.toString().lowercase().trim()
+        val selectedId = filterGroup.checkedButtonId
+
+        val filtrados = listaOriginal.filter { venta ->
+
+            val coincideBusqueda = when {
+
+                // BUSCAR POR EMAIL
+                query.contains("@") -> {
+                    venta.emailCliente?.lowercase()?.contains(query) == true
+                }
+
+                // BUSCAR POR TELÉFONO
+                query.any { it.isDigit() } -> {
+                    venta.telefonoCliente?.contains(query) == true
+                }
+
+                // ✍BUSCAR POR NOMBRE
+                else -> {
+                    venta.nombreCliente.lowercase().contains(query)
+                }
+            }
+
+            val coincideEstado = when (selectedId) {
+
+                R.id.btn_filter_vendidos ->
+                    venta.estado.equals("Pagado", true)
+
+                R.id.btn_filter_pendiente ->
+                    venta.estado.equals("Pendiente", true)
+
+                else -> true
+            }
+
+            coincideBusqueda && coincideEstado
+        }
+
+        adapter.submitList(filtrados)
     }
 
     /* --------------------------------------------------
@@ -558,10 +618,24 @@ class VentasFragment : Fragment() {
 
     private fun registrarVenta(form: VentaFormData, dialog: Dialog) {
         lifecycleScope.launch {
+
+            val db = AppDatabase.getDatabase(requireContext())
+
+            // OBTENER EL CLIENTE REAL DESDE LA BD
+            val cliente = db.clienteDao()
+                .obtenerTodos()
+                .find { it.id == form.clienteId }
+
             val estado = if (form.pagoTotal >= form.montoTotal) "Pagado" else "Pendiente"
+
             val venta = Venta(
                 idClienteVenta = form.clienteId,
                 nombreCliente = form.nombreCliente,
+
+                // NUEVOS CAMPOS ( NECESARIOS PARA FILTRAR POR EMAIL Y TELÉFONO )
+                emailCliente = cliente?.email ?: "",
+                telefonoCliente = cliente?.telefono ?: "",
+
                 montoTotal = form.montoTotal,
                 pagoTotal = form.pagoTotal,
                 fechaVenta = form.fechaVenta,
@@ -573,14 +647,14 @@ class VentasFragment : Fragment() {
                 estado = estado
             )
 
-            AppDatabase.getDatabase(requireContext()).ventaDao().insert(venta)
-            actualizarEstadoCliente(form.clienteId) // ACTUALIZA EL ESTADO DEL CLIENTE
+            db.ventaDao().insert(venta)
+
+            actualizarEstadoCliente(form.clienteId)
             cargarVentas()
-            Toast.makeText(requireContext(), "Venta guardada con exito", Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(requireContext(), "Venta guardada con éxito", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
-
-        cargarVentas()
     }
 
     private fun toggleFabMenu() {

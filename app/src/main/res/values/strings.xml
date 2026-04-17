@@ -36,7 +36,7 @@
     <string name="no_asignado">No Asignado</string>
     <string name="nuevo_cliente">Nuevo cliente</string>
     <string name="gestion_ventas_titulo">Gestión de\nVentas</string>
-    <string name="buscar_venta">Buscar venta...</string>
+    <string name="buscar_venta">Filtrar por Nombre, Mail o Teléfono...</string>
     <string name="pagadas">Pagadas</string>
     <string name="agregar_venta">Agregar venta</string>
     <string name="nueva_venta_cd">Nueva venta</string>

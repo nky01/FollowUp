@@ -17,5 +17,9 @@ data class Venta(
     val total: Double,
     val fecha: Long,
     val formaPago: String,
-    val estado: String
+    val estado: String,
+
+    // CAMPOS PARA EL FILTRADO DEL FRAGMENT VENTAS
+    val emailCliente: String,
+    val telefonoCliente: String
 )
