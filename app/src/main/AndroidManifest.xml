@@ -12,16 +12,41 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FollowUp">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.FollowUp">
+            android:name=".fragments.ReestablecerFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.CodigoFragment"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.PrincipalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.login.Bienvenida"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.login.Login"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.register.RegistrarCuenta"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.settings.CambiarMail"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.settings.VerificarCambioMail"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.settings.Perfil"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

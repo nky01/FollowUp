@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">FollowUp</string>
+    <string name="logo">FollowUp</string>
+    <string name="login">Login</string>
+    <string name="bienvenida_mensaje">¡Bienvenido a FollowUp! Tu aliado en ventas</string>
+    <string name="correo_electronico">CORREO ELECTRÓNICO</string>
+    <string name="contrasenia">CONTRASEÑA</string>
+    <string name="email_hint">Correoelectronico@gmail.com</string>
+    <string name="password_hint">••••••••</string>
+    <string name="ingresar">Iniciar sesión</string>
+    <string name="olvidaste_tu_contrasenia">¿Olvidaste tu contraseña?</string>
+    <string name="aun_no_tenes_una_cuenta">Aún no tenes una cuenta?</string>
+    <string name="registrate">Crear cuenta</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
+    <string name="nombre">NOMBRE</string>
+    <string name="nombre_hint">Juan</string>
+    <string name="confirmar_contrasenia">CONFIRMAR CONTRASEÑA</string>
+    <string name="buenos_aires_argentina">Buenos Aires, Argentina</string>
+    <string name="informaci_n_personal">Información Personal</string>
+    <string name="cuenta">Cuenta</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="seguridad">Seguridad</string>
+    <string name="aplicacion">Aplicacion</string>
+    <string name="apariencia">Apariencia</string>
+    <string name="usuario_01">Usuario 01</string>
+    <string name="cambiar_mail">Cambiar mail</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="apellido">Apellido</string>
+    <string name="nombre_label">Nombre</string>
+    <string name="informacion_personal">Informacion personal</string>
+    <string name="correo_label">Correo</string>
+    <string name="correo_hint">juan.perez@mail.com</string>
+    <string name="apellido_hint">Perez</string>
 </resources>
