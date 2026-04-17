@@ -30,4 +30,8 @@ interface ClienteDao {
     // Obtener un cliente por su email
     @Query("SELECT * FROM Cliente_Tabla WHERE email = :email LIMIT 1") // Se tendria que cambiar en un futuro?
     suspend fun obtenerPorEmail(email: String): Cliente?
+
+    //clasificacio por estado: vendido, pendiente o no asignado
+    @Query("SELECT * FROM Cliente_Tabla WHERE estado = :estado ORDER BY fecha DESC")
+    suspend fun obtenerPorEstado(estado: String): List<Cliente>
 }
