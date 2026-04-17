@@ -3,6 +3,7 @@ package com.followup.fragments
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.followup.data.entity.Venta
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -44,6 +46,14 @@ class VentasFragment : Fragment() {
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("es-AR"))
 
     private data class ClienteOption(val id: Int, val nombre: String, val label: String)
+
+    // VARIABLES DE LA VISTA VENTAS ( BOTONES DE FILTRADOS )
+    private lateinit var filterGroup: MaterialButtonToggleGroup // GRUPO DE LOS BOTONES
+    private lateinit var btnFilterTodos: MaterialButton // BOTÓN TODOS
+    private lateinit var btnFilterVendidos: MaterialButton // BOTÓN VENDIDOS
+    private lateinit var btnFilterPendiente: MaterialButton // BOTÓN PENDIENTE
+
+    private var listaOriginal: List<Venta> = listOf() // LISTA ORIGINAL DE VENTAS
 
     private data class VentaFormData(
         val clienteId: Int,
@@ -88,15 +98,40 @@ class VentasFragment : Fragment() {
 
         cargarVentas()
 
+        // SELECCIONAR EL PRIMER BOTÓN DE FILTRADO Y DARLE EL ESTILO
+        btnFilterTodos.isChecked = true
+        actualizarEstilosFiltro(R.id.btn_filter_todos)
+
     }
 
+    /* --------------------------------------------------
+                        CARGAR VENTAS
+    -------------------------------------------------- */
     private fun cargarVentas() {
         lifecycleScope.launch {
             val ventas = AppDatabase.getDatabase(requireContext())
                 .ventaDao()
                 .obtenerTodas()
 
-            adapter.submitList(ventas)
+            listaOriginal = ventas
+
+            // MANTIENE FILTRO ACTUAL ACTIVO
+            val selectedId = filterGroup.checkedButtonId
+
+            val listaFiltrada = when (selectedId) {
+
+                R.id.btn_filter_vendidos -> ventas.filter {
+                    it.estado.equals("Vendido", true)
+                }
+
+                R.id.btn_filter_pendiente -> ventas.filter {
+                    it.estado.equals("Pendiente", true)
+                }
+
+                else -> ventas
+            }
+
+            adapter.submitList(listaFiltrada)
         }
     }
 
@@ -245,8 +280,17 @@ class VentasFragment : Fragment() {
         fabOverlay.isFocusable = false
 
         recyclerVentas = view.findViewById(R.id.rvVentas) // RECYCLERVIEW
+
+        // COMPONENTES DE LA VISTA VENTAS ( BOTONES DE FILTRADOS )
+        filterGroup = view.findViewById(R.id.filter_group)
+        btnFilterTodos = view.findViewById(R.id.btn_filter_todos)
+        btnFilterVendidos = view.findViewById(R.id.btn_filter_vendidos)
+        btnFilterPendiente = view.findViewById(R.id.btn_filter_pendiente)
     }
 
+    /* --------------------------------------------------
+                INICIALIZADOR DE LISTENERS
+    -------------------------------------------------- */
     private fun initListeners() {
         fabMain.setOnClickListener { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
@@ -254,6 +298,61 @@ class VentasFragment : Fragment() {
         btnNuevaVenta.setOnClickListener {
             closeFabMenu()
             showNuevaVentaDialog()
+        }
+
+        // BOTONES DE FILTRADO [ FILTRA LISTA DE VENTAS POR ESTADO ]
+        filterGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+
+            if (!isChecked) return@addOnButtonCheckedListener
+
+            actualizarEstilosFiltro(checkedId) // ACTUALIZA LOS ESTILOS DE LOS BOTONES
+
+            when (checkedId) {
+
+                R.id.btn_filter_todos -> {
+                    adapter.submitList(listaOriginal)
+                }
+
+                R.id.btn_filter_vendidos -> {
+                    val filtrados = listaOriginal.filter {
+                        it.estado.equals("Vendido", ignoreCase = true)
+                    }
+                    adapter.submitList(filtrados)
+                }
+
+                R.id.btn_filter_pendiente -> {
+                    val filtrados = listaOriginal.filter {
+                        it.estado.equals("Pendiente", ignoreCase = true)
+                    }
+                    adapter.submitList(filtrados)
+                }
+            }
+        }
+    }
+
+    /* --------------------------------------------------
+       ACTUALIZAR ESTILOS DE LOS BOTONES DE FILTRADO
+    -------------------------------------------------- */
+
+    private fun actualizarEstilosFiltro(selectedId: Int) {
+
+        val botones = listOf(
+            btnFilterTodos,
+            btnFilterVendidos,
+            btnFilterPendiente
+        )
+
+        botones.forEach { btn ->
+
+            if (btn.id == selectedId) {
+                // SELECCIONADO
+                btn.setBackgroundColor(Color.parseColor("#286DFF"))
+                btn.setTextColor(Color.WHITE)
+            } else {
+                // NO SELECCIONADO
+                btn.setBackgroundColor(Color.WHITE)
+                btn.setTextColor(Color.parseColor("#475467"))
+            }
         }
     }
 
