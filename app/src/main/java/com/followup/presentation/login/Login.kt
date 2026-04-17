@@ -100,16 +100,17 @@ class Login : AppCompatActivity() {
     }
 
     private fun ejecutarLogin(email: String, password: String) {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        val emailLower = email.lowercase()
+        firebaseAuth.signInWithEmailAndPassword(emailLower, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     lifecycleScope.launch {
                         try {
                             val dao = database.usuarioDao()
-                            val usuario = dao.obtenerPorMail(email)
+                            val usuario = dao.obtenerPorMail(emailLower)
                             
                             sharedPreferences.edit {
-                                putString("USER_MAIL", email)
+                                putString("USER_MAIL", emailLower)
                                     .putString("USER_NAME", usuario?.nombre ?: "Usuario")
                             }
                             

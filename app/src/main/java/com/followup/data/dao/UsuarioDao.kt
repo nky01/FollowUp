@@ -29,4 +29,7 @@ interface UsuarioDao {
 
     @Query("UPDATE Usuario_Tabla SET contraseniaHash = :password WHERE mail = :mail")
     suspend fun actualizarContrasenia(mail: String, password: String)
+
+    @Query("UPDATE Usuario_Tabla SET mail = :nuevoMail WHERE mail = :mailActual")
+    suspend fun actualizarMail(mailActual: String, nuevoMail: String)
 }

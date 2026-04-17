@@ -55,12 +55,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Instruction label -->
+    <!-- Instruction for password verification -->
     <TextView
         android:id="@+id/tvInstruccion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Ingresa el nuevo email que usaras para ingresar a tu cuenta"
+        android:text="Ingresá tu contraseña actual para confirmar tu identidad."
         android:textSize="14sp"
         android:textColor="#1A1A1A"
         android:lineSpacingExtra="2dp"
@@ -71,40 +71,137 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Email input field -->
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etEmail"
+    <!-- Password input field -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:background="@drawable/ic_rounded_card"
-        android:hint="juan.perez@mail.com"
-        android:textColorHint="#AAAAAA"
-        android:textSize="14sp"
-        android:textColor="#1A1A1A"
-        android:inputType="textEmailAddress"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
+        app:boxBackgroundColor="@color/input_background"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconMode="password_toggle"
+        app:endIconTint="#AAAAAA"
+        app:hintEnabled="false"
         app:layout_constraintTop_toBottomOf="@id/tvInstruccion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:startIconDrawable="@android:drawable/ic_lock_lock"
+        app:startIconTint="#AAAAAA">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:paddingVertical="18dp"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#AAAAAA"
+            android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Error message -->
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="12sp"
+        android:textColor="#F44336"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tilPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Success message -->
+    <TextView
+        android:id="@+id/tvMensajeExito"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="14sp"
+        android:textColor="#4CAF50"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Email input field (hidden until re-authenticated) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEmail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:boxBackgroundColor="@color/input_background"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:hintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/tvInstruccion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="juan.perez@mail.com"
+            android:inputType="textEmailAddress"
+            android:paddingVertical="18dp"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#AAAAAA"
+            android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <!-- Submit button pinned to bottom -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_EnviarMail"
+        android:id="@+id/btn_Verificar"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:text="Enviar mail"
+        android:text="Confirmar"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:cornerRadius="12dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_EnviarMail"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="Enviar enlace de verificación"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
