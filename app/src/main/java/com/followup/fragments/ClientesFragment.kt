@@ -26,7 +26,7 @@ import com.followup.presentation.settings.Configuracion
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.imageview.ShapeableImageView
+import de.hdodenhof.circleimageview.CircleImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -116,7 +116,7 @@ class ClientesFragment : Fragment() {
         fabMenuContainer = view.findViewById(R.id.fab_menu_container)
         fabOverlay = view.findViewById(R.id.fab_overlay)
         val btnNuevoCliente = view.findViewById<MaterialButton>(R.id.btn_nuevo_cliente)
-        val profilePicture = view.findViewById<ShapeableImageView>(R.id.iv_profile_picture)
+        val profilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
 
         fabMain.setOnClickListener { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
