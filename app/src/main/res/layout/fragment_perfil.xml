@@ -85,19 +85,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Ubicación -->
-            <TextView
-                android:id="@+id/tv_ubicacion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Buenos Aires, Argentina"
-                android:textSize="14sp"
-                android:textColor="#BDBDBD"
-                app:layout_constraintTop_toBottomOf="@id/tv_nombre_usuario"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
             <!-- CardView de Cuenta -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/container_cuenta"
@@ -108,7 +95,7 @@
                 android:layout_marginTop="24dp"
                 app:cardCornerRadius="12dp"
                 app:cardBackgroundColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@id/tv_ubicacion"
+                app:layout_constraintTop_toBottomOf="@id/tv_nombre_usuario"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -238,20 +225,8 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- ...existing code... -->
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
-
-
-
-

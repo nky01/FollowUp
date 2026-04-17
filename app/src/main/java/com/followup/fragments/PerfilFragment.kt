@@ -28,11 +28,21 @@ import java.io.File
 
 class PerfilFragment : Fragment() {
 
-    private var usuarioId: Int = -1 // Se cargará dinámicamente
+    private var usuarioId: Int = -1
     private var profileImageUri: Uri? = null
 
+    // ACA estaba el error, el permiso de leer el almacenamiento externo no se estaba solicitando, por eso no se podia acceder a la imagen seleccionada.
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
+            // Solicitar persistencia de permisos para la URI si es necesario
+            try {
+                requireContext().contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // Algunos proveedores no soportan permisos persistentes
+            }
             profileImageUri = uri
             updateProfileImage(uri)
         }
@@ -55,16 +65,11 @@ class PerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Recuperar el ID del usuario logueado
         val prefs = requireContext().getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
         usuarioId = prefs.getInt("USER_ID", -1)
 
-        try {
-            setupViews(view)
-            loadUserData(view)
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Error al cargar perfil: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
+        setupViews(view)
+        loadUserData(view)
     }
 
     private fun setupViews(view: View) {
@@ -99,14 +104,12 @@ class PerfilFragment : Fragment() {
 
                 if (usuario != null) {
                     view.findViewById<TextView>(R.id.tv_nombre_usuario)?.text = usuario.nombre
-                    view.findViewById<TextView>(R.id.tv_ubicacion)?.text = "Buenos Aires, Argentina"
                     
                     if (!usuario.imagenPerfil.isNullOrEmpty()) {
                         try {
                             val uri = Uri.parse(usuario.imagenPerfil)
                             view.findViewById<CircleImageView>(R.id.profile_image)?.setImageURI(uri)
                             
-                            // Sincronizar SharedPreferences por si acaso
                             val userDataPrefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
                             userDataPrefs.edit().putString("profile_image_uri", usuario.imagenPerfil).apply()
                         } catch (e: Exception) {
