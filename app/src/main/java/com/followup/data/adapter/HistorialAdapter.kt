@@ -34,15 +34,10 @@ class HistorialAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.item_historial, parent, false)
         return when (viewType) {
-            TYPE_CLIENTE -> {
-                val view = inflater.inflate(R.layout.item_historial, parent, false)
-                ClienteViewHolder(view)
-            }
-            else -> {
-                val view = inflater.inflate(R.layout.item_historial, parent, false)
-                VentaViewHolder(view)
-            }
+            TYPE_CLIENTE -> ClienteViewHolder(view)
+            else -> VentaViewHolder(view)
         }
     }
 
@@ -53,26 +48,26 @@ class HistorialAdapter(
         }
     }
 
-    // --- VIEW HOLDERS ---
-
     inner class ClienteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvNombre = view.findViewById<TextView>(R.id.tvNombre)
+        private val tvNombre = view.findViewById<TextView>(R.id.tv_nombre_item)
+        private val tvDetalle = view.findViewById<TextView>(R.id.tv_detalle_secundario)
         private val btnRestaurar = view.findViewById<MaterialButton>(R.id.btn_restaurar_item)
 
         fun bind(cliente: Cliente) {
-            tvNombre.text = "Cliente: ${cliente.nombre}"
+            tvNombre.text = cliente.nombre
+            tvDetalle.text = "Cliente | Tel: ${cliente.telefono}"
             btnRestaurar.setOnClickListener { onRestaurarCliente(cliente) }
         }
     }
 
     inner class VentaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvNombre = view.findViewById<TextView>(R.id.tvNombre)
-        private val tvMonto = view.findViewById<TextView>(R.id.tvMonto)
+        private val tvNombre = view.findViewById<TextView>(R.id.tv_nombre_item)
+        private val tvDetalle = view.findViewById<TextView>(R.id.tv_detalle_secundario)
         private val btnRestaurar = view.findViewById<MaterialButton>(R.id.btn_restaurar_item)
 
         fun bind(venta: Venta) {
-            tvNombre.text = "Venta: ${venta.nombreCliente}"
-            tvMonto.text = "$${venta.montoTotal}"
+            tvNombre.text = "Venta a: ${venta.idClienteVenta}"
+            tvDetalle.text = "Monto: $${venta.total}"
             btnRestaurar.setOnClickListener { onRestaurarVenta(venta) }
         }
     }

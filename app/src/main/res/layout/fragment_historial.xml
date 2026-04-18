@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Historial"
+            android:text="@string/gestion_historial_titulo"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"

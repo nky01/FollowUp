@@ -94,22 +94,39 @@ class RegistrarCuenta : AppCompatActivity() {
     }
 
     private fun registrarUsuario(nombre: String, email: String, password: String) {
-        lifecycleScope.launch {
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             try {
-                val database = AppDatabase.getDatabase(this@RegistrarCuenta)
+                val database = AppDatabase.getDatabase(applicationContext)
                 val dao = database.usuarioDao()
 
                 val existe = dao.obtenerPorMail(email)
-                if (existe == null) {
-                    dao.crearUsuario(Usuario(nombre = nombre, mail = email, contraseniaHash = password, codigo2FA = null))
-                    Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya está en uso"
+
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    if (existe == null) {
+                        insertarNuevoUsuario(dao, nombre, email, password)
+                    } else {
+                        findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya esta en uso"
+                    }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@RegistrarCuenta, "Error al registrar", Toast.LENGTH_SHORT).show()
+                android.util.Log.e("REGISTRO_ERROR", "Error: ${e.message}")
+
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(this@RegistrarCuenta, "Error de base de datos", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
+
+    private suspend fun insertarNuevoUsuario(dao: com.followup.data.dao.UsuarioDao, nombre: String, email: String, pass: String) {
+        val nuevoUsuario = Usuario(
+            nombre = nombre,
+            mail = email,
+            contraseniaHash = pass,
+            codigo2FA = null
+        )
+        dao.crearUsuario(nuevoUsuario)
+        Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }

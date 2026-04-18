@@ -1,5 +1,6 @@
 package com.followup.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,70 +14,126 @@ import com.followup.R
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.followup.data.entity.Venta
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class HistorialFragment : Fragment() {
+    private lateinit var rvHistorial: RecyclerView
+    private lateinit var filterGroup: MaterialButtonToggleGroup
+
+    private lateinit var btnFiltroTodos: MaterialButton
+    private lateinit var btnFiltroClientes: MaterialButton
+    private lateinit var btnFiltroVentas: MaterialButton
 
     private lateinit var adapter: HistorialAdapter
     private var listaCompleta = mutableListOf<HistorialItem>()
 
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return inflater.inflate(R.layout.fragment_historial, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView(view)
-        setupFiltros(view)
+        initComponents(view)
+        setupRecyclerView()
+        initListeners()
+
         cargarDatos()
+
+        filterGroup.check(R.id.btn_filter_todos)
+        actualizarEstilosFiltros(R.id.btn_filter_todos)
     }
 
-    private fun setupRecyclerView(view: View) {
-        val rv = view.findViewById<RecyclerView>(R.id.historial)
+    private fun initComponents(view: View) {
+        rvHistorial = view.findViewById(R.id.historial)
+        filterGroup = view.findViewById(R.id.filter_group)
+
+        btnFiltroTodos = view.findViewById(R.id.btn_filter_todos)
+        btnFiltroClientes = view.findViewById(R.id.btn_filter_clientes)
+        btnFiltroVentas = view.findViewById(R.id.btn_filter_ventas)
+    }
+
+    private fun initListeners() {
+        filterGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+
+            actualizarEstilosFiltros(checkedId)
+
+            when (checkedId) {
+                R.id.btn_filter_todos -> adapter.submitList(listaCompleta.toList())
+                R.id.btn_filter_clientes -> {
+                    adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.ClienteItem>())
+                }
+                R.id.btn_filter_ventas -> {
+                    adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.VentaItem>())
+                }
+            }
+        }
+    }
+
+    private fun actualizarEstilosFiltros(selectedId: Int) {
+        val botones = listOf(btnFiltroTodos, btnFiltroClientes, btnFiltroVentas)
+        for (boton in botones) {
+            if (boton.id == selectedId) {
+                boton.setBackgroundColor(Color.parseColor("#286DFF"))
+                boton.setTextColor(Color.WHITE)
+            } else {
+                boton.setBackgroundColor(Color.WHITE)
+                boton.setTextColor(Color.parseColor("#475467"))
+            }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        rvHistorial.layoutManager = LinearLayoutManager(requireContext())
         adapter = HistorialAdapter(
             onRestaurarCliente = { cliente -> restaurarCliente(cliente) },
             onRestaurarVenta = { venta -> restaurarVenta(venta) }
         )
-        rv.layoutManager = LinearLayoutManager(requireContext())
-        rv.adapter = adapter
+        rvHistorial.adapter = adapter
     }
 
     private fun cargarDatos() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(requireContext())
 
-            val clientesEliminados = db.clienteDao().getClientesEnPapelera()
-            val ventasEliminadas = db.ventaDao().getVentasEliminadas()
+            combine(
+                db.clienteDao().getClientesEnPapelera().onStart { emit(emptyList()) },
+                db.ventaDao().getVentasEliminadas().onStart { emit(emptyList()) }
+            ) { clientes, ventas ->
+                val items = mutableListOf<HistorialItem>()
+                items.addAll(clientes.map { HistorialItem.ClienteItem(it) })
+                items.addAll(ventas.map { HistorialItem.VentaItem(it) })
 
-            listaCompleta.clear()
-            listaCompleta.addAll(clientesEliminados.map { HistorialItem.ClienteItem(it) })
-            listaCompleta.addAll(ventasEliminadas.map { HistorialItem.VentaItem(it) })
-
-            adapter.submitList(listaCompleta.toList())
+                // Ordenamos por fecha descendente
+                items.sortByDescending { item ->
+                    when(item) {
+                        is HistorialItem.ClienteItem -> item.cliente.fecha
+                        is HistorialItem.VentaItem -> item.venta.fechaVenta
+                    }
+                }
+                items
+            }.collect { lista ->
+                listaCompleta = lista.toMutableList()
+                aplicarFiltroActual()
+            }
         }
     }
 
-    private fun setupFiltros(view: View) {
-        val toggleGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.filter_group)
-
-        toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
-                when (checkedId) {
-                    R.id.btn_filter_todos -> adapter.submitList(listaCompleta.toList())
-                    R.id.btn_filter_clientes -> {
-                        adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.ClienteItem>())
-                    }
-                    R.id.btn_filter_ventas -> {
-                        adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.VentaItem>())
-                    }
-                }
-            }
+    private fun aplicarFiltroActual() {
+        when (filterGroup.checkedButtonId) {
+            R.id.btn_filter_clientes -> adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.ClienteItem>())
+            R.id.btn_filter_ventas -> adapter.submitList(listaCompleta.filterIsInstance<HistorialItem.VentaItem>())
+            else -> adapter.submitList(listaCompleta.toList())
         }
     }
 
@@ -84,7 +141,6 @@ class HistorialFragment : Fragment() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(requireContext())
             db.clienteDao().update(cliente.copy(isDeleted = false))
-            cargarDatos()
             Toast.makeText(requireContext(), "${cliente.nombre} restaurado", Toast.LENGTH_SHORT).show()
         }
     }
@@ -93,7 +149,6 @@ class HistorialFragment : Fragment() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(requireContext())
             db.ventaDao().update(venta.copy(isDeleted = false))
-            cargarDatos()
             Toast.makeText(requireContext(), "Venta restaurada", Toast.LENGTH_SHORT).show()
         }
     }

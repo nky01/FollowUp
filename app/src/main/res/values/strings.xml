@@ -60,4 +60,5 @@
     <string name="card_venta_descripcion">[Descripcion]</string>
     <string name="icono_venta">Icono de venta</string>
     <string name="editar_venta">Editar Venta</string>
+    <string name="gestion_historial_titulo">Gestión de\nHistorial</string>
 </resources>

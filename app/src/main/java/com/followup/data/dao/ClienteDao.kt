@@ -25,7 +25,7 @@ interface ClienteDao {
     suspend fun delete(cliente: Cliente)
 
     // Obtener todos los clientes, ordenados por fecha
-    @Query("SELECT * FROM Cliente_Tabla ORDER BY fecha DESC") // Falta implementar
+    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 0 ORDER BY fecha DESC")
     suspend fun obtenerTodos(): List<Cliente>
 
     // Obtener un cliente por su email
@@ -33,7 +33,7 @@ interface ClienteDao {
     suspend fun obtenerPorEmail(email: String): Cliente?
 
     //clasificacio por estado: vendido, pendiente o no asignado
-    @Query("SELECT * FROM Cliente_Tabla WHERE estado = :estado ORDER BY fecha DESC")
+    @Query("SELECT * FROM Cliente_Tabla WHERE estado = :estado AND isDeleted = 0 ORDER BY fecha DESC")
     suspend fun obtenerPorEstado(estado: String): List<Cliente>
 
     @Query("UPDATE Cliente_Tabla SET isDeleted = 1 WHERE id = :clienteId")

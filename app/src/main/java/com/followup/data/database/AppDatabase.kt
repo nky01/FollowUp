@@ -31,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "followup_db"
                 )
                     .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigrationOnDowngrade()
                     .build()
                     .also { INSTANCIA = it }
             }
