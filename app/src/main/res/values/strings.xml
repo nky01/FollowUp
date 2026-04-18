@@ -61,4 +61,5 @@
     <string name="icono_venta">Icono de venta</string>
     <string name="editar_venta">Editar Venta</string>
     <string name="gestion_historial_titulo">Gestión de\nHistorial</string>
+    <string name="buscar_historial">Filtrar por Nombre, Mail o Teléfono...</string>
 </resources>

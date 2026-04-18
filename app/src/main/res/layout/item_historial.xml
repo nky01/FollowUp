@@ -25,7 +25,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/primary_blue" />
+            app:tint="#4A90E2" />
 
         <LinearLayout
             android:id="@+id/container_textos"
@@ -75,7 +75,7 @@
             app:icon="@android:drawable/ic_menu_revert"
             app:iconPadding="4dp"
             app:iconSize="18dp"
-            app:iconTint="@color/primary_blue"
+            app:iconTint="#4A90E2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
