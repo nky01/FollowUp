@@ -18,6 +18,7 @@ data class Venta(
     val fecha: Long,
     val formaPago: String,
     val estado: String,
+    val isDeleted: Boolean = false,
 
     // CAMPOS PARA EL FILTRADO DEL FRAGMENT VENTAS
     val emailCliente: String,

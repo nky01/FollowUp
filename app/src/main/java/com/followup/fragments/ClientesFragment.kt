@@ -375,11 +375,11 @@ class ClientesFragment : Fragment() {
     private fun eliminarClienteConfirmado(cliente: Cliente) {
         lifecycleScope.launch {
             val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
-            dao.delete(cliente)
 
+            dao.marcarComoEliminado(cliente.id)
             cargarClientes()
 
-            Toast.makeText(requireContext(), "Cliente eliminado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "${cliente.nombre} eliminado", Toast.LENGTH_SHORT).show()
         }
     }
 

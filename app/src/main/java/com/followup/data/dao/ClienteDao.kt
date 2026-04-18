@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.followup.data.entity.Cliente
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClienteDao {
@@ -34,4 +35,13 @@ interface ClienteDao {
     //clasificacio por estado: vendido, pendiente o no asignado
     @Query("SELECT * FROM Cliente_Tabla WHERE estado = :estado ORDER BY fecha DESC")
     suspend fun obtenerPorEstado(estado: String): List<Cliente>
+
+    @Query("UPDATE Cliente_Tabla SET isDeleted = 1 WHERE id = :clienteId")
+    suspend fun marcarComoEliminado(clienteId: Int)
+
+    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 0")
+    fun getClientesActivos(): Flow<List<Cliente>>
+
+    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 1")
+    fun getClientesEnPapelera(): Flow<List<Cliente>>
 }

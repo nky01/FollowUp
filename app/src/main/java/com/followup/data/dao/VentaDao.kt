@@ -28,7 +28,21 @@ interface VentaDao {
     suspend fun obtenerIngresosTotales(): Double?
 
     // QUERY PARA OBTENER LOS ESTADOS POR CLIENTE Y NO POR VENTA
-        // [1] - SE UTILIZA PARA ACTUALIZAR EL ESTADO DEL CLIENTE CUANDO SE LE ASIGNA UNA VENTA
+    // [1] - SE UTILIZA PARA ACTUALIZAR EL ESTADO DEL CLIENTE CUANDO SE LE ASIGNA UNA VENTA
     @Query("SELECT estado FROM Ventas_Tabla WHERE idClienteVenta = :clienteId")
     suspend fun obtenerEstadosPorCliente(clienteId: Int): List<String>
+
+    @Query("SELECT * FROM Ventas_Tabla WHERE isDeleted = 0")
+    suspend fun getVentasActivas(): List<Venta>
+
+    @Query("SELECT * FROM Ventas_Tabla WHERE isDeleted = 1")
+    suspend fun getVentasEliminadas(): List<Venta>
+
+    // El "Borrado Lógico"
+    @Query("UPDATE Ventas_Tabla SET isDeleted = 1 WHERE id = :idVenta")
+    suspend fun softDelete(idVenta: Int)
+
+    // Para restaurar
+    @Query("UPDATE Ventas_Tabla SET isDeleted = 0 WHERE id = :idVenta")
+    suspend fun restaurarVenta(idVenta: Int)
 }

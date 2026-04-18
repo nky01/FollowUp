@@ -12,6 +12,7 @@ data class Cliente(
     val telefono: String,
     val email: String,
     val estado: String, // "Pendiente", "Vendido", "No Asignado"
+    val isDeleted: Boolean = false,
 
     val fecha: Long, // Tiempo en milisegundos
 

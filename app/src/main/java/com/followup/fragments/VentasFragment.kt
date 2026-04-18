@@ -261,12 +261,13 @@ class VentasFragment : Fragment() {
             .setMessage("¿Estás seguro que querés eliminar esta venta?")
             .setPositiveButton("Sí") { _, _ ->
                 lifecycleScope.launch {
-                    AppDatabase.getDatabase(requireContext())
-                        .ventaDao()
-                        .delete(venta)
+                    val db = AppDatabase.getDatabase(requireContext())
 
-                    actualizarEstadoCliente(venta.idClienteVenta) // ACTUALIZA EL ESTADO DEL CLIENTE
+                    db.ventaDao().softDelete(venta.id)
+                    actualizarEstadoCliente(venta.idClienteVenta)
                     cargarVentas()
+
+                    Toast.makeText(requireContext(), "Venta movida al historial", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancelar", null)
