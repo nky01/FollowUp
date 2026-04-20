@@ -16,26 +16,25 @@
 
         <!-- Icono arriba izquierda -->
         <ImageView
-            android:id="@+id/iconCheck"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/logo"
+            android:id="@+id/iv_logo_small"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="56dp"
             android:src="@mipmap/logo"
+            app:tint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profile_picture"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="56dp"
             android:layout_marginEnd="16dp"
-            android:contentDescription="Imagen de perfil"
             android:src="@android:color/darker_gray"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-            app:strokeColor="@color/white"
-            app:strokeWidth="2dp"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,12 +44,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Gestión de\nClientes"
+            android:text="@string/gestion_de_clientes"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iconCheck" />
+            app:layout_constraintTop_toBottomOf="@id/iv_logo_small" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_search"
@@ -76,7 +75,7 @@
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Buscar cliente..."
+                android:hint="@string/buscar_cliente"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:paddingVertical="12dp"

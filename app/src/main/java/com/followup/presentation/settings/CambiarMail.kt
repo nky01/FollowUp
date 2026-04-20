@@ -5,22 +5,33 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.followup.R
-import com.followup.data.database.AppDatabase
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.launch
-import kotlin.random.Random
+import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 
 class CambiarMail : AppCompatActivity() {
 
+    private lateinit var tvInstruccion: TextView
+    private lateinit var tvError: TextView
+    private lateinit var tvMensajeExito: TextView
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var tilEmail: TextInputLayout
     private lateinit var etEmail: TextInputEditText
+    private lateinit var btnVerificar: MaterialButton
     private lateinit var btnEnviarMail: MaterialButton
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var database: AppDatabase
+    private lateinit var firebaseAuth: FirebaseAuth
+
+    private var isReauthenticated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +39,19 @@ class CambiarMail : AppCompatActivity() {
 
         inicializarViews()
         inicializarSharedPreferences()
-        inicializarDatabase()
+        inicializarFirebaseAuth()
         configurarClickListener()
     }
 
     private fun inicializarViews() {
+        tvInstruccion = findViewById(R.id.tvInstruccion)
+        tvError = findViewById(R.id.tvError)
+        tvMensajeExito = findViewById(R.id.tvMensajeExito)
+        tilPassword = findViewById(R.id.tilPassword)
+        etPassword = findViewById(R.id.etPassword)
+        tilEmail = findViewById(R.id.tilEmail)
         etEmail = findViewById(R.id.etEmail)
+        btnVerificar = findViewById(R.id.btn_Verificar)
         btnEnviarMail = findViewById(R.id.btn_EnviarMail)
     }
 
@@ -41,96 +59,133 @@ class CambiarMail : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
     }
 
-    private fun inicializarDatabase() {
-        database = AppDatabase.getDatabase(this)
+    private fun inicializarFirebaseAuth() {
+        firebaseAuth = FirebaseAuth.getInstance()
     }
 
     private fun configurarClickListener() {
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            startActivity(Intent(this, Configuracion::class.java))
+            finish()
+        }
+
+        btnVerificar.setOnClickListener {
+            if (!isReauthenticated) {
+                verificarPassword()
+            }
+        }
+
         btnEnviarMail.setOnClickListener {
-            validarYEnviarCodigo()
+            validarYEnviarVerificacion()
         }
     }
 
-    private fun validarYEnviarCodigo() {
-        val nuevoEmail = etEmail.text.toString().trim()
+    private fun verificarPassword() {
+        val password = etPassword.text.toString()
+
+        if (password.isEmpty()) {
+            tvError.text = "La contraseña es obligatoria"
+            tvError.visibility = View.VISIBLE
+            return
+        }
+
+        tvError.visibility = View.GONE
+        btnVerificar.isEnabled = false
+        btnVerificar.text = "Verificando..."
+
+        val currentUser = firebaseAuth.currentUser
+        val currentEmail = currentUser?.email
+
+        if (currentUser == null || currentEmail == null) {
+            Toast.makeText(this, "No hay usuario logueado", Toast.LENGTH_SHORT).show()
+            btnVerificar.isEnabled = true
+            btnVerificar.text = "Confirmar"
+            return
+        }
+
+        val credential = EmailAuthProvider.getCredential(currentEmail, password)
+
+        currentUser.reauthenticate(credential)
+            .addOnSuccessListener {
+                isReauthenticated = true
+                mostrarFormularioNuevoMail()
+            }
+            .addOnFailureListener { e ->
+                tvError.text = "Contraseña incorrecta"
+                tvError.visibility = View.VISIBLE
+                btnVerificar.isEnabled = true
+                btnVerificar.text = "Confirmar"
+            }
+    }
+
+    private fun mostrarFormularioNuevoMail() {
+        tvInstruccion.text = "Ingresá el nuevo correo electrónico que usarás para iniciar sesión."
+        tilPassword.visibility = View.GONE
+        btnVerificar.visibility = View.GONE
+        tvError.visibility = View.GONE
+        tilEmail.visibility = View.VISIBLE
+        btnEnviarMail.visibility = View.VISIBLE
+        etEmail.requestFocus()
+    }
+
+    private fun validarYEnviarVerificacion() {
+        val nuevoEmail = etEmail.text.toString().trim().lowercase()
 
         if (!validarEmail(nuevoEmail)) {
             return
         }
 
-        lifecycleScope.launch {
-            try {
-                val mailActual = obtenerMailActual()
+        val mailActual = firebaseAuth.currentUser?.email
 
-                if (nuevoEmail.equals(mailActual, ignoreCase = true)) {
-                    etEmail.error = "El nuevo email no puede ser igual al actual"
-                    return@launch
-                }
-
-                val existeUsuario = database.usuarioDao().obtenerPorMail(nuevoEmail)
-                if (existeUsuario != null) {
-                    etEmail.error = "Este email ya está registrado"
-                    return@launch
-                }
-
-                val codigo = generarCodigo6Digitos()
-                enviarCodigoPorEmail(mailActual, codigo)
-
-                etEmail.error = null
-                Toast.makeText(this@CambiarMail, "Código enviado a $mailActual", Toast.LENGTH_LONG).show()
-
-                navegarAVerificacion(mailActual, nuevoEmail, codigo)
-
-            } catch (e: Exception) {
-                Toast.makeText(this@CambiarMail, "Error al procesar la solicitud", Toast.LENGTH_SHORT).show()
-            }
+        if (nuevoEmail.equals(mailActual, ignoreCase = true)) {
+            tilEmail.error = "El nuevo email no puede ser igual al actual"
+            return
         }
+
+        btnEnviarMail.isEnabled = false
+        btnEnviarMail.text = "Enviando..."
+
+        firebaseAuth.currentUser?.verifyBeforeUpdateEmail(nuevoEmail)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    tvMensajeExito.text = "Se envió un enlace de verificación a $nuevoEmail. Hacé clic en el enlace para confirmar el cambio."
+                    tvMensajeExito.visibility = View.VISIBLE
+                    tvInstruccion.visibility = View.GONE
+                    tilEmail.visibility = View.GONE
+                    btnEnviarMail.visibility = View.GONE
+                } else {
+                    val errorMessage = task.exception?.message
+                    when {
+                        errorMessage?.contains("email already in use", ignoreCase = true) == true -> {
+                            tilEmail.error = "Este email ya está registrado"
+                        }
+                        errorMessage?.contains("invalid email", ignoreCase = true) == true -> {
+                            tilEmail.error = "Email inválido"
+                        }
+                        else -> {
+                            Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    btnEnviarMail.isEnabled = true
+                    btnEnviarMail.text = "Enviar enlace de verificación"
+                }
+            }
     }
 
     private fun validarEmail(email: String): Boolean {
         return when {
             email.isEmpty() -> {
-                etEmail.error = "El email es obligatorio"
+                tilEmail.error = "El email es obligatorio"
                 false
             }
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                etEmail.error = "Formato de email inválido"
+                tilEmail.error = "Formato de email inválido"
                 false
             }
             else -> {
-                etEmail.error = null
+                tilEmail.error = null
                 true
             }
         }
-    }
-
-    private fun obtenerMailActual(): String {
-        return sharedPreferences.getString("USER_MAIL", "") ?: ""
-    }
-
-    private fun generarCodigo6Digitos(): String {
-        return Random.nextInt(100000, 999999).toString()
-    }
-
-    private fun enviarCodigoPorEmail(destinatario: String, codigo: String) {
-        // TODO: Implementar envío real de email mediante API o servicio de backend
-        // Ejemplo de implementación futura:
-        // val correo = Correo(destinatario, "Código de verificación: $codigo")
-        // apiService.enviarCorreo(correo)
-
-        // Por ahora, se guarda el código temporalmente para debug
-        sharedPreferences.edit()
-            .putString("CODIGO_VERIFICACION", codigo)
-            .putString("NUEVO_EMAIL_TEMPORAL", etEmail.text.toString().trim())
-            .apply()
-    }
-
-    private fun navegarAVerificacion(mailActual: String, nuevoEmail: String, codigo: String) {
-        val intent = Intent(this, VerificarCambioMail::class.java)
-        intent.putExtra("MAIL_ACTUAL", mailActual)
-        intent.putExtra("NUEVO_EMAIL", nuevoEmail)
-        intent.putExtra("CODIGO", codigo)
-        startActivity(intent)
-        finish()
     }
 }
