@@ -68,11 +68,15 @@ class InicioFragment : Fragment() {
                 ivProfilePicture.setImageResource(android.R.color.darker_gray)
             }
         }
+
+
         ivProfilePicture?.setOnClickListener {
+
             val intent = android.content.Intent(
                 requireContext(),
                 com.followup.presentation.Perfil::class.java
             )
+
             startActivity(intent)
         }
 
