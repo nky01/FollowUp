@@ -27,6 +27,7 @@ class Login : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: AppDatabase
+    private lateinit var btnLogin: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +47,7 @@ class Login : AppCompatActivity() {
         val tietEmail = findViewById<TextInputEditText>(R.id.tiet_Email)
         val tilPassword = findViewById<TextInputLayout>(R.id.til_Password)
         val tietPassword = findViewById<TextInputEditText>(R.id.tiet_Password)
-        val btnLogin = findViewById<MaterialButton>(R.id.btn_Login)
+        btnLogin = findViewById<MaterialButton>(R.id.btn_Login)
         val tvRegister = findViewById<TextView>(R.id.tv_Register)
         val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
 
@@ -100,9 +101,16 @@ class Login : AppCompatActivity() {
     }
 
     private fun ejecutarLogin(email: String, password: String) {
+        btnLogin.isEnabled = false
+        btnLogin.text = "Ingresando..."
+        btnLogin.setBackgroundColor(getColor(R.color.primary_blue_disabled))
+
         val emailLower = email.lowercase()
         firebaseAuth.signInWithEmailAndPassword(emailLower, password)
             .addOnCompleteListener(this) { task ->
+                btnLogin.isEnabled = true
+                btnLogin.text = getString(R.string.ingresar)
+                btnLogin.setBackgroundColor(getColor(R.color.primary_blue))
                 if (task.isSuccessful) {
                     lifecycleScope.launch {
                         try {
