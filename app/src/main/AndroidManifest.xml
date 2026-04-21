@@ -45,6 +45,9 @@
             android:name=".presentation.settings.Configuracion"
             android:exported="false" />
         <activity
+            android:name=".presentation.settings.Seguridad"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>

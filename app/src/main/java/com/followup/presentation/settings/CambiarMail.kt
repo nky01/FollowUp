@@ -65,7 +65,6 @@ class CambiarMail : AppCompatActivity() {
 
     private fun configurarClickListener() {
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            startActivity(Intent(this, Configuracion::class.java))
             finish()
         }
 

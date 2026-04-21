@@ -1,7 +1,6 @@
 package com.followup.presentation.settings
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -40,6 +39,10 @@ class Configuracion : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.ll_CambiarMail).setOnClickListener {
             startActivity(Intent(this, CambiarMail::class.java))
+        }
+
+        findViewById<LinearLayout>(R.id.llSeguridad).setOnClickListener {
+            startActivity(Intent(this, Seguridad::class.java))
         }
     }
 }
