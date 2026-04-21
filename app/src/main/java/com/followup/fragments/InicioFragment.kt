@@ -32,6 +32,10 @@ class InicioFragment : Fragment() {
     private var listaCompletaSeguimientos: List<Venta> = emptyList()
     private var expandidoSeguimientos = false
 
+    // LISTA DE VENTAS VENDIDAS
+    private var listaCompletaVentas: List<Venta> = emptyList()
+    private var expandidoVentas = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,6 +74,10 @@ class InicioFragment : Fragment() {
         // REFERENCIA A LOS BOTONES DE LA VISTA PARA EL APARTADO "PRÓXIMOS SEGUIMIENTOS"
         val tvToggle = view.findViewById<TextView>(R.id.tvToggle_Seguimientos)
         val ivToggle = view.findViewById<ImageView>(R.id.ivToggle_Seguimientos)
+
+        // REFERENCIA A LOS BOTONES DE LA VISTA PARA EL APARTADO "VENTAS RECIENTES"
+        val tvToggleVentas = view.findViewById<TextView>(R.id.tvToggle_VentasRec)
+        val ivToggleVentas = view.findViewById<ImageView>(R.id.ivToggle_VentasRec)
 
         if (savedUriString != null && ivProfilePicture != null) {
             try {
@@ -122,8 +130,31 @@ class InicioFragment : Fragment() {
             }
         }
 
+        val toggleVentasAction = {
+            expandidoVentas = !expandidoVentas
+
+            if (expandidoVentas) {
+                // Mostrar todas las ventas vendidas
+                ventasAdapter.submitList(listaCompletaVentas)
+
+                ivToggleVentas.animate().rotation(90f).setDuration(200).start()
+                tvToggleVentas.text = "Ver menos"
+            } else {
+                // Mostrar solo 3
+                ventasAdapter.submitList(listaCompletaVentas.take(3))
+
+                ivToggleVentas.animate().rotation(0f).setDuration(200).start()
+                tvToggleVentas.text = "Ver todos"
+            }
+        }
+
+        // LISTENERS PARA "PRÓXIMOS SEGUIMIENTOS"
         tvToggle.setOnClickListener { toggleAction() }
         ivToggle.setOnClickListener { toggleAction() }
+
+        // LISTENERS PARA "VENTAS RECIENTES"
+        tvToggleVentas.setOnClickListener { toggleVentasAction() }
+        ivToggleVentas.setOnClickListener { toggleVentasAction() }
 
     }
 
@@ -190,11 +221,21 @@ class InicioFragment : Fragment() {
                 seguimientosAdapter.submitList(listaMostrar)
 
                 // 3. Cargar Ventas Recientes
-                val ventasRecientes = todasLasVentas
+                val ventasVendidas = todasLasVentas
+                    .filter { it.estado == "Pagado" } // SOLO VENDIDAS
                     .sortedByDescending { it.fechaVenta }
-                    .take(3)
 
-                ventasAdapter.submitList(ventasRecientes)
+                // Guardamos la lista completa
+                listaCompletaVentas = ventasVendidas
+
+                // Mostrar según estado (expandido o no)
+                val listaMostrarVentas = if (expandidoVentas) {
+                    ventasVendidas
+                } else {
+                    ventasVendidas.take(3)
+                }
+
+                ventasAdapter.submitList(listaMostrarVentas)
 
             } catch (e: Exception) {
                 e.printStackTrace()
