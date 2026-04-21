@@ -1,5 +1,6 @@
 package com.followup.presentation.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -94,32 +95,39 @@ class Login : AppCompatActivity() {
     }
 
     private fun ejecutarLogin(email: String, password: String) {
-        // lifecycleScope para ejecutar la consulta Db y evitar bloquear la UI,
-        // por ejemplo: si la DB tarda en responder o hay un error de conexión, no se congela la app y se muestra un Toast de error
-        lifecycleScope.launch {
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             try {
-                val database = AppDatabase.getDatabase(this@Login)
+                val database = AppDatabase.getDatabase(applicationContext)
                 val dao = database.usuarioDao()
 
-                // Buscar usuario en la DB
                 val usuario = dao.obtenerPorMail(email)
 
-                if (usuario != null) {
-                    // Verificar contraseña
-                    if (usuario.contraseniaHash == password) {
-                        // Ir al Home
-                        val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
-                        startActivity(intent)
-                        finish() // Cerrar el login para que no se pueda volver atrás
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    if (usuario != null) {
+                        if (usuario.contraseniaHash == password) {
+
+                            // GUARDAR NOMBRE DEL USUARIO PARA USAR EN TODA LA APP
+                            val sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+                            sharedPreferences.edit()
+                                .putString("USER_NAME", usuario.nombre)
+                                .apply()
+
+                            val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
+                        }
                     } else {
-                        findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
+                        findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
                     }
-                } else {
-                    findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
                 }
-                // toast es una notificación breve que aparece en la pantalla
             } catch (e: Exception) {
-                Toast.makeText(this@Login, "Error al conectar con la base de datos", Toast.LENGTH_SHORT).show()
+                android.util.Log.e("LOGIN_ERROR", "Error: ${e.message}")
+
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(this@Login, "Error de DB: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

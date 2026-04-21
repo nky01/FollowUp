@@ -50,8 +50,16 @@ class PrincipalActivity : AppCompatActivity() {
         bottomNavigationView = findViewById(R.id.bottom_navigation)
     }
 
-    private fun replaceFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
+    private fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+
+        val currentFragment = fragmentManager.findFragmentById(R.id.frame_container)
+        if (currentFragment?.javaClass == fragment.javaClass) return
+
+        fragmentManager.beginTransaction()
+            .replace(R.id.frame_container, fragment)
+            .setReorderingAllowed(true) // Optimiza las transiciones
+            .commit()
     }
 
 }
