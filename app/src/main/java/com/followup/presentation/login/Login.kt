@@ -1,5 +1,6 @@
 package com.followup.presentation.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -104,6 +105,13 @@ class Login : AppCompatActivity() {
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     if (usuario != null) {
                         if (usuario.contraseniaHash == password) {
+
+                            // GUARDAR NOMBRE DEL USUARIO PARA USAR EN TODA LA APP
+                            val sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+                            sharedPreferences.edit()
+                                .putString("USER_NAME", usuario.nombre)
+                                .apply()
+
                             val intent = Intent(this@Login, com.followup.fragments.PrincipalActivity::class.java)
                             startActivity(intent)
                             finish()

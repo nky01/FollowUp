@@ -1,5 +1,6 @@
 package com.followup.presentation.register
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
@@ -126,6 +127,14 @@ class RegistrarCuenta : AppCompatActivity() {
             codigo2FA = null
         )
         dao.crearUsuario(nuevoUsuario)
+
+        // GUARDAR NOMBRE DEL USUARIO PARA USAR EN TODA LA APP
+        val sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+
+        sharedPreferences.edit()
+            .putString("USER_NAME", nombre)
+            .apply()
+
         Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
         finish()
     }

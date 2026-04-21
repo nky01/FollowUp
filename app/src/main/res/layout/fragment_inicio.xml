@@ -16,13 +16,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:layout_marginBottom="12dp">
 
             <ImageView
                 android:id="@+id/iv_logo_small"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="16dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="16dp"
                 android:src="@mipmap/logo"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +32,8 @@
                 android:id="@+id/iv_profile_picture"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:src="@android:color/darker_gray"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="2dp"
@@ -43,7 +44,7 @@
                 android:id="@+id/tv_saludo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_margin="16dp"
                 android:text="Hola, [ Usuario ]"
                 android:textColor="@color/white"
                 android:textSize="32sp"
@@ -201,11 +202,12 @@
             </LinearLayout>
 
             <!-- Próximos seguimientos -->
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginHorizontal="8dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -213,16 +215,35 @@
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/tv_ver_todos_seguimientos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Ver todos >"
-                    android:textColor="@color/primary_blue"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvToggle_Seguimientos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Ver todos"
+                        android:textColor="@color/primary_blue"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/ivToggle_Seguimientos"
+                        android:layout_width="24dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="Icono cliente"
+                        android:src="@drawable/ic_toggle"
+                        app:tint="#4A90E2" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_seguimientos"

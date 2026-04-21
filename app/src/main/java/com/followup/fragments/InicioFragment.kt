@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
 import com.followup.data.adapter.SeguimientoHomeAdapter
 import com.followup.data.database.AppDatabase
+import com.followup.data.entity.Venta
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -25,6 +27,10 @@ class InicioFragment : Fragment() {
     private lateinit var rvVentasRecientes: RecyclerView
     private lateinit var seguimientosAdapter: SeguimientoHomeAdapter
     private lateinit var ventasAdapter: SeguimientoHomeAdapter
+
+    // LISTA DE VENTAS PARA SEGUIMIENTOS
+    private var listaCompletaSeguimientos: List<Venta> = emptyList()
+    private var expandidoSeguimientos = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +67,10 @@ class InicioFragment : Fragment() {
         val savedUriString = userDataPrefs.getString("profile_image_uri", null)
         val ivProfilePicture = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
 
+        // REFERENCIA A LOS BOTONES DE LA VISTA PARA EL APARTADO "PRÓXIMOS SEGUIMIENTOS"
+        val tvToggle = view.findViewById<TextView>(R.id.tvToggle_Seguimientos)
+        val ivToggle = view.findViewById<ImageView>(R.id.ivToggle_Seguimientos)
+
         if (savedUriString != null && ivProfilePicture != null) {
             try {
                 ivProfilePicture.setImageURI(Uri.parse(savedUriString))
@@ -91,6 +101,30 @@ class InicioFragment : Fragment() {
         view.findViewById<View>(R.id.card_ventas)?.setOnClickListener {
             bottomNav.selectedItemId = R.id.bottom_Ventas
         }
+
+        // --- LOGICA PARA VER MÁS O MENOS ELEMENTOS EN "PRÓXIMOS SEGUIMIENTOS"
+
+        val toggleAction = {
+            expandidoSeguimientos = !expandidoSeguimientos
+
+            if (expandidoSeguimientos) {
+                // Mostrar todos
+                seguimientosAdapter.submitList(listaCompletaSeguimientos)
+
+                ivToggle.animate().rotation(90f).setDuration(200).start()
+                tvToggle.text = "Ver menos"
+            } else {
+                // Mostrar solo 3
+                seguimientosAdapter.submitList(listaCompletaSeguimientos.take(3))
+
+                ivToggle.animate().rotation(0f).setDuration(200).start()
+                tvToggle.text = "Ver todos"
+            }
+        }
+
+        tvToggle.setOnClickListener { toggleAction() }
+        ivToggle.setOnClickListener { toggleAction() }
+
     }
 
     private fun setupRecyclerViews() {
@@ -123,7 +157,9 @@ class InicioFragment : Fragment() {
                 }.timeInMillis
 
                 val alertasCount = todasLasVentas.filter {
-                    it.fechaSeguimiento > it.fechaVenta && it.fechaSeguimiento >= hoy
+                    it.estado == "Pendiente" && // SOLO FILTRA LAS ALERTAS DE LAS QUE NO ESTÁN VENDIDAS
+                            it.fechaSeguimiento >= it.fechaVenta &&
+                            it.fechaSeguimiento >= hoy
                 }.size
 
                 view?.let { v ->
@@ -133,12 +169,25 @@ class InicioFragment : Fragment() {
                 }
 
                 // 2. Cargar Próximos Seguimientos (solo los que son alertas reales)
-                val proximosSeguimientos = todasLasVentas
-                    .filter { it.fechaSeguimiento > it.fechaVenta && it.fechaSeguimiento >= hoy }
+                val filtradas = todasLasVentas
+                    .filter {
+                        it.estado == "Pendiente" && // SOLO VENTAS PENDIENTES
+                                it.fechaSeguimiento >= it.fechaVenta &&
+                                it.fechaSeguimiento >= hoy
+                    }
                     .sortedBy { it.fechaSeguimiento }
-                    .take(3)
 
-                seguimientosAdapter.submitList(proximosSeguimientos)
+                // Guardamos la lista completa
+                listaCompletaSeguimientos = filtradas
+
+                // Mostrar según estado (3 o todos)
+                val listaMostrar = if (expandidoSeguimientos) {
+                    filtradas
+                } else {
+                    filtradas.take(3)
+                }
+
+                seguimientosAdapter.submitList(listaMostrar)
 
                 // 3. Cargar Ventas Recientes
                 val ventasRecientes = todasLasVentas
