@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Usuario_Tabla")
-
 data class Usuario(
     @PrimaryKey(autoGenerate = true)
     val id:Int=0,
