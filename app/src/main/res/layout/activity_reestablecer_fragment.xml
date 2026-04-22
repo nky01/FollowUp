@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,19 +14,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"
         android:letterSpacing="0.05"
+        android:layout_marginStart="32dp"
         android:text="CONFIRMAR CONTRASEÑA"
         android:textColor="@color/text_secondary"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/til_nueva_contrasena"
-        tools:layout_editor_absoluteX="32dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_nueva_contrasena" />
 
     <TextView
         android:id="@+id/tv_NuevaContrasenia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="19dp"
         android:layout_marginBottom="4dp"
         android:letterSpacing="0.05"
         android:text="NUEVA CONTRASEÑA"
@@ -52,10 +54,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="48dp"
+        android:layout_marginBottom="12dp"
         android:text="Reestablecer Contraseña"
         android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_Desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_Logo" />
 
@@ -64,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="6dp"
         app:boxBackgroundColor="#F5F5F5"
         app:boxBackgroundMode="filled"
         app:boxCornerRadiusBottomEnd="8dp"
@@ -75,7 +79,7 @@
         app:boxStrokeWidthFocused="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_Desc"
+        app:layout_constraintTop_toBottomOf="@id/tv_NuevaContrasenia"
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_lock">
 
@@ -95,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="6dp"
         app:boxBackgroundColor="#F5F5F5"
         app:boxBackgroundMode="filled"
         app:boxCornerRadiusBottomEnd="8dp"
@@ -106,12 +110,12 @@
         app:boxStrokeWidthFocused="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_Desc"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ConfirmarContrasenia"
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_lock">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiet_ConfirmPassword_ConfirmPassword"
+            android:id="@+id/tiet_ConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirmar contraseña"
@@ -145,6 +149,7 @@
         android:layout_marginStart="32dp"
         android:text="Ingresa tu nueva contraseña"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_NuevaContrasenia"
         app:layout_constraintTop_toBottomOf="@+id/tv_Titulo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
