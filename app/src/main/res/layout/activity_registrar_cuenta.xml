@@ -24,7 +24,7 @@
                 android:layout_height="48dp"
                 android:layout_margin="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Volver"
+                android:contentDescription="@string/volver_boton"
                 android:src="@drawable/ic_back_arrow_black"
                 app:tint="@color/primary_blue"
                 app:layout_constraintStart_toStartOf="parent"

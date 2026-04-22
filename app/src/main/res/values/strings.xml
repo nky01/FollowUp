@@ -36,4 +36,9 @@
     <string name="apellido_hint">Perez</string>
     <string name="gestion_de_clientes">Gestión de Clientes</string>
     <string name="buscar_cliente">Buscar cliente…</string>
+    <string name="seguridad_title">Seguridad</string>
+    <string name="cambiar_contrasenia_opcion">Cambiar contraseña</string>
+    <string name="agregar_segundo_factor_2fa_opcion">Agregar segundo factor (2FA)</string>
+    <string name="desbloqueo_biometrico_opcion">Desbloqueo biométrico</string>
+    <string name="volver_boton">Volver</string>
 </resources>

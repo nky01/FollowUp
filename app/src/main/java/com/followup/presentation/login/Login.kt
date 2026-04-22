@@ -1,13 +1,18 @@
 package com.followup.presentation.login
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -22,12 +27,18 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executor
 
 class Login : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: AppDatabase
     private lateinit var btnLogin: MaterialButton
+    private lateinit var executor: Executor
+    private lateinit var biometricPrompt: BiometricPrompt
+    
+    private var pendingEmail: String = ""
+    private var pendingUserName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +47,8 @@ class Login : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
         firebaseAuth = FirebaseAuth.getInstance()
         database = AppDatabase.getDatabase(this)
+        
+        setupBiometric()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -117,14 +130,22 @@ class Login : AppCompatActivity() {
                             val dao = database.usuarioDao()
                             val usuario = dao.obtenerPorMail(emailLower)
                             
+                            val userName = usuario?.nombre ?: "Usuario"
+                            
                             sharedPreferences.edit {
                                 putString("USER_MAIL", emailLower)
-                                    .putString("USER_NAME", usuario?.nombre ?: "Usuario")
+                                putString("USER_NAME", userName)
                             }
                             
-                            val intent = Intent(this@Login, PrincipalActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                            pendingEmail = emailLower
+                            pendingUserName = userName
+                            
+                            val biometricEnabled = sharedPreferences.getBoolean("biometric_enabled", false)
+                            if (biometricEnabled && canAuthenticateWithBiometric()) {
+                                showBiometricPrompt()
+                            } else {
+                                navigateToMain()
+                            }
                         } catch (_: Exception) {
                             Toast.makeText(this@Login, "Error al cargar datos del usuario", Toast.LENGTH_SHORT).show()
                         }
@@ -145,5 +166,52 @@ class Login : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun setupBiometric() {
+        executor = ContextCompat.getMainExecutor(this)
+        
+        biometricPrompt = BiometricPrompt(this, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && 
+                        errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        Toast.makeText(this@Login, "Error: $errString", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    navigateToMain()
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(this@Login, "Huella no reconocida", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun canAuthenticateWithBiometric(): Boolean {
+        val biometricManager = BiometricManager.from(this)
+        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
+    }
+
+    private fun showBiometricPrompt() {
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Verificación biométrica")
+            .setSubtitle("Verifica tu identidad para acceder a la app")
+            .setNegativeButtonText("Usar contraseña")
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            .build()
+        
+        biometricPrompt.authenticate(promptInfo)
+    }
+
+    private fun navigateToMain() {
+        val intent = Intent(this@Login, PrincipalActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

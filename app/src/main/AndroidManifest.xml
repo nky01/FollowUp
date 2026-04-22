@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-feature android:name="android.hardware.fingerprint" android:required="true"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -37,9 +41,6 @@
             android:exported="false" />
         <activity
             android:name=".presentation.settings.CambiarMail"
-            android:exported="false" />
-        <activity
-            android:name=".presentation.settings.VerificarCambioMail"
             android:exported="false" />
         <activity
             android:name=".presentation.settings.Configuracion"
