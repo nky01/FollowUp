@@ -1,6 +1,8 @@
 package com.followup.presentation.register
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.ImageButton
 import android.widget.Toast
@@ -16,9 +18,12 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegistrarCuenta : AppCompatActivity() {
+
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var database: AppDatabase
 
@@ -26,7 +31,7 @@ class RegistrarCuenta : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_registrar_cuenta)
-        
+
         firebaseAuth = FirebaseAuth.getInstance()
         database = AppDatabase.getDatabase(this)
 
@@ -47,9 +52,7 @@ class RegistrarCuenta : AppCompatActivity() {
         val btnRegister = findViewById<MaterialButton>(R.id.btn_Register)
         val btnBack = findViewById<ImageButton>(R.id.btn_Back)
 
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnRegister.setOnClickListener {
             val nombre = tietName.text.toString().trim()
@@ -64,17 +67,21 @@ class RegistrarCuenta : AppCompatActivity() {
     }
 
     private fun validarFrontend(
-        nombre: String, email: String, password: String, confirmPassword: String,
-        tilName: TextInputLayout, tilEmail: TextInputLayout, tilPassword: TextInputLayout, tilConfirmPassword: TextInputLayout
+        nombre: String,
+        email: String,
+        password: String,
+        confirmPassword: String,
+        tilName: TextInputLayout,
+        tilEmail: TextInputLayout,
+        tilPassword: TextInputLayout,
+        tilConfirmPassword: TextInputLayout
     ): Boolean {
         var esValido = true
 
         if (nombre.isEmpty()) {
             tilName.error = "El nombre es obligatorio"
             esValido = false
-        } else {
-            tilName.error = null
-        }
+        } else tilName.error = null
 
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
@@ -82,9 +89,7 @@ class RegistrarCuenta : AppCompatActivity() {
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Formato de email inválido"
             esValido = false
-        } else {
-            tilEmail.error = null
-        }
+        } else tilEmail.error = null
 
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
@@ -92,16 +97,12 @@ class RegistrarCuenta : AppCompatActivity() {
         } else if (password.length < 6) {
             tilPassword.error = "Mínimo 6 caracteres"
             esValido = false
-        } else {
-            tilPassword.error = null
-        }
+        } else tilPassword.error = null
 
         if (confirmPassword != password) {
             tilConfirmPassword.error = "Las contraseñas no coinciden"
             esValido = false
-        } else {
-            tilConfirmPassword.error = null
-        }
+        } else tilConfirmPassword.error = null
 
         return esValido
     }
@@ -110,33 +111,48 @@ class RegistrarCuenta : AppCompatActivity() {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    lifecycleScope.launch {
+
+                    lifecycleScope.launch(Dispatchers.IO) {
                         try {
                             val dao = database.usuarioDao()
                             val existe = dao.obtenerPorMail(email)
+
                             if (existe == null) {
-                                dao.crearUsuario(
-                                    Usuario(
-                                        nombre = nombre,
-                                        mail = email,
-                                        contraseniaHash = password,
-                                        codigo2FA = null
-                                    )
+                                val nuevoUsuario = Usuario(
+                                    nombre = nombre,
+                                    mail = email,
+                                    contraseniaHash = password,
+                                    codigo2FA = null
                                 )
+                                dao.crearUsuario(nuevoUsuario)
+
+                                // Guardar en SharedPreferences
+                                val prefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+                                prefs.edit().putString("USER_NAME", nombre).apply()
                             }
-                            Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
-                            finish()
-                        } catch (_: Exception) {
-                            Toast.makeText(this@RegistrarCuenta, "Error al guardar en base de datos local", Toast.LENGTH_SHORT).show()
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+
+                        } catch (e: Exception) {
+                            Log.e("REGISTRO_ERROR", "DB Error: ${e.message}")
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@RegistrarCuenta, "Error al guardar en base local", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
+
                 } else {
                     val errorMessage = task.exception?.message
+
                     when {
-                        errorMessage?.contains("email already in use", ignoreCase = true) == true -> {
+                        errorMessage?.contains("email already in use", true) == true -> {
                             findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya está en uso"
                         }
-                        errorMessage?.contains("weak password", ignoreCase = true) == true -> {
+                        errorMessage?.contains("weak password", true) == true -> {
                             findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña muy débil"
                         }
                         else -> {

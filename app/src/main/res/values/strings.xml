@@ -1,7 +1,10 @@
 <resources>
+
     <string name="app_name">FollowUp</string>
     <string name="logo">FollowUp</string>
     <string name="saludo_formato">Hola %s!</string>
+
+    <!-- Auth -->
     <string name="login">Login</string>
     <string name="bienvenida_mensaje">¡Bienvenido a FollowUp! Tu aliado en ventas</string>
     <string name="correo_electronico">CORREO ELECTRÓNICO</string>
@@ -14,26 +17,77 @@
     <string name="registrate">Crear cuenta</string>
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="crear_cuenta">Crear cuenta</string>
+    <string name="registrarse">Registrarse</string>
+
+    <!-- Datos -->
     <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
     <string name="nombre">NOMBRE</string>
-    <string name="nombre_hint">Juan</string>
+    <string name="nombre_label">Nombre</string>
+    <string name="nombre_hint">Juan Pérez</string>
+    <string name="apellido">Apellido</string>
+    <string name="apellido_hint">Perez</string>
+    <string name="correo_label">Correo</string>
+    <string name="correo_hint">juan.perez@mail.com</string>
     <string name="confirmar_contrasenia">CONFIRMAR CONTRASEÑA</string>
+
+    <!-- Perfil -->
     <string name="buenos_aires_argentina">Buenos Aires, Argentina</string>
+    <string name="usuario_01">Usuario 01</string>
+    <string name="imagen_perfil">Imagen de perfil</string>
+    <string name="cambiar_mail">Cambiar mail</string>
+
+    <!-- Configuración -->
     <string name="informaci_n_personal">Información Personal</string>
+    <string name="informacion_personal">Informacion personal</string>
     <string name="cuenta">Cuenta</string>
     <string name="notificaciones">Notificaciones</string>
     <string name="seguridad">Seguridad</string>
     <string name="aplicacion">Aplicacion</string>
     <string name="apariencia">Apariencia</string>
-    <string name="usuario_01">Usuario 01</string>
-    <string name="cambiar_mail">Cambiar mail</string>
-    <string name="registrarse">Registrarse</string>
-    <string name="apellido">Apellido</string>
-    <string name="nombre_label">Nombre</string>
-    <string name="informacion_personal">Informacion personal</string>
-    <string name="correo_label">Correo</string>
-    <string name="correo_hint">juan.perez@mail.com</string>
-    <string name="apellido_hint">Perez</string>
+
+    <!-- Clientes -->
     <string name="gestion_de_clientes">Gestión de Clientes</string>
-    <string name="buscar_cliente">Buscar cliente…</string>
+    <string name="gestion_clientes_titulo">Gestión de\nClientes</string>
+    <string name="buscar_cliente">Buscar cliente...</string>
+    <string name="todos">Todos</string>
+    <string name="vendidos">Vendidos</string>
+    <string name="pendiente">Pendiente</string>
+    <string name="no_asignado">No Asignado</string>
+    <string name="nuevo_cliente">Nuevo cliente</string>
+
+    <!-- Ventas -->
+    <string name="gestion_ventas_titulo">Gestión de\nVentas</string>
+    <string name="buscar_venta">Filtrar por Nombre, Mail o Teléfono...</string>
+    <string name="pagadas">Pagadas</string>
+    <string name="agregar_venta">Agregar venta</string>
+    <string name="nueva_venta_cd">Nueva venta</string>
+    <string name="agregar_venta_titulo">Agregar Venta</string>
+
+    <string name="nombre_cliente">Nombre de cliente</string>
+    <string name="seleccionar_cliente">Seleccione cliente</string>
+    <string name="monto_total">Monto Total</string>
+    <string name="pago_total">Pago Total</string>
+    <string name="fecha_venta">Fecha de Venta</string>
+    <string name="fecha_seguimiento">Fecha seguimiento</string>
+    <string name="descripcion">Descripcion</string>
+
+    <string name="cancelar">Cancelar</string>
+    <string name="guardar">Guardar</string>
+
+    <!-- Cards Venta -->
+    <string name="card_venta_titulo">Venta $ID_Venta</string>
+    <string name="card_venta_cliente">Cliente $Nombre_Cliente</string>
+    <string name="card_venta_estado">Pendiente</string>
+    <string name="card_venta_fecha">25 Feb</string>
+    <string name="card_venta_monto_titulo">Monto a pagar</string>
+    <string name="card_venta_monto_calculo">$40.000/50.000</string>
+    <string name="card_venta_seguimiento">Fecha de Seguimiento: 25 Mar</string>
+    <string name="card_venta_descripcion">[Descripcion]</string>
+    <string name="icono_venta">Icono de venta</string>
+    <string name="editar_venta">Editar Venta</string>
+
+    <!-- Historial -->
+    <string name="gestion_historial_titulo">Gestión de\nHistorial</string>
+    <string name="buscar_historial">Filtrar por Nombre, Mail o Teléfono...</string>
+
 </resources>

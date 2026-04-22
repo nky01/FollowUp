@@ -17,54 +17,50 @@
         android:padding="20dp">
 
         <ImageView
-            android:id="@+id/iv_user_icon"
+            android:id="@+id/iv_venta_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="#E8F1FF"
-            android:contentDescription="Icono cliente"
+            android:contentDescription="Icono venta"
             android:padding="8dp"
-            android:src="@drawable/ic_clients"
+            android:src="@drawable/ic_ventas"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="#4A90E2" />
 
         <TextView
-            android:id="@+id/tvNombre"
+            android:id="@+id/tvVentaId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/iv_user_icon"
-            app:layout_constraintTop_toTopOf="@id/iv_user_icon"
-            tools:text="Cliente 1" />
+            app:layout_constraintStart_toEndOf="@id/iv_venta_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_venta_icon"
+            tools:text="Venta #00" />
 
         <TextView
-            android:id="@+id/tvSubtitulo"
+            android:id="@+id/tvClienteId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:textColor="@color/hint_color"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@id/tvNombre"
-            app:layout_constraintTop_toBottomOf="@id/tvNombre"
-            tools:text="Fabricacion de ..." />
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvVentaId"
+            app:layout_constraintTop_toBottomOf="@id/tvVentaId"
+            tools:text="Cliente ID: 0" />
 
         <TextView
-            android:id="@+id/tvEstado"
+            android:id="@+id/tvEstadoVenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFF4E5"
-            android:drawablePadding="4dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
             android:textColor="#D4850D"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvNombre"
+            app:layout_constraintTop_toTopOf="@id/tvVentaId"
             tools:text="Pendiente" />
 
         <LinearLayout
@@ -73,10 +69,9 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/tvDescTag"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvNombre"
-            app:layout_constraintTop_toBottomOf="@+id/tvEstado">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEstadoVenta">
 
             <TextView
                 android:id="@+id/tvFecha"
@@ -101,117 +96,94 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvDescTag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:textStyle="normal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_user_icon"
-            tools:text="Fabricacion de 20 unidades" />
-
-        <!-- INVISIBLE, SOLO SE MUESTRA CUANDO SE DESPLIEGA -->
-
+        <!-- Menu Oculto -->
         <LinearLayout
-            android:id="@+id/layoutContacto"
+            android:id="@+id/layoutMontoVenta"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDescTag">
+            app:layout_constraintTop_toBottomOf="@+id/tvClienteId">
 
             <TextView
-                android:id="@+id/tvContactoTitulo"
+                android:id="@+id/tvMontoTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Contacto:"
+                android:layout_marginTop="12dp"
+                android:text="@string/card_venta_monto_titulo"
                 android:textColor="@color/text_primary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDescTag" />
+                app:layout_constraintTop_toBottomOf="@+id/iv_venta_icon" />
 
-            <LinearLayout
-                android:id="@+id/layoutTel"
+            <!-- Progress -->
+            <ProgressBar
+                android:id="@+id/progressPago"
+                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tvContactoTitulo">
+                android:layout_height="16dp"
+                android:layout_marginTop="6dp"
+                android:progress="80" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Telefono:  "
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvTelefonoValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_primary"
-                    tools:text="+54 9 112233445" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutMail"
+            <!-- Valores -->
+            <TextView
+                android:id="@+id/tvMonto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/layoutTel">
+                android:text="$40.000 / 50.000" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Correo electronico:  "
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
+            <!-- Fecha de Seguimiento -->
+            <TextView
+                android:id="@+id/tvSeguimiento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/card_venta_seguimiento"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMontoCalculo" />
 
-                <TextView
-                    android:id="@+id/tvEmailValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_primary"
-                    tools:text="usuario01@gmail.com" />
+            <TextView
+                android:id="@+id/tvDescVenta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/card_venta_descripcion"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSeguimiento" />
 
-            </LinearLayout>
-
+            <!-- Editar y Eliminar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="end"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutMontoVenta">
 
                 <ImageView
-                    android:id="@+id/ivEdit"
+                    android:id="@+id/ivEditVenta"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:contentDescription="Editar"
+                    android:contentDescription="Editar venta"
                     android:src="@android:drawable/ic_menu_edit"
-                    app:layout_constraintBottom_toBottomOf="@id/ivDelete"
-                    app:layout_constraintEnd_toStartOf="@id/ivDelete"
-                    app:layout_constraintTop_toTopOf="@id/ivDelete"
                     app:tint="@color/text_primary" />
 
                 <ImageView
-                    android:id="@+id/ivDelete"
+                    android:id="@+id/ivDeleteVenta"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginLeft="6dp"
-                    android:contentDescription="Eliminar"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="Eliminar venta"
                     android:src="@android:drawable/ic_menu_delete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layoutMail"
                     app:tint="#F04438" />
 
             </LinearLayout>
@@ -220,3 +192,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
+

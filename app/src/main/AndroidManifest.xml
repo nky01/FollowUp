@@ -47,6 +47,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".presentation.Perfil"
+            android:exported="false" />
     </application>
 
 </manifest>
