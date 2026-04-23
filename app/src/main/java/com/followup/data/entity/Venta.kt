@@ -6,6 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Ventas_Tabla")
 data class Venta(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+
+    val userMail: String,
+
     val idClienteVenta: Int,
     val nombreCliente: String,
     val montoTotal: Double,

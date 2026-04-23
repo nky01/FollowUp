@@ -2,6 +2,7 @@ package com.followup.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
@@ -31,6 +32,7 @@ import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.launch
 import com.followup.data.adapter.ClientesAdapter
+import com.followup.presentation.settings.SessionManager
 import com.google.android.material.button.MaterialButtonToggleGroup
 
 class ClientesFragment : Fragment() {
@@ -59,6 +61,8 @@ class ClientesFragment : Fragment() {
 
     private lateinit var adapter: ClientesAdapter
 
+    private lateinit var sessionManager: SessionManager // IMPORTANTE PARA RELACIONES
+
     /* ------------------------------------------------------------------------------------
                                       MÉTODOS DEL FRAGMENT
     ------------------------------------------------------------------------------------ */
@@ -75,6 +79,8 @@ class ClientesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
 
         initComponents(view) // INICIALIZA LOS COMPONENTES DE LA VISTA
 
@@ -313,7 +319,14 @@ class ClientesFragment : Fragment() {
             val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
 
             if (!cliente.email.equals(emailOriginal, ignoreCase = true)) {
-                val emailExistente = dao.obtenerPorEmail(cliente.email)
+
+                val userMail = sessionManager.getUserMail() // OBTENER EL USUARIO LOGUEADO
+
+                val emailExistente = dao.obtenerPorEmail(
+                    cliente.email,
+                    userMail
+                )
+
                 if (emailExistente != null) {
                     tilEmail.error = "Este correo ya esta en uso"
                     return@launch
@@ -385,18 +398,24 @@ class ClientesFragment : Fragment() {
 
     // cargarClientes se encarga de obtener la lista de clientes desde la base de datos, aplicando el filtro de estado si es necesario, y dsp actualiza la vista
     private fun cargarClientes() {
+
         lifecycleScope.launch {
+
             val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
+            val userMail = sessionManager.getUserMail() // IMPORTANTE
+
             val clientes = if (filtroActual == null) {
-                dao.obtenerTodos()
+                dao.obtenerTodos(userMail)
             } else {
-                dao.obtenerPorEstado(filtroActual!!)
+                dao.obtenerPorEstado(filtroActual!!, userMail)
             }
 
             clientesCargados.clear()
             clientesCargados.addAll(clientes)
+
             aplicarBusquedaYRender(searchInput.text?.toString().orEmpty())
         }
+
     }
 
     private fun aplicarBusquedaYRender(query: String) {
@@ -589,7 +608,10 @@ class ClientesFragment : Fragment() {
                 // Verificar si el email ya existe en la base de datos
                 val database = AppDatabase.getDatabase(requireContext())
                 val dao = database.clienteDao()
-                val existe = dao.obtenerPorEmail(email)
+
+                val userMail = sessionManager.getUserMail()
+
+                val existe = dao.obtenerPorEmail(email, userMail)
 
                 if (existe == null) {
                     dao.insert(
@@ -599,7 +621,8 @@ class ClientesFragment : Fragment() {
                             telefono = telefono,
                             email = email,
                             estado = estado,
-                            fecha = System.currentTimeMillis()
+                            fecha = System.currentTimeMillis(),
+                            userMail = userMail
                         )
                     )
                     cargarClientes()

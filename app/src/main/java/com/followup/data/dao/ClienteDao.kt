@@ -12,36 +12,79 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ClienteDao {
 
-    // Insertar
-    @Insert(onConflict = OnConflictStrategy.REPLACE) // Si existe ID, reemplaza registro
+    /* ------------------------------
+            INSERTAR CLIENTE
+    ------------------------------ */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cliente: Cliente)
 
-    // Actualizar
+    /* ------------------------------
+            ACTUALIZAR CLIENTE
+    ------------------------------ */
     @Update
     suspend fun update(cliente: Cliente)
 
-    // Eliminar
+    /* ------------------------------
+            ELIMINAR CLIENTE
+    ------------------------------ */
     @Delete
     suspend fun delete(cliente: Cliente)
 
-    // Obtener todos los clientes, ordenados por fecha
-    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 0 ORDER BY fecha DESC")
-    suspend fun obtenerTodos(): List<Cliente>
+    /* ------------------------------
+        OBTENER TODOS (POR USUARIO)
+    ------------------------------ */
+    @Query("""
+    SELECT * FROM Cliente_Tabla
+    WHERE userMail = :userMail
+""")
+    suspend fun obtenerTodos(userMail: String): List<Cliente>
 
-    // Obtener un cliente por su email
-    @Query("SELECT * FROM Cliente_Tabla WHERE email = :email LIMIT 1") // Se tendria que cambiar en un futuro?
-    suspend fun obtenerPorEmail(email: String): Cliente?
+    /* ------------------------------
+        OBTENER POR EMAIL (MISMO USER)
+    ------------------------------ */
+    @Query("""
+        SELECT * FROM Cliente_Tabla 
+        WHERE email = :email 
+        AND userMail = :userMail 
+        LIMIT 1
+    """)
+    suspend fun obtenerPorEmail(email: String, userMail: String): Cliente?
 
-    //clasificacio por estado: vendido, pendiente o no asignado
-    @Query("SELECT * FROM Cliente_Tabla WHERE estado = :estado AND isDeleted = 0 ORDER BY fecha DESC")
-    suspend fun obtenerPorEstado(estado: String): List<Cliente>
+    /* ------------------------------
+        OBTENER POR ESTADO + USER
+    ------------------------------ */
+    @Query("""
+        SELECT * FROM Cliente_Tabla 
+        WHERE estado = :estado 
+        AND isDeleted = 0 
+        AND userMail = :userMail
+        ORDER BY fecha DESC
+    """)
+    suspend fun obtenerPorEstado(estado: String, userMail: String): List<Cliente>
 
+    /* ------------------------------
+        SOFT DELETE
+    ------------------------------ */
     @Query("UPDATE Cliente_Tabla SET isDeleted = 1 WHERE id = :clienteId")
     suspend fun marcarComoEliminado(clienteId: Int)
 
-    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 0")
-    fun getClientesActivos(): Flow<List<Cliente>>
+    /* ------------------------------
+        FLOW ACTIVOS (POR USER)
+    ------------------------------ */
+    @Query("""
+        SELECT * FROM Cliente_Tabla 
+        WHERE isDeleted = 0 
+        AND userMail = :userMail
+    """)
+    fun getClientesActivos(userMail: String): Flow<List<Cliente>>
 
-    @Query("SELECT * FROM Cliente_Tabla WHERE isDeleted = 1")
-    fun getClientesEnPapelera(): Flow<List<Cliente>>
+    /* ------------------------------
+        FLOW PAPELERA (POR USER)
+    ------------------------------ */
+    @Query("""
+        SELECT * FROM Cliente_Tabla 
+        WHERE isDeleted = 1 
+        AND userMail = :userMail
+    """)
+    fun getClientesEnPapelera(userMail: String): Flow<List<Cliente>>
 }

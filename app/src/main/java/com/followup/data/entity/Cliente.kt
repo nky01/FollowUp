@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 data class Cliente(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
+    val userMail: String,
+
     val nombre: String,
     val descripcion: String,
     val telefono: String,

@@ -16,30 +16,96 @@ interface VentaDao {
     @Delete
     suspend fun delete(venta: Venta)
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE isDeleted = 0 ORDER BY fecha DESC")
-    suspend fun obtenerTodas(): List<Venta>
+    /* --------------------------------------------------
+                    OBTENER TODAS
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Ventas_Tabla 
+        WHERE userMail = :userMail 
+        AND isDeleted = 0 
+        ORDER BY fecha DESC
+    """)
+    suspend fun obtenerTodas(userMail: String): List<Venta>
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE idClienteVenta = :clienteId AND isDeleted = 0")
-    suspend fun obtenerVentasPorCliente(clienteId: Int): List<Venta>
+    /* --------------------------------------------------
+                FILTRAR POR ESTADO
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Ventas_Tabla 
+        WHERE estado = :estado 
+        AND userMail = :userMail 
+        AND isDeleted = 0 
+        ORDER BY fecha DESC
+    """)
+    suspend fun obtenerPorEstado(estado: String, userMail: String): List<Venta>
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE estado = :estado AND isDeleted = 0 ORDER BY fecha DESC")
-    suspend fun obtenerPorEstado(estado: String): List<Venta>
+    /* --------------------------------------------------
+            VENTAS POR CLIENTE
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Ventas_Tabla 
+        WHERE idClienteVenta = :clienteId 
+        AND userMail = :userMail 
+        AND isDeleted = 0
+    """)
+    suspend fun obtenerVentasPorCliente(clienteId: Int, userMail: String): List<Venta>
 
-    @Query("SELECT SUM(total) FROM Ventas_Tabla WHERE estado = 'Pagado' AND isDeleted = 0")
-    suspend fun obtenerIngresosTotales(): Double?
+    /* --------------------------------------------------
+            INGRESOS TOTALES
+    -------------------------------------------------- */
+    @Query("""
+        SELECT SUM(total) FROM Ventas_Tabla 
+        WHERE estado = 'Pagado' 
+        AND userMail = :userMail 
+        AND isDeleted = 0
+    """)
+    suspend fun obtenerIngresosTotales(userMail: String): Double?
 
-    @Query("SELECT estado FROM Ventas_Tabla WHERE idClienteVenta = :clienteId AND isDeleted = 0")
-    suspend fun obtenerEstadosPorCliente(clienteId: Int): List<String>
+    /* --------------------------------------------------
+        ESTADOS DE UN CLIENTE
+    -------------------------------------------------- */
+    @Query("""
+        SELECT estado FROM Ventas_Tabla 
+        WHERE idClienteVenta = :clienteId 
+        AND userMail = :userMail 
+        AND isDeleted = 0
+    """)
+    suspend fun obtenerEstadosPorCliente(clienteId: Int, userMail: String): List<String>
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE isDeleted = 0")
-    fun getVentasActivas(): Flow<List<Venta>>
+    /* --------------------------------------------------
+                FLOW ACTIVAS
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Ventas_Tabla 
+        WHERE userMail = :userMail 
+        AND isDeleted = 0
+    """)
+    fun getVentasActivas(userMail: String): Flow<List<Venta>>
 
-    @Query("SELECT * FROM Ventas_Tabla WHERE isDeleted = 1")
-    fun getVentasEliminadas(): Flow<List<Venta>>
+    /* --------------------------------------------------
+                FLOW ELIMINADAS
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Ventas_Tabla 
+        WHERE userMail = :userMail 
+        AND isDeleted = 1
+    """)
+    fun getVentasEliminadas(userMail: String): Flow<List<Venta>>
 
-    @Query("UPDATE Ventas_Tabla SET isDeleted = 1 WHERE id = :idVenta")
+    /* --------------------------------------------------
+                SOFT DELETE
+    -------------------------------------------------- */
+    @Query("""
+        UPDATE Ventas_Tabla 
+        SET isDeleted = 1 
+        WHERE id = :idVenta
+    """)
     suspend fun softDelete(idVenta: Int)
 
-    @Query("UPDATE Ventas_Tabla SET isDeleted = 0 WHERE id = :idVenta")
+    @Query("""
+        UPDATE Ventas_Tabla 
+        SET isDeleted = 0 
+        WHERE id = :idVenta
+    """)
     suspend fun restaurarVenta(idVenta: Int)
 }

@@ -18,8 +18,8 @@ import com.followup.R
 import com.followup.data.adapter.SeguimientoHomeAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Venta
-import com.followup.presentation.Perfil
 import com.followup.presentation.settings.Configuracion
+import com.followup.presentation.settings.SessionManager
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -38,11 +38,15 @@ class InicioFragment : Fragment() {
     private var listaCompletaVentas: List<Venta> = emptyList()
     private var expandidoVentas = false
 
+    private lateinit var sessionManager: SessionManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_inicio, container, false)
+
+        sessionManager = SessionManager(requireContext())
 
         sharedPreferences = requireActivity()
             .getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
@@ -81,7 +85,7 @@ class InicioFragment : Fragment() {
 
         // Navegación a perfil/configuración
         ivProfilePicture.setOnClickListener {
-            startActivity(Intent(requireContext(), Perfil::class.java))
+            startActivity(Intent(requireContext(), com.followup.presentation.settings.Configuracion::class.java))
         }
 
         val bottomNav = requireActivity()
@@ -159,9 +163,14 @@ class InicioFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val db = AppDatabase.getDatabase(requireContext())
-                val todasLasVentas = db.ventaDao().obtenerTodas()
 
-                val clientesCount = db.clienteDao().obtenerTodos().size
+                val userMail = sessionManager.getUserMail()
+
+                val todasLasVentas = db.ventaDao().obtenerTodas(userMail)
+
+                val clientesCount = db.clienteDao()
+                    .obtenerTodos(userMail)
+                    .size
                 val ventasCount = todasLasVentas.size
 
                 val hoy = Calendar.getInstance().apply {

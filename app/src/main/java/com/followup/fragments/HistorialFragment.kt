@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
+import com.followup.presentation.settings.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 
 class HistorialFragment : Fragment() {
@@ -35,6 +36,8 @@ class HistorialFragment : Fragment() {
     private lateinit var adapter: HistorialAdapter
     private var listaCompleta = mutableListOf<HistorialItem>()
 
+    private lateinit var sessionManager: SessionManager
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +48,9 @@ class HistorialFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+
         initComponents(view)
         setupRecyclerView()
         initListeners()
@@ -123,11 +129,15 @@ class HistorialFragment : Fragment() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(requireContext())
 
+            val userMail = sessionManager.getUserMail()
+
             combine(
-                db.clienteDao().getClientesEnPapelera(),
-                db.ventaDao().getVentasEliminadas()
+                db.clienteDao().getClientesEnPapelera(userMail),
+                db.ventaDao().getVentasEliminadas(userMail)
             ) { clientes, ventas ->
+
                 val items = mutableListOf<HistorialItem>()
+
                 items.addAll(clientes.map { HistorialItem.ClienteItem(it) })
                 items.addAll(ventas.map { HistorialItem.VentaItem(it) })
 

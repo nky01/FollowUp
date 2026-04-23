@@ -3,6 +3,7 @@ package com.followup.fragments
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import com.followup.data.adapter.VentasAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.followup.data.entity.Venta
+import com.followup.presentation.settings.SessionManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,6 +60,8 @@ class VentasFragment : Fragment() {
     // BUSCADOR PARA FILTRAR VENTAS POR [ NOMBRE, MAIL, TELÉFONO ]
     private lateinit var inputBuscar: TextInputEditText
 
+    private lateinit var sessionManager: SessionManager
+
     private data class VentaFormData(
         val clienteId: Int,
         val nombreCliente: String,
@@ -78,6 +82,9 @@ class VentasFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+
         initComponents(view)
         initListeners()
 
@@ -112,25 +119,24 @@ class VentasFragment : Fragment() {
     -------------------------------------------------- */
     private fun cargarVentas() {
         lifecycleScope.launch {
+
+            val userMail = sessionManager.getUserMail()
+
             val ventas = AppDatabase.getDatabase(requireContext())
                 .ventaDao()
-                .obtenerTodas()
+                .obtenerTodas(userMail)
 
             listaOriginal = ventas
 
-            // MANTIENE FILTRO ACTUAL ACTIVO
             val selectedId = filterGroup.checkedButtonId
 
             val listaFiltrada = when (selectedId) {
-
                 R.id.btn_filter_vendidos -> ventas.filter {
                     it.estado.equals("Pagado", true)
                 }
-
                 R.id.btn_filter_pendiente -> ventas.filter {
                     it.estado.equals("Pendiente", true)
                 }
-
                 else -> ventas
             }
 
@@ -440,7 +446,12 @@ class VentasFragment : Fragment() {
     }
 
     private suspend fun obtenerClientesDisponibles(): List<ClienteOption> {
-        val clientes = AppDatabase.getDatabase(requireContext()).clienteDao().obtenerTodos()
+        val userMail = sessionManager.getUserMail()
+
+        val clientes = AppDatabase.getDatabase(requireContext())
+            .clienteDao()
+            .obtenerTodos(userMail)
+
         return clientes.map { cliente: Cliente ->
             ClienteOption(cliente.id, cliente.nombre, "${cliente.nombre} - ${cliente.email}")
         }
@@ -623,8 +634,10 @@ class VentasFragment : Fragment() {
             val db = AppDatabase.getDatabase(requireContext())
 
             // OBTENER EL CLIENTE REAL DESDE LA BD
+            val userMail = sessionManager.getUserMail()
+
             val cliente = db.clienteDao()
-                .obtenerTodos()
+                .obtenerTodos(userMail)
                 .find { it.id == form.clienteId }
 
             val estado = if (form.pagoTotal >= form.montoTotal) "Pagado" else "Pendiente"
@@ -632,6 +645,7 @@ class VentasFragment : Fragment() {
             val venta = Venta(
                 idClienteVenta = form.clienteId,
                 nombreCliente = form.nombreCliente,
+                userMail = userMail,
 
                 // NUEVOS CAMPOS ( NECESARIOS PARA FILTRAR POR EMAIL Y TELÉFONO )
                 emailCliente = cliente?.email ?: "",
@@ -710,7 +724,9 @@ class VentasFragment : Fragment() {
 
         val db = AppDatabase.getDatabase(requireContext())
 
-        val estados = db.ventaDao().obtenerEstadosPorCliente(clienteId)
+        val userMail = sessionManager.getUserMail()
+
+        val estados = db.ventaDao().obtenerEstadosPorCliente(clienteId, userMail)
 
         val nuevoEstado = when {
             estados.isEmpty() -> "No Asignado"
@@ -718,7 +734,8 @@ class VentasFragment : Fragment() {
             else -> "Vendido"
         }
 
-        val cliente = db.clienteDao().obtenerTodos()
+        val cliente = db.clienteDao()
+            .obtenerTodos(userMail)
             .find { it.id == clienteId }
 
         if (cliente != null) {
