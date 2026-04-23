@@ -1,165 +1,372 @@
 package com.followup.presentation.register
 
+/* ----------------------------------------------------------------------------------------
+                                           IMPORTS
+---------------------------------------------------------------------------------------- */
+
 import android.content.Context
+// Permite acceder a recursos del sistema (SharedPreferences, etc.)
+
 import android.os.Bundle
+// Contenedor de datos del Activity
+
 import android.util.Log
+// Logs para debug
+
 import android.util.Patterns
+// Validaciones predefinidas (email)
+
 import android.widget.ImageButton
+// Botón de imagen (volver atrás)
+
 import android.widget.Toast
+// Mensajes cortos en pantalla
+
 import androidx.activity.enableEdgeToEdge
+// Permite usar toda la pantalla
+
 import androidx.appcompat.app.AppCompatActivity
+// Activity base
+
 import androidx.core.view.ViewCompat
+// Compatibilidad de vistas
+
 import androidx.core.view.WindowInsetsCompat
+// Manejo de barras del sistema
+
 import androidx.lifecycle.lifecycleScope
+// Corrutinas ligadas al ciclo de vida
+
 import com.followup.R
+// Recursos del proyecto
+
 import com.followup.data.database.AppDatabase
+// Base de datos ROOM
+
 import com.followup.data.entity.Usuario
+// Entidad Usuario
+
 import com.google.android.material.button.MaterialButton
+// Botón Material
+
 import com.google.android.material.textfield.TextInputEditText
+// Input editable
+
 import com.google.android.material.textfield.TextInputLayout
+// Contenedor del input (manejo de errores)
+
 import com.google.firebase.auth.FirebaseAuth
+// Autenticación Firebase
+
 import kotlinx.coroutines.Dispatchers
+// Manejo de hilos
+
 import kotlinx.coroutines.launch
+// Iniciar corrutinas
+
 import kotlinx.coroutines.withContext
+// Cambiar de hilo
+
+/* ----------------------------------------------------------------------------------------
+                                  ACTIVITY REGISTRAR CUENTA
+---------------------------------------------------------------------------------------- */
+/*
+    [+] Permite crear un nuevo usuario:
+        - Registra en Firebase (autenticación)
+        - Guarda usuario en Room (base local)
+        - Guarda nombre en SharedPreferences
+*/
 
 class RegistrarCuenta : AppCompatActivity() {
 
+    /* ----------------------------------------------------------------------------------------
+                                            ATRIBUTOS
+    ---------------------------------------------------------------------------------------- */
+
     private lateinit var firebaseAuth: FirebaseAuth
+    // Maneja autenticación Firebase
+
     private lateinit var database: AppDatabase
+    // Base de datos local (ROOM)
+
+    /* ---------- Componentes UI ---------- */
+
+    private lateinit var tilName: TextInputLayout
+    private lateinit var tietName: TextInputEditText
+
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tietEmail: TextInputEditText
+
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var tietPassword: TextInputEditText
+
+    private lateinit var tilConfirmPassword: TextInputLayout
+    private lateinit var tietConfirmPassword: TextInputEditText
+
+    private lateinit var btnRegister: MaterialButton
+    private lateinit var btnBack: ImageButton
+
+    /* ----------------------------------------------------------------------------------------
+                                      MÉTODOS PREDEFINIDOS
+    ---------------------------------------------------------------------------------------- */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_registrar_cuenta)
 
-        firebaseAuth = FirebaseAuth.getInstance()
-        database = AppDatabase.getDatabase(this)
+        setupUI()
+        initComponents()
+        initListeners()
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                          SETUP INICIAL
+    ---------------------------------------------------------------------------------------- */
+
+    private fun setupUI() {
+
+        enableEdgeToEdge()
+        // Usa toda la pantalla
+
+        setContentView(R.layout.activity_registrar_cuenta)
+        // Conecta XML
+
+        applyInsets()
+        // Ajusta márgenes del sistema
+    }
+
+    private fun applyInsets() {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+
             insets
         }
+    }
 
-        val tilName = findViewById<TextInputLayout>(R.id.til_Name)
-        val tietName = findViewById<TextInputEditText>(R.id.tiet_Name)
-        val tilEmail = findViewById<TextInputLayout>(R.id.til_Email)
-        val tietEmail = findViewById<TextInputEditText>(R.id.tiet_Email)
-        val tilPassword = findViewById<TextInputLayout>(R.id.til_Password)
-        val tietPassword = findViewById<TextInputEditText>(R.id.tiet_Password)
-        val tilConfirmPassword = findViewById<TextInputLayout>(R.id.til_ConfirmPassword)
-        val tietConfirmPassword = findViewById<TextInputEditText>(R.id.tiet_ConfirmPassword)
-        val btnRegister = findViewById<MaterialButton>(R.id.btn_Register)
-        val btnBack = findViewById<ImageButton>(R.id.btn_Back)
+    /* ----------------------------------------------------------------------------------------
+                                      INICIALIZACIÓN
+    ---------------------------------------------------------------------------------------- */
+
+    private fun initComponents() {
+        initServices()
+        initViews()
+    }
+
+    private fun initServices() {
+
+        firebaseAuth = FirebaseAuth.getInstance()
+        // Inicializa Firebase Auth
+
+        database = AppDatabase.getDatabase(this)
+        // Inicializa ROOM
+    }
+
+    private fun initViews() {
+
+        tilName = findViewById(R.id.til_Name)
+        tietName = findViewById(R.id.tiet_Name)
+
+        tilEmail = findViewById(R.id.til_Email)
+        tietEmail = findViewById(R.id.tiet_Email)
+
+        tilPassword = findViewById(R.id.til_Password)
+        tietPassword = findViewById(R.id.tiet_Password)
+
+        tilConfirmPassword = findViewById(R.id.til_ConfirmPassword)
+        tietConfirmPassword = findViewById(R.id.tiet_ConfirmPassword)
+
+        btnRegister = findViewById(R.id.btn_Register)
+        btnBack = findViewById(R.id.btn_Back)
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      LISTENERS (EVENTOS)
+    ---------------------------------------------------------------------------------------- */
+
+    private fun initListeners() {
 
         btnBack.setOnClickListener { finish() }
+        // Vuelve a la pantalla anterior
 
         btnRegister.setOnClickListener {
-            val nombre = tietName.text.toString().trim()
-            val email = tietEmail.text.toString().trim()
-            val password = tietPassword.text.toString().trim()
-            val confirmPassword = tietConfirmPassword.text.toString().trim()
-
-            if (validarFrontend(nombre, email, password, confirmPassword, tilName, tilEmail, tilPassword, tilConfirmPassword)) {
-                registrarUsuario(nombre, email, password)
-            }
+            manejarRegistro()
         }
     }
+
+    private fun manejarRegistro() {
+
+        val nombre = tietName.text.toString().trim()
+        val email = tietEmail.text.toString().trim()
+        val password = tietPassword.text.toString().trim()
+        val confirmPassword = tietConfirmPassword.text.toString().trim()
+
+        if (validarFrontend(nombre, email, password, confirmPassword)) {
+            registrarUsuario(nombre, email, password)
+        }
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      VALIDACIONES
+    ---------------------------------------------------------------------------------------- */
 
     private fun validarFrontend(
         nombre: String,
         email: String,
         password: String,
-        confirmPassword: String,
-        tilName: TextInputLayout,
-        tilEmail: TextInputLayout,
-        tilPassword: TextInputLayout,
-        tilConfirmPassword: TextInputLayout
+        confirmPassword: String
     ): Boolean {
+
+        limpiarErrores()
+
         var esValido = true
 
         if (nombre.isEmpty()) {
             tilName.error = "El nombre es obligatorio"
             esValido = false
-        } else tilName.error = null
+        }
 
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
             esValido = false
+
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Formato de email inválido"
             esValido = false
-        } else tilEmail.error = null
+        }
 
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
             esValido = false
+
         } else if (password.length < 6) {
             tilPassword.error = "Mínimo 6 caracteres"
             esValido = false
-        } else tilPassword.error = null
+        }
 
         if (confirmPassword != password) {
             tilConfirmPassword.error = "Las contraseñas no coinciden"
             esValido = false
-        } else tilConfirmPassword.error = null
+        }
 
         return esValido
     }
 
+    private fun limpiarErrores() {
+
+        tilName.error = null
+        tilEmail.error = null
+        tilPassword.error = null
+        tilConfirmPassword.error = null
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      REGISTRO (FIREBASE + ROOM)
+    ---------------------------------------------------------------------------------------- */
+
     private fun registrarUsuario(nombre: String, email: String, password: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+
+        val emailLower = email.lowercase()
+        // Normaliza email
+
+        firebaseAuth.createUserWithEmailAndPassword(emailLower, password)
             .addOnCompleteListener(this) { task ->
+
                 if (task.isSuccessful) {
 
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val dao = database.usuarioDao()
-                            val existe = dao.obtenerPorMail(email)
-
-                            if (existe == null) {
-                                val nuevoUsuario = Usuario(
-                                    nombre = nombre,
-                                    mail = email,
-                                    contraseniaHash = password,
-                                    codigo2FA = null
-                                )
-                                dao.crearUsuario(nuevoUsuario)
-
-                                // Guardar en SharedPreferences
-                                val prefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
-                                prefs.edit().putString("USER_NAME", nombre).apply()
-                            }
-
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
-
-                        } catch (e: Exception) {
-                            Log.e("REGISTRO_ERROR", "DB Error: ${e.message}")
-
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(this@RegistrarCuenta, "Error al guardar en base local", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
+                    onRegisterSuccess(nombre, emailLower, password)
 
                 } else {
-                    val errorMessage = task.exception?.message
 
-                    when {
-                        errorMessage?.contains("email already in use", true) == true -> {
-                            findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo ya está en uso"
-                        }
-                        errorMessage?.contains("weak password", true) == true -> {
-                            findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña muy débil"
-                        }
-                        else -> {
-                            Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+                    manejarErrorRegistro(task.exception?.message)
                 }
             }
+    }
+
+    private fun onRegisterSuccess(nombre: String, email: String, password: String) {
+
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            try {
+                val dao = database.usuarioDao()
+                val existe = dao.obtenerPorMail(email)
+
+                if (existe == null) {
+
+                    val nuevoUsuario = Usuario(
+                        nombre = nombre,
+                        mail = email,
+                        contraseniaHash = password,
+                        codigo2FA = null
+                    )
+
+                    dao.crearUsuario(nuevoUsuario)
+                    // Guarda en ROOM
+
+                    guardarNombreEnPrefs(nombre)
+                }
+
+                mostrarExito()
+
+            } catch (e: Exception) {
+
+                Log.e("REGISTRO_ERROR", "DB Error: ${e.message}")
+                mostrarError("Error al guardar en base local")
+            }
+        }
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      POST REGISTRO
+    ---------------------------------------------------------------------------------------- */
+
+    private suspend fun mostrarExito() {
+
+        withContext(Dispatchers.Main) {
+
+            Toast.makeText(this@RegistrarCuenta, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
+
+            finish()
+            // Vuelve al login
+        }
+    }
+
+    private fun guardarNombreEnPrefs(nombre: String) {
+
+        val prefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+
+        prefs.edit()
+            .putString("USER_NAME", nombre)
+            .apply()
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      MANEJO DE ERRORES
+    ---------------------------------------------------------------------------------------- */
+
+    private fun manejarErrorRegistro(errorMessage: String?) {
+
+        when {
+            errorMessage?.contains("email already in use", true) == true -> {
+                tilEmail.error = "Este correo ya está en uso"
+            }
+
+            errorMessage?.contains("weak password", true) == true -> {
+                tilPassword.error = "Contraseña muy débil"
+            }
+
+            else -> {
+                mostrarError("Error: $errorMessage")
+            }
+        }
+    }
+
+    private fun mostrarError(mensaje: String) {
+
+        runOnUiThread {
+            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+        }
     }
 }
