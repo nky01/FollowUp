@@ -3,10 +3,10 @@
     <string name="logo">FollowUp</string>
     <string name="saludo_formato">Hola %s!</string>
     <string name="login">Login</string>
-    <string name="bienvenida_mensaje">¡Bienvenido a FollowUp! Tu aliado en ventas</string>
+    <string name="bienvenida_mensaje">¡Bienvenido a FollowUp!\nTu aliado en ventas</string>
     <string name="correo_electronico">CORREO ELECTRÓNICO</string>
     <string name="contrasenia">CONTRASEÑA</string>
-    <string name="email_hint">Correoelectronico@gmail.com</string>
+    <string name="email_hint">usuario@mail.com</string>
     <string name="password_hint">••••••••</string>
     <string name="ingresar">Iniciar sesión</string>
     <string name="olvidaste_tu_contrasenia">¿Olvidaste tu contraseña?</string>
@@ -14,7 +14,7 @@
     <string name="registrate">Crear cuenta</string>
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="crear_cuenta">Crear cuenta</string>
-    <string name="correoelectronico_gmail_com">Correoelectronico@gmail.com</string>
+    <string name="correoelectronico_gmail_com">usuario@mail.com</string>
     <string name="nombre">NOMBRE</string>
     <string name="nombre_hint">Juan</string>
     <string name="confirmar_contrasenia">CONFIRMAR CONTRASEÑA</string>
@@ -32,7 +32,7 @@
     <string name="nombre_label">Nombre</string>
     <string name="informacion_personal">Informacion personal</string>
     <string name="correo_label">Correo</string>
-    <string name="correo_hint">juan.perez@mail.com</string>
+    <string name="correo_hint">usuario@mail.com</string>
     <string name="apellido_hint">Perez</string>
     <string name="gestion_de_clientes">Gestión de Clientes</string>
     <string name="buscar_cliente">Buscar cliente…</string>
@@ -40,5 +40,15 @@
     <string name="cambiar_contrasenia_opcion">Cambiar contraseña</string>
     <string name="agregar_segundo_factor_2fa_opcion">Agregar segundo factor (2FA)</string>
     <string name="desbloqueo_biometrico_opcion">Desbloqueo biométrico</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
     <string name="volver_boton">Volver</string>
+    <string name="confirmar_contrasenia_subtitulo">CONFIRMAR CONTRASEÑA</string>
+    <string name="nueva_contrasenia_subtitulo">NUEVA CONTRASEÑA</string>
+    <string name="reestablecer_contrasenia_titulo">Reestablecer Contraseña</string>
+    <string name="nueva_contrasenia_hint">Nueva contraseña</string>
+    <string name="confirmar_contrasenia_hint">Confirmar contraseña</string>
+    <string name="confirmar_contrasenia_boton">Confirmar Contraseña</string>
+    <string name="cambiar_mail_titulo">Cambiar mail</string>
+    <string name="ingres_tu_contrase_a_actual_para_confirmar_tu_identidad">Ingresá tu contraseña actual para confirmar tu identidad.</string>
+    <string name="enviar_enlace_de_verificacion_btn">Enviar enlace de verificación</string>
 </resources>

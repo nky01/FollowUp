@@ -1,6 +1,5 @@
 package com.followup.presentation.settings
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ImageButton
@@ -35,7 +34,7 @@ class Seguridad : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_seguridad)
 
-        sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -131,9 +130,4 @@ class Seguridad : AppCompatActivity() {
         biometricPrompt.authenticate(promptInfo)
     }
 
-    fun authenticateWithBiometric() {
-        if (canAuthenticateWithBiometric()) {
-            showBiometricPrompt(enable = false)
-        }
-    }
 }

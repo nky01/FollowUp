@@ -10,7 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.followup.R
 import com.followup.fragments.PrincipalActivity
-import com.followup.presentation.login.Login
 import com.google.firebase.auth.FirebaseAuth
 
 class Bienvenida : AppCompatActivity() {
