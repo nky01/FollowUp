@@ -34,9 +34,11 @@ interface ClienteDao {
         OBTENER TODOS (POR USUARIO)
     ------------------------------ */
     @Query("""
-    SELECT * FROM Cliente_Tabla
-    WHERE userMail = :userMail
-""")
+        SELECT * FROM Cliente_Tabla
+        WHERE userMail = :userMail
+        AND isDeleted = 0
+        ORDER BY fecha DESC
+    """)
     suspend fun obtenerTodos(userMail: String): List<Cliente>
 
     /* ------------------------------
