@@ -119,4 +119,23 @@ interface VentaDao {
      */
     @Query("DELETE FROM Ventas_Tabla WHERE idClienteVenta = :clienteId AND userMail = :userMail")
     suspend fun eliminarVentasPorCliente(clienteId: Int, userMail: String)
+
+    /* --------------------------------------------------
+                MARCAR VENTA CADUCADA
+    -------------------------------------------------- */
+
+    /**
+     * Marca como 'Pago caducado' todas las ventas pendientes cuya
+     * fecha de seguimiento ya pasó. Se llama antes de recalcular el estado del cliente.
+     */
+    @Query("""
+    UPDATE Ventas_Tabla
+    SET estado = 'Pago caducado'
+    WHERE idClienteVenta = :clienteId
+    AND userMail = :userMail
+    AND isDeleted = 0
+    AND estado = 'Pendiente'
+    AND fechaSeguimiento < :ahora
+""")
+    suspend fun marcarVentasCaducadas(clienteId: Int, userMail: String, ahora: Long)
 }

@@ -62,7 +62,6 @@
                 android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botón Filtro por Fecha -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_filter_date"
             android:layout_width="48dp"
@@ -84,7 +83,6 @@
                 app:tint="@color/primary_blue" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Botón Filtro por Estado -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_filtro_estado"
             android:layout_width="48dp"
@@ -122,6 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Dropdown de estados — se abre al tocar btn_filtro_estado -->
         <LinearLayout
             android:id="@+id/dropdown_estados_venta"
             android:layout_width="180dp"
@@ -184,6 +183,27 @@
                 android:text="Pagado"
                 android:textColor="#12B76A"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="12dp"
+                android:background="#F2F4F7" />
+
+            <!-- NUEVO: Pago caducado -->
+            <TextView
+                android:id="@+id/filtro_venta_caducado"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Pago caducado"
+                android:textColor="#F04438"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <View

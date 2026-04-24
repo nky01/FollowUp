@@ -164,18 +164,7 @@ class InicioFragment : Fragment() {
 
     private fun configurarImagenPerfil(view: View) {
         val prefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val ivProfile = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
         val uriString = prefs.getString("profile_image_uri", null)
-        uriString?.let {
-            try {
-                ivProfile.setImageURI(Uri.parse(it))
-            } catch (_: Exception) {
-                ivProfile.setImageResource(android.R.color.darker_gray)
-            }
-        }
-        ivProfile.setOnClickListener {
-            startActivity(Intent(requireContext(), Configuracion::class.java))
-        }
     }
 
     private fun setupRecyclerViews() {
@@ -225,7 +214,6 @@ class InicioFragment : Fragment() {
 
     private fun actualizarSaludo() {
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
-        view?.findViewById<TextView>(R.id.tv_saludo)?.text = "Hola, $userName"
     }
 
     // Actualiza las métricas de clientes, ventas y alertas en la interfaz

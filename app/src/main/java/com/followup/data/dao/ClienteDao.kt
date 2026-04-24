@@ -101,7 +101,7 @@ interface ClienteDao {
         WHERE idClienteVenta = :clienteId
         AND userMail = :userMail
         AND isDeleted = 0
-        AND estado = 'Pendiente'
+        AND estado IN ('Pendiente', 'Pago caducado')
     """)
     suspend fun contarVentasPendientes(clienteId: Int, userMail: String): Int
 

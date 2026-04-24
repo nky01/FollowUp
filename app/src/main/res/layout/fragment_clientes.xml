@@ -227,6 +227,26 @@
                 android:textColor="#98A2B3"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="#F2F4F7" />
+
+            <TextView
+                android:id="@+id/filtro_pago_caducado"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Pago Caducado"
+                android:textColor="#F04438"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <!-- FAB overlay -->
