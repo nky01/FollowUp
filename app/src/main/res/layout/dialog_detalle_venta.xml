@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_content_top_rounded">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <!-- HEADER -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="28dp"
+                android:paddingBottom="16dp"
+                android:paddingHorizontal="24dp">
+
+                <!-- Ícono -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardBackgroundColor="#EBF1FF"
+                    app:cardElevation="0dp">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_ventas"
+                        app:tint="#286DFF" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Número de venta -->
+                <TextView
+                    android:id="@+id/tv_detalle_venta_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    tools:text="Venta #12" />
+
+                <!-- Cliente -->
+                <TextView
+                    android:id="@+id/tv_detalle_venta_cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/hint_color"
+                    tools:text="Juan Pérez" />
+
+                <!-- Estado -->
+                <TextView
+                    android:id="@+id/tv_detalle_venta_estado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="4dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/bg_estado_rounded"
+                    tools:text="Pendiente" />
+
+            </LinearLayout>
+
+            <!-- PROGRESO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Progreso de pago"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hint_color" />
+
+                    <TextView
+                        android:id="@+id/tv_detalle_venta_porcentaje"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        tools:text="60%" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progress_detalle_pago"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="6dp"
+                    android:progress="60" />
+
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:layout_marginHorizontal="24dp" android:background="#F2F4F7" />
+
+            <!-- DATOS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="16dp">
+
+                <!-- Monto total -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                        android:src="@drawable/ic_ventas" app:tint="@color/hint_color" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginStart="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Monto total" android:textSize="11sp" android:textStyle="bold"
+                            android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                        <TextView android:id="@+id/tv_detalle_venta_monto"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:textSize="14sp" android:textColor="@color/text_primary"
+                            tools:text="$50.000" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+                <!-- Pago realizado -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                        android:src="@drawable/ic_ventas" app:tint="@color/hint_color" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginStart="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Pago realizado" android:textSize="11sp" android:textStyle="bold"
+                            android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                        <TextView android:id="@+id/tv_detalle_venta_pago"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:textSize="14sp" android:textColor="@color/text_primary"
+                            tools:text="$30.000" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+                <!-- Fecha de venta -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                        android:src="@drawable/ic_calendar" app:tint="@color/hint_color" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginStart="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Fecha de venta" android:textSize="11sp" android:textStyle="bold"
+                            android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                        <TextView android:id="@+id/tv_detalle_venta_fecha"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:textSize="14sp" android:textColor="@color/text_primary"
+                            tools:text="24/04/2026" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+                <!-- Fecha de seguimiento -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                        android:src="@drawable/ic_calendar" app:tint="@color/hint_color" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginStart="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Fecha de seguimiento" android:textSize="11sp" android:textStyle="bold"
+                            android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                        <TextView android:id="@+id/tv_detalle_venta_seguimiento"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:textSize="14sp" android:textColor="@color/text_primary"
+                            tools:text="30/04/2026" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+                <!-- Descripción -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                        android:src="@drawable/ic_edit" app:tint="@color/hint_color" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginStart="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Descripción" android:textSize="11sp" android:textStyle="bold"
+                            android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                        <TextView android:id="@+id/tv_detalle_venta_descripcion"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:textSize="14sp" android:textColor="@color/text_primary"
+                            android:lineSpacingMultiplier="1.4"
+                            tools:text="Venta de pack premium." />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- BOTONES -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="20dp"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_detalle_venta_editar"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Editar"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_primary"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#D0D5DD"
+                    app:strokeWidth="1.5dp"
+                    app:icon="@drawable/ic_edit"
+                    app:iconTint="@color/text_primary"
+                    app:iconPadding="6dp"
+                    app:backgroundTint="@android:color/white" />
+
+                <View android:layout_width="10dp" android:layout_height="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_detalle_venta_eliminar"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Eliminar"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="#F04438"
+                    app:icon="@drawable/ic_delete"
+                    app:iconTint="@android:color/white"
+                    app:iconPadding="6dp" />
+
+            </LinearLayout>
+
+            <!-- Cerrar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cerrar_detalle_venta"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="160dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Cerrar"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:cornerRadius="14dp"
+                app:strokeColor="#D0D5DD"
+                app:strokeWidth="1.5dp"
+                app:backgroundTint="@android:color/white" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

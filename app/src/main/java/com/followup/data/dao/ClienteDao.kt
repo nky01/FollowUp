@@ -123,6 +123,19 @@ interface ClienteDao {
     suspend fun obtenerClientesConSeguimientoVencido(userMail: String, ahora: Long): List<Cliente>
 
     /* --------------------------------------------------
+                    Contar Ventas Caducadas
+    -------------------------------------------------- */
+
+    @Query("""
+    SELECT COUNT(*) FROM Ventas_Tabla
+    WHERE idClienteVenta = :clienteId
+    AND userMail = :userMail
+    AND isDeleted = 0
+    AND estado = 'Pago caducado'
+""")
+    suspend fun contarVentasCaducadas(clienteId: Int, userMail: String): Int
+
+    /* --------------------------------------------------
                 FLOWS (observación reactiva)
     -------------------------------------------------- */
 

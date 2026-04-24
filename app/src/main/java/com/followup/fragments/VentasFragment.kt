@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,18 +18,21 @@ import android.view.ViewGroup
 /* ---------- WIDGETS / UI ---------- */
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 
 /* ---------- ANDROIDX ---------- */
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /* ---------- MATERIAL DESIGN ---------- */
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -50,6 +54,7 @@ import java.util.Locale
 
 /* ---------- CORRUTINAS ---------- */
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 
 class VentasFragment : Fragment() {
@@ -73,10 +78,9 @@ class VentasFragment : Fragment() {
     private var listaOriginal: List<Venta> = listOf()
 
     // --- Filtros por estado ---
-    private lateinit var filterGroup: MaterialButtonToggleGroup
-    private lateinit var btnFilterTodos: MaterialButton
-    private lateinit var btnFilterVendidos: MaterialButton
-    private lateinit var btnFilterPendiente: MaterialButton
+    private lateinit var btnFiltroEstado: MaterialCardView
+    private lateinit var dropdownEstadosVenta: LinearLayout
+    private var filtroActual: String? = null
 
     // --- Buscador ---
     private lateinit var inputBuscar: TextInputEditText
@@ -92,11 +96,9 @@ class VentasFragment : Fragment() {
 
     /* ========================================================================================
                                     CONSTANTES DE ESTADO
-    ========================================================================================
-       Centralizar los strings de estado evita errores de tipeo en comparaciones.
-    */
+    ======================================================================================== */
     private object Estado {
-        const val PENDIENTE   = "Pendiente"   // antes era "Falta pagar"
+        const val PENDIENTE   = "Pendiente"
         const val PAGADO      = "Pagado"
         const val NO_ASIGNADO = "No Asignado"
     }
@@ -105,10 +107,8 @@ class VentasFragment : Fragment() {
                                     DATA CLASSES INTERNAS
     ======================================================================================== */
 
-    /* Opción del dropdown de clientes en el formulario de nueva venta. */
     private data class ClienteOption(val id: Int, val nombre: String, val label: String)
 
-    /* Datos del formulario ya validados, listos para construir una entidad Venta. */
     private data class VentaFormData(
         val clienteId: Int,
         val nombreCliente: String,
@@ -141,10 +141,6 @@ class VentasFragment : Fragment() {
         initAdapter()
         initListeners()
         cargarVentas()
-
-        // Seleccionar "Todos" como filtro inicial
-        btnFilterTodos.isChecked = true
-        actualizarEstilosFiltro(R.id.btn_filter_todos)
     }
 
     override fun onDestroyView() {
@@ -159,37 +155,38 @@ class VentasFragment : Fragment() {
 
     /** Vincula todas las vistas del layout con sus variables. */
     private fun initComponents(view: View) {
-        fabMain            = view.findViewById(R.id.fab_main)
-        fabMenuContainer   = view.findViewById(R.id.fab_menu_container)
-        fabOverlay         = view.findViewById(R.id.fab_overlay)
-        btnNuevaVenta      = view.findViewById(R.id.btn_nueva_venta)
-        recyclerVentas     = view.findViewById(R.id.rvVentas)
-        filterGroup        = view.findViewById(R.id.filter_group)
-        btnFilterTodos     = view.findViewById(R.id.btn_filter_todos)
-        btnFilterVendidos  = view.findViewById(R.id.btn_filter_vendidos)
-        btnFilterPendiente = view.findViewById(R.id.btn_filter_pendiente)
-        inputBuscar        = view.findViewById(R.id.search)
+        fabMain              = view.findViewById(R.id.fab_main)
+        fabMenuContainer     = view.findViewById(R.id.fab_menu_container)
+        fabOverlay           = view.findViewById(R.id.fab_overlay)
+        btnNuevaVenta        = view.findViewById(R.id.btn_nueva_venta)
+        recyclerVentas       = view.findViewById(R.id.rvVentas)
+        btnFiltroEstado      = view.findViewById(R.id.btn_filtro_estado)
+        dropdownEstadosVenta = view.findViewById(R.id.dropdown_estados_venta)
+        inputBuscar          = view.findViewById(R.id.search)
 
-        // El overlay empieza no interactuable; se activa solo cuando el FAB está abierto
         fabOverlay.isClickable = false
         fabOverlay.isFocusable = false
     }
 
-    /* Crea el adaptador y lo asigna al RecyclerView. */
+    /** Crea el adaptador y lo asigna al RecyclerView. */
     private fun initAdapter() {
         adapter = VentasAdapter(object : VentasAdapter.OnVentaClickListener {
-            override fun onDeleteClick(venta: Venta) = mostrarDialogoEliminar(venta)
-            override fun onEditClick(venta: Venta)   = mostrarDialogoEditar(venta)
+            override fun onDeleteClick(venta: Venta)  = mostrarDialogoEliminar(venta)
+            override fun onEditClick(venta: Venta)    = mostrarDialogoEditar(venta)
+            override fun onDetalleClick(venta: Venta) = mostrarDialogDetalle(venta)
         })
-        recyclerVentas.layoutManager = LinearLayoutManager(requireContext())
-        recyclerVentas.adapter = adapter
+
+        recyclerVentas.layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerVentas.clipChildren  = false
+        recyclerVentas.clipToPadding = false
+        recyclerVentas.adapter       = adapter
     }
 
-    /* Registra todos los listeners de botones, filtros y buscador. */
+    /** Registra todos los listeners de botones, filtros y buscador. */
     private fun initListeners() {
 
-        // FAB principal abre/cierra el menú; el overlay lo cierra al tocar fuera
-        fabMain.setOnClickListener { toggleFabMenu() }
+        // FAB principal
+        fabMain.setOnClickListener   { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
 
         btnNuevaVenta.setOnClickListener {
@@ -197,26 +194,96 @@ class VentasFragment : Fragment() {
             showNuevaVentaDialog()
         }
 
-        // Filtros por estado: al cambiar el botón activo se re-filtra la lista
-        filterGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            actualizarEstilosFiltro(checkedId)
-            filtrarVentas()  // único punto que aplica filtro + búsqueda
+        // Botón filtro: abre/cierra el dropdown
+        btnFiltroEstado.setOnClickListener {
+            dropdownEstadosVenta.visibility =
+                if (dropdownEstadosVenta.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
-        // Buscador: filtra por nombre, email o teléfono al escribir
+        // Opciones del dropdown
+        requireView().findViewById<TextView>(R.id.filtro_venta_todos).setOnClickListener {
+            filtroActual = null
+            dropdownEstadosVenta.visibility = View.GONE
+            filtrarVentas()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_venta_pendiente).setOnClickListener {
+            filtroActual = Estado.PENDIENTE
+            dropdownEstadosVenta.visibility = View.GONE
+            filtrarVentas()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_venta_pagado).setOnClickListener {
+            filtroActual = Estado.PAGADO
+            dropdownEstadosVenta.visibility = View.GONE
+            filtrarVentas()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_venta_caducado).setOnClickListener {
+            filtroActual = "Pago caducado"
+            dropdownEstadosVenta.visibility = View.GONE
+            filtrarVentas()
+        }
+
+        // Buscador
         inputBuscar.doAfterTextChanged { filtrarVentas() }
     }
 
 
     /* ========================================================================================
-                                    CARGA Y FILTRADO DE VENTAS
-       ======================================================================================== */
+                                    MOSTRAR DIALOG DETALLE
+    ======================================================================================== */
 
-    /**
-     * Trae todas las ventas del usuario desde la BD y guarda la lista original.
-     * Después aplica los filtros vigentes para actualizar el RecyclerView.
-     */
+    private fun mostrarDialogDetalle(venta: Venta) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_detalle_venta, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val moneyFormatter = DecimalFormat("#,##0.00")
+
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_id).text          = "Venta #${venta.id}"
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_cliente).text      = venta.nombreCliente
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_monto).text        = "$${moneyFormatter.format(venta.montoTotal)}"
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_pago).text         = "$${moneyFormatter.format(venta.pagoTotal)}"
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_fecha).text        = dateFormatter.format(Date(venta.fechaVenta))
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_seguimiento).text  = dateFormatter.format(Date(venta.fechaSeguimiento))
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_descripcion).text  =
+            venta.descripcion.ifEmpty { "Sin descripción" }
+
+        val tvEstado = dialogView.findViewById<TextView>(R.id.tv_detalle_venta_estado)
+        tvEstado.text = venta.estado
+        val colorEstado = colorParaEstado(venta.estado)
+        (tvEstado.background as? GradientDrawable)?.setColor(Color.parseColor(colorEstado))
+
+        val porcentaje = ((venta.pagoTotal / venta.montoTotal) * 100).toInt().coerceIn(0, 100)
+        dialogView.findViewById<ProgressBar>(R.id.progress_detalle_pago).progress   = porcentaje
+        dialogView.findViewById<TextView>(R.id.tv_detalle_venta_porcentaje).text     = "$porcentaje%"
+
+        dialogView.findViewById<MaterialButton>(R.id.btn_detalle_venta_editar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogoEditar(venta)
+        }
+        dialogView.findViewById<MaterialButton>(R.id.btn_detalle_venta_eliminar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogoEliminar(venta)
+        }
+        dialogView.findViewById<MaterialButton>(R.id.btn_cerrar_detalle_venta).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+
+    /* ========================================================================================
+                                    CARGA Y FILTRADO DE VENTAS
+    ======================================================================================== */
+
     private fun cargarVentas() {
         lifecycleScope.launch {
             val userMail = sessionManager.getUserMail()
@@ -228,47 +295,35 @@ class VentasFragment : Fragment() {
     }
 
     /**
-     * Filtra [listaOriginal] combinando el estado del botón activo y el texto del buscador.
-     * Es el único lugar donde se llama a [adapter.submitList], evitando duplicaciones.
+     * Único punto de actualización del adaptador.
+     * Combina búsqueda de texto + filtro de estado.
      */
     private fun filtrarVentas() {
-        val query      = inputBuscar.text.toString().lowercase().trim()
-        val selectedId = filterGroup.checkedButtonId
+        val query = inputBuscar.text.toString().lowercase().trim()
 
         val resultado = listaOriginal.filter { venta ->
-            coincideConBusqueda(venta, query) && coincideConEstado(venta, selectedId)
+            coincideConBusqueda(venta, query) && coincideConEstado(venta)
         }
 
         adapter.submitList(resultado)
     }
 
     /**
-     * Devuelve true si la venta coincide con el texto buscado.
-     * Detecta automáticamente si se busca por email (contiene @), teléfono (contiene dígitos)
-     * o nombre (cualquier otro texto).
+     * Búsqueda inteligente: detecta email (@), teléfono (dígitos) o nombre.
      */
     private fun coincideConBusqueda(venta: Venta, query: String): Boolean {
         if (query.isEmpty()) return true
         return when {
-            query.contains("@") ->
-                venta.emailCliente?.lowercase()?.contains(query) == true
-            query.any { it.isDigit() } ->
-                venta.telefonoCliente?.contains(query) == true
-            else ->
-                venta.nombreCliente.lowercase().contains(query)
+            query.contains("@")        -> venta.emailCliente?.lowercase()?.contains(query) == true
+            query.any { it.isDigit() } -> venta.telefonoCliente?.contains(query) == true
+            else                       -> venta.nombreCliente.lowercase().contains(query)
         }
     }
 
-    /**
-     * Devuelve true si la venta coincide con el filtro de estado seleccionado.
-     * Si el botón activo es "Todos", siempre devuelve true.
-     */
-    private fun coincideConEstado(venta: Venta, selectedId: Int): Boolean {
-        return when (selectedId) {
-            R.id.btn_filter_vendidos  -> venta.estado.equals(Estado.PAGADO,    ignoreCase = true)
-            R.id.btn_filter_pendiente -> venta.estado.equals(Estado.PENDIENTE, ignoreCase = true)
-            else                      -> true
-        }
+    /** Null = Todos → siempre true. Con valor, compara ignorando mayúsculas. */
+    private fun coincideConEstado(venta: Venta): Boolean {
+        val f = filtroActual ?: return true
+        return venta.estado.equals(f, ignoreCase = true)
     }
 
 
@@ -286,7 +341,6 @@ class VentasFragment : Fragment() {
 
         dialog.show()
 
-        // Referencias a campos del formulario
         val montoTotal       = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_monto_total)
         val pagoTotal        = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_pago_total)
         val fechaVenta       = dialogView.findViewById<TextInputEditText>(R.id.tiet_venta_fecha_venta)
@@ -295,26 +349,21 @@ class VentasFragment : Fragment() {
         val btnCancelar      = dialogView.findViewById<MaterialButton>(R.id.btn_cancelar_venta)
         val btnGuardar       = dialogView.findViewById<MaterialButton>(R.id.btn_guardar_venta)
 
-        // Precargar datos existentes de la venta
         montoTotal.setText(venta.montoTotal.toString())
         pagoTotal.setText(venta.pagoTotal.toString())
         descripcion.setText(venta.descripcion)
-
-        // Precargar fechas usando el dateFormatter único del Fragment
         setupDateField(fechaVenta, venta.fechaVenta)
         setupDateField(fechaSeguimiento, venta.fechaSeguimiento)
 
         btnCancelar.setOnClickListener { dialog.dismiss() }
 
         btnGuardar.setOnClickListener {
-
-            val monto = montoTotal.text.toString().toDoubleOrNull()
-            val pago  = pagoTotal.text.toString().toDoubleOrNull()
+            val monto                = montoTotal.text.toString().toDoubleOrNull()
+            val pago                 = pagoTotal.text.toString().toDoubleOrNull()
             val fechaVentaLong       = fechaVenta.tag as? Long
             val fechaSeguimientoLong = fechaSeguimiento.tag as? Long
-            val desc = descripcion.text.toString()
+            val desc                 = descripcion.text.toString()
 
-            // Validaciones — cada una muestra su propio mensaje de error
             if (monto == null || monto <= 0) {
                 Toast.makeText(requireContext(), "Monto inválido", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -336,7 +385,6 @@ class VentasFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Determinar estado con tolerancia para evitar errores de punto flotante con Double
             val estado = if (Math.abs(pago - monto) < 0.001) Estado.PAGADO else Estado.PENDIENTE
 
             val ventaActualizada = venta.copy(
@@ -349,10 +397,7 @@ class VentasFragment : Fragment() {
             )
 
             lifecycleScope.launch {
-                AppDatabase.getDatabase(requireContext())
-                    .ventaDao()
-                    .update(ventaActualizada)
-
+                AppDatabase.getDatabase(requireContext()).ventaDao().update(ventaActualizada)
                 actualizarEstadoCliente(venta.idClienteVenta)
                 dialog.dismiss()
                 cargarVentas()
@@ -410,7 +455,6 @@ class VentasFragment : Fragment() {
         }
     }
 
-    /** Obtiene los clientes del usuario y los convierte en opciones para el dropdown. */
     private suspend fun obtenerClientesDisponibles(): List<ClienteOption> {
         val userMail = sessionManager.getUserMail()
         return AppDatabase.getDatabase(requireContext())
@@ -421,36 +465,29 @@ class VentasFragment : Fragment() {
             }
     }
 
-    /**
-     * Configura todos los campos, validaciones y botones del formulario de venta.
-     * Recibe lambdas para cancelar y guardar, lo que lo hace reutilizable para
-     * distintos diálogos sin duplicar código.
-     */
     private fun configurarFormularioVenta(
         findView: (Int) -> View?,
         clientesDisponibles: List<ClienteOption>,
         onCancelar: () -> Unit,
         onGuardar: (VentaFormData) -> Unit
     ) {
-        val tilCliente           = findView(R.id.til_venta_cliente) as TextInputLayout
-        val actvCliente          = findView(R.id.actv_venta_cliente) as AutoCompleteTextView
-        val tilMontoTotal        = findView(R.id.til_venta_monto_total) as TextInputLayout
-        val tietMontoTotal       = findView(R.id.tiet_venta_monto_total) as TextInputEditText
-        val tilPagoTotal         = findView(R.id.til_venta_pago_total) as TextInputLayout
-        val tietPagoTotal        = findView(R.id.tiet_venta_pago_total) as TextInputEditText
-        val tilFechaVenta        = findView(R.id.til_venta_fecha_venta) as TextInputLayout
-        val tietFechaVenta       = findView(R.id.tiet_venta_fecha_venta) as TextInputEditText
+        val tilCliente           = findView(R.id.til_venta_cliente)          as TextInputLayout
+        val actvCliente          = findView(R.id.actv_venta_cliente)          as AutoCompleteTextView
+        val tilMontoTotal        = findView(R.id.til_venta_monto_total)       as TextInputLayout
+        val tietMontoTotal       = findView(R.id.tiet_venta_monto_total)      as TextInputEditText
+        val tilPagoTotal         = findView(R.id.til_venta_pago_total)        as TextInputLayout
+        val tietPagoTotal        = findView(R.id.tiet_venta_pago_total)       as TextInputEditText
+        val tilFechaVenta        = findView(R.id.til_venta_fecha_venta)       as TextInputLayout
+        val tietFechaVenta       = findView(R.id.tiet_venta_fecha_venta)      as TextInputEditText
         val tilFechaSeguimiento  = findView(R.id.til_venta_fecha_seguimiento) as TextInputLayout
         val tietFechaSeguimiento = findView(R.id.tiet_venta_fecha_seguimiento) as TextInputEditText
-        val tilDescripcion       = findView(R.id.til_venta_descripcion) as TextInputLayout
-        val tietDescripcion      = findView(R.id.tiet_venta_descripcion) as TextInputEditText
-        val btnCancelar          = findView(R.id.btn_cancelar_venta) as MaterialButton
-        val btnGuardar           = findView(R.id.btn_guardar_venta) as MaterialButton
+        val tilDescripcion       = findView(R.id.til_venta_descripcion)       as TextInputLayout
+        val tietDescripcion      = findView(R.id.tiet_venta_descripcion)      as TextInputEditText
+        val btnCancelar          = findView(R.id.btn_cancelar_venta)          as MaterialButton
+        val btnGuardar           = findView(R.id.btn_guardar_venta)           as MaterialButton
 
-        // Mapa para buscar el ClienteOption seleccionado a partir del label del dropdown
         val clienteMap = clientesDisponibles.associateBy { it.label }
 
-        // Dropdown de clientes (solo lectura, no se puede tipear libremente)
         actvCliente.keyListener = null
         actvCliente.setAdapter(
             ArrayAdapter(
@@ -460,18 +497,15 @@ class VentasFragment : Fragment() {
             )
         )
 
-        // Inicializar fechas con el momento actual
         val ahora = System.currentTimeMillis()
         setupDateField(tietFechaVenta, ahora)
         setupDateField(tietFechaSeguimiento, ahora)
 
-        // Si no hay clientes, mostrar error y deshabilitar el botón guardar
         if (clientesDisponibles.isEmpty()) {
             tilCliente.error = "No hay clientes disponibles"
             btnGuardar.isEnabled = false
         }
 
-        // Limpiar el error de cada campo en cuanto el usuario empieza a escribir
         actvCliente.doAfterTextChanged          { tilCliente.error = null }
         tietMontoTotal.doAfterTextChanged       { tilMontoTotal.error = null }
         tietPagoTotal.doAfterTextChanged        { tilPagoTotal.error = null }
@@ -504,14 +538,8 @@ class VentasFragment : Fragment() {
 
     /* ========================================================================================
                                     VALIDACIÓN DEL FORMULARIO
-     ======================================================================================== */
+    ======================================================================================== */
 
-    /**
-     * Valida todos los campos del formulario de nueva venta.
-     * Muestra errores inline debajo de cada campo usando TextInputLayout.
-     *
-     * @return [VentaFormData] con los datos listos si todo es válido, o null si hay errores.
-     */
     private fun validarVentaFrontend(
         clienteSeleccionado: String,
         montoText: String,
@@ -531,40 +559,26 @@ class VentasFragment : Fragment() {
         var esValido = true
 
         val cliente = clienteMap[clienteSeleccionado]
-        if (cliente == null) {
-            tilCliente.error = "Seleccioná un cliente válido"
-            esValido = false
-        } else tilCliente.error = null
+        if (cliente == null) { tilCliente.error = "Seleccioná un cliente válido"; esValido = false }
+        else tilCliente.error = null
 
         val monto = montoText.toDoubleOrNull()
-        if (monto == null || monto <= 0.0) {
-            tilMontoTotal.error = "Ingresá un monto válido"
-            esValido = false
-        } else tilMontoTotal.error = null
+        if (monto == null || monto <= 0.0) { tilMontoTotal.error = "Ingresá un monto válido"; esValido = false }
+        else tilMontoTotal.error = null
 
         val pago = pagoText.toDoubleOrNull()
-        if (pago == null || pago < 0.0) {
-            tilPagoTotal.error = "Ingresá un pago válido"
-            esValido = false
-        } else if (monto != null && pago > monto) {
-            tilPagoTotal.error = "El pago no puede superar el monto"
-            esValido = false
-        } else tilPagoTotal.error = null
+        if (pago == null || pago < 0.0) { tilPagoTotal.error = "Ingresá un pago válido"; esValido = false }
+        else if (monto != null && pago > monto) { tilPagoTotal.error = "El pago no puede superar el monto"; esValido = false }
+        else tilPagoTotal.error = null
 
-        if (fechaVenta == null) {
-            tilFechaVenta.error = "Seleccioná la fecha de venta"
-            esValido = false
-        } else tilFechaVenta.error = null
+        if (fechaVenta == null) { tilFechaVenta.error = "Seleccioná la fecha de venta"; esValido = false }
+        else tilFechaVenta.error = null
 
-        if (fechaSeguimiento == null) {
-            tilFechaSeguimiento.error = "Seleccioná la fecha de seguimiento"
-            esValido = false
-        } else tilFechaSeguimiento.error = null
+        if (fechaSeguimiento == null) { tilFechaSeguimiento.error = "Seleccioná la fecha de seguimiento"; esValido = false }
+        else tilFechaSeguimiento.error = null
 
-        if (descripcion.isEmpty()) {
-            tilDescripcion.error = "Ingresá una descripción"
-            esValido = false
-        } else tilDescripcion.error = null
+        if (descripcion.isEmpty()) { tilDescripcion.error = "Ingresá una descripción"; esValido = false }
+        else tilDescripcion.error = null
 
         if (!esValido || cliente == null || monto == null || pago == null ||
             fechaVenta == null || fechaSeguimiento == null) return null
@@ -585,7 +599,6 @@ class VentasFragment : Fragment() {
                                     REGISTRAR NUEVA VENTA
     ======================================================================================== */
 
-    /** Construye la entidad Venta a partir del formulario validado y la persiste en la BD. */
     private fun registrarVenta(form: VentaFormData, dialog: Dialog) {
         lifecycleScope.launch {
             try {
@@ -596,7 +609,8 @@ class VentasFragment : Fragment() {
                     .obtenerTodos(userMail)
                     .find { it.id == form.clienteId }
 
-                val estado = if (form.pagoTotal >= form.montoTotal) Estado.PAGADO else Estado.PENDIENTE
+                val estado = if (Math.abs(form.pagoTotal - form.montoTotal) < 0.001) Estado.PAGADO
+                else Estado.PENDIENTE
 
                 val venta = Venta(
                     idClienteVenta   = form.clienteId,
@@ -632,45 +646,45 @@ class VentasFragment : Fragment() {
 
     /* ========================================================================================
                                     ACTUALIZAR ESTADO DEL CLIENTE
-       ======================================================================================== */
+    ======================================================================================== */
 
-    /**
-     * Recalcula el estado del cliente según sus ventas activas y lo persiste.
-     *
-     * Reglas:
-     *  - Sin ventas activas  → "No Asignado"
-     *  - Alguna pendiente    → "Pendiente"
-     *  - Todas pagadas       → "Venta finalizada"
-     */
     private suspend fun actualizarEstadoCliente(clienteId: Int) {
         val db       = AppDatabase.getDatabase(requireContext())
         val userMail = sessionManager.getUserMail()
 
         val cliente = db.clienteDao().obtenerPorId(clienteId) ?: return
 
-        // No tocar clientes en estado transitorio — ClientesFragment los maneja
-        if (cliente.estado == EstadoCliente.NUEVO_CLIENTE) return
-
+        val caducadas  = db.clienteDao().contarVentasCaducadas(clienteId, userMail)
         val pendientes = db.clienteDao().contarVentasPendientes(clienteId, userMail)
         val pagadas    = db.clienteDao().contarVentasPagadas(clienteId, userMail)
 
-        val nuevoEstado = when {
-            pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE
-            pagadas > 0    -> {
-                // Todas pagadas → PAGO_REALIZADO transitorio por 24hs
-                val ahora = System.currentTimeMillis()
-                db.clienteDao().update(cliente.copy(
-                    estado            = EstadoCliente.PAGO_REALIZADO,
-                    fechaCambioEstado = ahora
-                ))
-                return
-            }
-            else -> EstadoCliente.NO_ASIGNADO
+        // Sin ninguna venta activa → No Asignado, siempre, sin excepciones
+        if (caducadas == 0 && pendientes == 0 && pagadas == 0) {
+            db.clienteDao().update(cliente.copy(
+                estado            = EstadoCliente.NO_ASIGNADO,
+                fechaCambioEstado = null
+            ))
+            return
         }
+
+        // Prioridad: Caducado > Pendiente > Pagado (PAGO_REALIZADO transitorio)
+        val nuevoEstado = when {
+            caducadas  > 0 -> EstadoCliente.PAGO_CADUCADO
+            pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE
+            else           -> EstadoCliente.PAGO_REALIZADO  // solo pagadas
+        }
+
+        // PAGO_REALIZADO necesita timestamp para el ciclo de 24hs
+        val fechaCambio = if (nuevoEstado == EstadoCliente.PAGO_REALIZADO)
+            System.currentTimeMillis() else null
+
+        // Evitar writes innecesarios si el estado no cambió
+        // (excepto PAGO_REALIZADO que siempre renueva el timestamp)
+        if (cliente.estado == nuevoEstado && nuevoEstado != EstadoCliente.PAGO_REALIZADO) return
 
         db.clienteDao().update(cliente.copy(
             estado            = nuevoEstado,
-            fechaCambioEstado = null
+            fechaCambioEstado = fechaCambio
         ))
     }
 
@@ -679,13 +693,6 @@ class VentasFragment : Fragment() {
                                     SELECTOR DE FECHA (DATEPICKER)
     ======================================================================================== */
 
-    /**
-     * Configura un campo de texto para mostrar un DatePickerDialog al tocarlo.
-     * El timestamp seleccionado se guarda en el [tag] del campo para recuperarlo después.
-     *
-     * @param field         Campo que actuará como selector de fecha.
-     * @param initialMillis Fecha inicial a mostrar (en milisegundos).
-     */
     private fun setupDateField(field: TextInputEditText, initialMillis: Long) {
         field.tag = initialMillis
         field.setText(dateFormatter.format(initialMillis))
@@ -713,29 +720,6 @@ class VentasFragment : Fragment() {
 
 
     /* ========================================================================================
-                               ESTILOS DE LOS BOTONES DE FILTRO
-    ======================================================================================== */
-
-    /**
-     * Actualiza el aspecto visual de los botones de filtrado.
-     * El botón activo se pinta con azul; los demás quedan en blanco.
-     */
-    private fun actualizarEstilosFiltro(selectedId: Int) {
-        val botones = listOf(btnFilterTodos, btnFilterVendidos, btnFilterPendiente)
-
-        botones.forEach { btn ->
-            if (btn.id == selectedId) {
-                btn.setBackgroundColor(Color.parseColor("#286DFF"))
-                btn.setTextColor(Color.WHITE)
-            } else {
-                btn.setBackgroundColor(Color.WHITE)
-                btn.setTextColor(Color.parseColor("#475467"))
-            }
-        }
-    }
-
-
-    /* ========================================================================================
                                         MENÚ FAB
     ======================================================================================== */
 
@@ -746,22 +730,19 @@ class VentasFragment : Fragment() {
     private fun openFabMenu() {
         isFabMenuOpen = true
 
-        fabOverlay.visibility = View.VISIBLE
+        fabOverlay.visibility       = View.VISIBLE
         fabMenuContainer.visibility = View.VISIBLE
-        fabOverlay.isClickable = true
-        fabOverlay.isFocusable = true
+        fabOverlay.isClickable      = true
+        fabOverlay.isFocusable      = true
 
-        // Traer al frente para que el overlay tape el contenido de abajo
         fabOverlay.bringToFront()
         fabMenuContainer.bringToFront()
         fabMain.bringToFront()
 
-        // Animar entrada del overlay (fade in)
         fabOverlay.alpha = 0f
         fabOverlay.animate().alpha(1f).setDuration(150).start()
 
-        // Animar entrada del menú (fade in + slide up)
-        fabMenuContainer.alpha = 0f
+        fabMenuContainer.alpha        = 0f
         fabMenuContainer.translationY = 20f
         fabMenuContainer.animate().alpha(1f).translationY(0f).setDuration(180).start()
 
@@ -775,17 +756,28 @@ class VentasFragment : Fragment() {
         fabOverlay.isClickable = false
         fabOverlay.isFocusable = false
 
-        // Animar salida del overlay (fade out → ocultar)
         fabOverlay.animate().alpha(0f).setDuration(120).withEndAction {
             fabOverlay.visibility = View.GONE
         }.start()
 
-        // Animar salida del menú (fade out + slide down → ocultar)
         fabMenuContainer.animate().alpha(0f).translationY(20f).setDuration(140).withEndAction {
             fabMenuContainer.visibility = View.GONE
         }.start()
 
         fabMain.bringToFront()
         fabMain.setImageResource(android.R.drawable.ic_input_add)
+    }
+
+
+    /* ========================================================================================
+                                    UTILIDADES
+    ======================================================================================== */
+
+    /** Mapa centralizado de estado → color hex. Usado en el adaptador y en el diálogo de detalle. */
+    private fun colorParaEstado(estado: String): String = when (estado.lowercase()) {
+        "pendiente"     -> "#F79009"
+        "pagado"        -> "#12B76A"
+        "pago caducado" -> "#F04438"
+        else            -> "#98A2B3"
     }
 }

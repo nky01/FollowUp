@@ -12,7 +12,7 @@ import com.followup.data.entity.Usuario
 import com.followup.data.entity.Venta
 
 // tuve que cambiarlo porque me daba error al crear un nuevo cliente, no se si es por el cambio de version o por el cambio de nombre de la tabla, pero lo importante es que ahora funciona
-@Database(entities = [Usuario::class, Cliente::class, Venta::class], version = 9, exportSchema = false)
+@Database(entities = [Usuario::class, Cliente::class, Venta::class], version = 10, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao
@@ -28,7 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "followup_db5"
+                    "followup_db6"
                 )
                     .fallbackToDestructiveMigration()
                     .fallbackToDestructiveMigrationOnDowngrade()
