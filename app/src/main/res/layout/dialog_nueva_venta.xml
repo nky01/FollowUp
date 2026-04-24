@@ -65,22 +65,35 @@
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_fecha_venta"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <!-- SWITCH ACTIVAR ALERTA -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_alerta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear alerta de seguimiento"
+            android:layout_marginTop="12dp"/>
+
+        <LinearLayout
+            android:id="@+id/layout_alerta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/fecha_venta">
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="8dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_venta_fecha_venta"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Frecuencia">
 
+                <AutoCompleteTextView
+                    android:id="@+id/actv_frecuencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_venta_fecha_seguimiento"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
