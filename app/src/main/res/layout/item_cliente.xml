@@ -16,175 +16,175 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
+        <!-- ICONO -->
         <ImageView
             android:id="@+id/iv_user_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="#E8F1FF"
-            android:contentDescription="Icono cliente"
             android:padding="8dp"
             android:src="@drawable/ic_clients"
+            app:tint="#4A90E2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#4A90E2" />
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- NOMBRE -->
         <TextView
             android:id="@+id/tvNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/text_primary"
             app:layout_constraintStart_toEndOf="@id/iv_user_icon"
             app:layout_constraintTop_toTopOf="@id/iv_user_icon"
             tools:text="Cliente 1" />
 
-        <TextView
-            android:id="@+id/tvSubtitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@color/hint_color"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@id/tvNombre"
-            app:layout_constraintTop_toBottomOf="@id/tvNombre"
-            tools:text="Fabricacion de ..." />
-
+        <!-- ESTADO -->
         <TextView
             android:id="@+id/tvEstado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FFF4E5"
-            android:drawablePadding="4dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
-            android:textColor="#D4850D"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:textColor="#D4850D"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvNombre"
             tools:text="Pendiente" />
 
+        <!-- FECHA + TOGGLE -->
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/tvDescTag"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvNombre"
-            app:layout_constraintTop_toBottomOf="@+id/tvEstado">
+            android:gravity="end"
+            app:layout_constraintTop_toBottomOf="@id/tvEstado"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:id="@+id/tvFecha"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="@color/hint_color"
+                android:layout_height="wrap_content"
                 android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/tvEstado"
-                app:layout_constraintTop_toBottomOf="@id/tvEstado"
+                android:textColor="@color/hint_color"
                 tools:text="25 Feb" />
 
             <ImageView
                 android:id="@+id/ivToggle"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginLeft="8dp"
-                android:contentDescription="Icono cliente"
-                android:padding="2dp"
+                android:layout_marginStart="8dp"
                 android:src="@drawable/ic_toggle"
                 app:tint="#4A90E2" />
-
         </LinearLayout>
 
+        <!-- DESCRIPCION -->
         <TextView
             android:id="@+id/tvDescTag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textColor="@color/text_primary"
             android:textSize="14sp"
-            android:textStyle="normal"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/text_primary"
             app:layout_constraintTop_toBottomOf="@id/iv_user_icon"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="Fabricacion de 20 unidades" />
 
-        <!-- INVISIBLE, SOLO SE MUESTRA CUANDO SE DESPLIEGA -->
-
+        <!-- DETALLE DESPLEGABLE -->
         <LinearLayout
             android:id="@+id/layoutContacto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDescTag">
+            app:layout_constraintTop_toBottomOf="@id/tvDescTag"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/tvContactoTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Contacto:"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDescTag" />
+                android:textColor="@color/text_primary" />
 
+            <!-- TELEFONO -->
             <LinearLayout
-                android:id="@+id/layoutTel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tvContactoTitulo">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Telefono:  "
+                    android:text="Teléfono: "
+                    android:textStyle="bold"
                     android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/tvTelefonoValue"
+                    android:textColor="@color/text_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_primary"
-                    tools:text="+54 9 112233445" />
+                    tools:text="+54 9 112233445"/>
             </LinearLayout>
 
+            <!-- EMAIL -->
             <LinearLayout
-                android:id="@+id/layoutMail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/layoutTel">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Correo electronico:  "
+                    android:text="Email: "
+                    android:textStyle="bold"
                     android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/tvEmailValue"
+                    android:textColor="@color/text_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_primary"
-                    tools:text="usuario01@gmail.com" />
-
+                    tools:text="mail@gmail.com"/>
             </LinearLayout>
 
+            <!-- WHATSAPP -->
+            <LinearLayout
+                android:id="@+id/layoutWhatsapp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_whatsapp"
+                    app:tint="#25D366" />
+
+                <TextView
+                    android:id="@+id/tvWhatsapp"
+                    android:layout_marginStart="8dp"
+                    android:text="Enviar WhatsApp"
+                    android:textColor="#25D366"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- BOTONES -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,24 +196,16 @@
                     android:id="@+id/ivEdit"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:contentDescription="Editar"
                     android:src="@android:drawable/ic_menu_edit"
-                    app:layout_constraintBottom_toBottomOf="@id/ivDelete"
-                    app:layout_constraintEnd_toStartOf="@id/ivDelete"
-                    app:layout_constraintTop_toTopOf="@id/ivDelete"
-                    app:tint="@color/text_primary" />
+                    app:tint="@color/text_primary"/>
 
                 <ImageView
                     android:id="@+id/ivDelete"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginLeft="6dp"
-                    android:contentDescription="Eliminar"
+                    android:layout_marginStart="6dp"
                     android:src="@android:drawable/ic_menu_delete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layoutMail"
-                    app:tint="#F04438" />
-
+                    app:tint="#F04438"/>
             </LinearLayout>
 
         </LinearLayout>

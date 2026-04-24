@@ -1,26 +1,25 @@
 package com.followup.data.adapter
 
-import com.followup.data.entity.Cliente
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
+import com.followup.data.entity.Cliente
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ClientesAdapter(
-    private val listener: OnClienteClickListener // LISTENER PARA EL CLICK EN EL ITEM DEL RECYCLERVIEW
+    private val listener: OnClienteClickListener
 ) : RecyclerView.Adapter<ClientesAdapter.ClienteViewHolder>() {
 
     private val items = mutableListOf<Cliente>()
     private val dateFormatter = SimpleDateFormat("dd MMM", Locale.forLanguageTag("es-AR"))
 
-    /* ---------------------------------------------------------------------------
-         INTERFAZ PARA EL CLICK EN EL ITEM DEL RECYCLERVIEW ( EDIT / DELETE )
-    --------------------------------------------------------------------------- */
     interface OnClienteClickListener {
         fun onDeleteClick(cliente: Cliente)
         fun onEditClick(cliente: Cliente)
@@ -50,7 +49,6 @@ class ClientesAdapter(
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
-        private val tvSubtitulo: TextView = itemView.findViewById(R.id.tvSubtitulo)
         private val tvEstado: TextView = itemView.findViewById(R.id.tvEstado)
         private val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
         private val tvDescTag: TextView = itemView.findViewById(R.id.tvDescTag)
@@ -62,12 +60,18 @@ class ClientesAdapter(
         private val ivToggle: ImageView = itemView.findViewById(R.id.ivToggle)
         private val layoutContacto: LinearLayout = itemView.findViewById(R.id.layoutContacto)
 
+        // WHATSAPP
+        private val layoutWhatsapp: LinearLayout = itemView.findViewById(R.id.layoutWhatsapp)
+
         fun bind(cliente: Cliente, formatter: SimpleDateFormat) {
+
             tvNombre.text = cliente.nombre
-            tvSubtitulo.text = ""
-            tvDescTag.text = if (cliente.descripcion.isBlank()) "Sin descripcion" else cliente.descripcion
+            tvDescTag.text =
+                if (cliente.descripcion.isBlank()) "Sin descripcion" else cliente.descripcion
+
             tvEstado.text = cliente.estado
             tvFecha.text = formatter.format(Date(cliente.fecha))
+
             tvTelefonoValue.text = cliente.telefono
             tvEmailValue.text = cliente.email
 
@@ -85,32 +89,41 @@ class ClientesAdapter(
                 listener.onDeleteClick(cliente)
             }
 
-            // ESTADO INICIAL DE LOS COMPONENTES ( IMPORTANTE PARA EL RECYCLERVIEW )
             layoutContacto.visibility = if (cliente.expandido) View.VISIBLE else View.GONE
             ivToggle.rotation = if (cliente.expandido) 90f else 0f
 
             ivToggle.setOnClickListener {
-
-                cliente.expandido = !cliente.expandido // CAMBIA ESTADO
+                cliente.expandido = !cliente.expandido
 
                 if (cliente.expandido) {
-                    // MOSTRAR
                     layoutContacto.visibility = View.VISIBLE
-
-                    ivToggle.animate()
-                        .rotation(90f)
-                        .setDuration(200)
-                        .start()
-
+                    ivToggle.animate().rotation(90f).setDuration(200).start()
                 } else {
-                    // OCULTAR
                     layoutContacto.visibility = View.GONE
-
-                    ivToggle.animate()
-                        .rotation(0f)
-                        .setDuration(200)
-                        .start()
+                    ivToggle.animate().rotation(0f).setDuration(200).start()
                 }
+            }
+
+            layoutWhatsapp.setOnClickListener {
+
+                val telefonoRaw = cliente.telefono
+                    .replace(" ", "")
+                    .replace("+", "")
+
+                val telefonoFinal = if (!telefonoRaw.startsWith("54")) {
+                    "549$telefonoRaw"
+                } else {
+                    telefonoRaw
+                }
+
+                val mensaje = "Hola ${cliente.nombre}! Me contacto desde FollowUp 👋"
+
+                val url = "https://wa.me/$telefonoFinal?text=${Uri.encode(mensaje)}"
+
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+
+                itemView.context.startActivity(intent)
             }
         }
         private fun estadoColors(estado: String): Pair<Int, Int> {
