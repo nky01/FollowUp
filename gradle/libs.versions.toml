@@ -21,6 +21,7 @@ recyclerview = "1.4.0"
 
 room = "2.7.0"
 circleimageview = "3.1.0"
+mpandroidchart = "3.1.0"
 
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -30,6 +31,7 @@ espressoCore = "3.5.1"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

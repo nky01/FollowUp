@@ -16,13 +16,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:padding="24dp">
 
             <ImageView
                 android:id="@+id/iv_logo_small"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_margin="16dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
                 android:src="@mipmap/logo"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -32,8 +32,7 @@
                 android:id="@+id/iv_profile_picture"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
                 android:src="@android:color/darker_gray"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="2dp"
@@ -44,7 +43,7 @@
                 android:id="@+id/tv_saludo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginTop="24dp"
                 android:text="Hola, [ Usuario ]"
                 android:textColor="@color/white"
                 android:textSize="32sp"
@@ -67,14 +66,43 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Gráfico de Facturación -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#F2F4F7">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ingresos por mes"
+                        android:textColor="@color/primary_blue"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/barChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Stats Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3">
+                android:weightSum="3"
+                android:layout_marginTop="8dp">
 
-                <!-- Clientes Stat -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_clientes"
                     android:layout_width="0dp"
@@ -116,7 +144,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Ventas Stat -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/card_ventas"
                     android:layout_width="0dp"
@@ -158,9 +185,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Alertas Stat -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_alertas"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -202,12 +227,11 @@
             </LinearLayout>
 
             <!-- Próximos seguimientos -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginHorizontal="8dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -215,35 +239,31 @@
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="end"
-                    android:orientation="horizontal">
-
+                    android:id="@+id/layoutToggle_Seguimientos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
                     <TextView
                         android:id="@+id/tvToggle_Seguimientos"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:layout_height="wrap_content"
                         android:text="Ver todos"
                         android:textColor="@color/primary_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <ImageView
                         android:id="@+id/ivToggle_Seguimientos"
-                        android:layout_width="24dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="Icono cliente"
-                        android:src="@drawable/ic_toggle"
-                        app:tint="#4A90E2" />
-
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_right_arrow"
+                        app:tint="@color/primary_blue"
+                        android:layout_marginStart="4dp"/>
                 </LinearLayout>
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_seguimientos"
@@ -254,50 +274,43 @@
                 tools:listitem="@layout/item_seguimiento_home" />
 
             <!-- Ventas Recientes -->
-            <!-- Próximos seguimientos -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginHorizontal="8dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:text="Ventas Recientes"
+                    android:text="¿Ventas Recientes?"
                     android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="end"
-                    android:orientation="horizontal">
-
+                    android:id="@+id/layoutToggle_VentasRec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
                     <TextView
                         android:id="@+id/tvToggle_VentasRec"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:layout_height="wrap_content"
                         android:text="Ver todos"
                         android:textColor="@color/primary_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
                     <ImageView
                         android:id="@+id/ivToggle_VentasRec"
-                        android:layout_width="24dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="Icono cliente"
-                        android:src="@drawable/ic_toggle"
-                        app:tint="#4A90E2" />
-
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_right_arrow"
+                        app:tint="@color/primary_blue"
+                        android:layout_marginStart="4dp"/>
                 </LinearLayout>
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_ventas_recientes"

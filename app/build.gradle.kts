@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.circleimageview)
+    implementation(libs.mpandroidchart) // Librería de gráficos
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Google Firebase para usar el servicio de autenticación de Google
