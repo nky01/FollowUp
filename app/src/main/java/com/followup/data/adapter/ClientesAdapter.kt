@@ -113,12 +113,43 @@ class ClientesAdapter(
                 }
             }
         }
-
         private fun estadoColors(estado: String): Pair<Int, Int> {
             return when (estado.lowercase(Locale.ROOT)) {
-                "vendido" -> Pair(Color.parseColor("#E8F5E9"), Color.parseColor("#2E7D32"))
-                "pendiente" -> Pair(Color.parseColor("#FFF4E5"), Color.parseColor("#D4850D"))
-                else -> Pair(Color.parseColor("#F2F4F7"), Color.parseColor("#475467"))
+
+                "venta finalizada" -> Pair(
+                    Color.parseColor("#E8F5E9"),
+                    Color.parseColor("#2E7D32")
+                )
+
+                "pendiente" -> Pair(
+                    Color.parseColor("#FFF4E5"),
+                    Color.parseColor("#D4850D")
+                )
+
+                "nuevo cliente" -> Pair(
+                    Color.parseColor("#E3F2FD"),
+                    Color.parseColor("#1E88E5")
+                )
+
+                "cliente potencial" -> Pair(
+                    Color.parseColor("#F3E5F5"),
+                    Color.parseColor("#8E24AA")
+                )
+
+                "llamar" -> Pair(
+                    Color.parseColor("#FFFDE7"),
+                    Color.parseColor("#F9A825")
+                )
+
+                "sin asignar" -> Pair(
+                    Color.parseColor("#F2F4F7"),
+                    Color.parseColor("#98A2B3")
+                )
+
+                else -> Pair(
+                    Color.parseColor("#F2F4F7"),
+                    Color.parseColor("#475467")
+                )
             }
         }
     }

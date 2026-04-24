@@ -95,9 +95,9 @@ class VentasFragment : Fragment() {
        Centralizar los strings de estado evita errores de tipeo en comparaciones.
     */
     private object Estado {
+        const val PENDIENTE   = "Falta pagar"
         const val PAGADO      = "Pagado"
-        const val PENDIENTE   = "Pendiente"
-        const val NO_ASIGNADO = "No Asignado"
+        const val NO_ASIGNADO = "No asignado"
     }
 
     /* ========================================================================================
@@ -331,7 +331,7 @@ class VentasFragment : Fragment() {
                 return@setOnClickListener
             }
             if (desc.isEmpty()) {
-                Toast.makeText(requireContext(), "Ingresá una descripción", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Ingresá una descripción (obligatorio)", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -634,7 +634,7 @@ class VentasFragment : Fragment() {
      * Reglas:
      *  - Sin ventas activas  → "No Asignado"
      *  - Alguna pendiente    → "Pendiente"
-     *  - Todas pagadas       → "Vendido"
+     *  - Todas pagadas       → "Venta finalizada"
      */
     private suspend fun actualizarEstadoCliente(clienteId: Int) {
         val db       = AppDatabase.getDatabase(requireContext())
@@ -645,7 +645,7 @@ class VentasFragment : Fragment() {
         val nuevoEstado = when {
             estados.isEmpty()                                                  -> Estado.NO_ASIGNADO
             estados.any { it.equals(Estado.PENDIENTE, ignoreCase = true) }    -> Estado.PENDIENTE
-            else                                                               -> "Vendido"
+            else                                                               -> "Venta finalizada"
         }
 
         val cliente = db.clienteDao()

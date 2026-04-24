@@ -519,8 +519,20 @@ class ClientesFragment : Fragment() {
         btnCancelar = dialog.findViewById(R.id.btn_cancelar_cliente)
     )
 
+    private object EstadoCliente {
+        const val NUEVO = "Nuevo cliente"
+        const val POTENCIAL = "Cliente potencial"
+        const val LLAMAR = "Llamar"
+        const val PENDIENTE = "Pendiente"
+    }
     private fun configurarDropdownEstado(view: AutoCompleteTextView) {
-        val estados = listOf("Pendiente", "Vendido", "No Asignado")
+        val estados = listOf(
+            EstadoCliente.NUEVO,
+            EstadoCliente.POTENCIAL,
+            EstadoCliente.LLAMAR,
+            EstadoCliente.PENDIENTE
+        )
+
         view.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, estados))
     }
 
