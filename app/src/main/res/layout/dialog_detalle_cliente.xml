@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    ESTRUCTURA DEL DIALOG:
+      - Header: avatar + nombre + estado
+      - Botones rápidos: WhatsApp | Email
+      - Descripción (solo si hay texto)
+      - Datos del cliente: teléfono, email, dirección, fecha
+      - Botones de acción: Editar | Eliminar
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/background_content_top_rounded"
+        android:paddingBottom="24dp">
+
+        <!-- ══════════════════════════════
+                      HEADER
+             ══════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="28dp"
+            android:paddingBottom="16dp"
+            android:paddingHorizontal="24dp">
+
+            <!-- Avatar -->
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="top|center_horizontal"
+                android:src="@drawable/ic_person"
+                android:padding="14dp"
+                android:scaleType="centerInside"
+                android:elevation="4dp"
+                android:background="@drawable/bg_avatar_circle" />
+
+            <!-- Nombre + Apellido -->
+            <TextView
+                android:id="@+id/tv_detalle_nombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:gravity="center"
+                tools:text="Juan Pérez" />
+
+            <!-- Estado -->
+            <TextView
+                android:id="@+id/tv_detalle_estado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_estado_rounded"
+                tools:text="Nuevo Cliente" />
+
+        </LinearLayout>
+
+        <!-- ══════════════════════════════
+              BOTONES RÁPIDOS: WSP + MAIL
+             ══════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <!-- WhatsApp -->
+            <LinearLayout
+                android:id="@+id/btn_wsp"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_btn_wsp"
+                android:layout_marginEnd="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_whatsapp"
+                    app:tint="#25D366" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="WhatsApp"
+                    android:textColor="#25D366"
+                    android:textStyle="bold"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Email -->
+            <LinearLayout
+                android:id="@+id/btn_mail"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_btn_mail"
+                android:layout_marginStart="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_dialog_email"
+                    app:tint="#286DFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Email"
+                    android:textColor="#286DFF"
+                    android:textStyle="bold"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divisor -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="24dp"
+            android:background="#F2F4F7" />
+
+        <!-- ══════════════════════════════
+                DESCRIPCIÓN (condicional)
+             Visible solo si hay texto.
+             Se maneja desde el Fragment.
+             ══════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/layout_descripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descripción"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/hint_color"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:id="@+id/tv_detalle_descripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingMultiplier="1.4"
+                tools:text="Cliente interesado en el pack premium de fabricación." />
+
+            <!-- Divisor -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="#F2F4F7" />
+
+        </LinearLayout>
+
+        <!-- ══════════════════════════════
+                  DATOS DEL CLIENTE
+             ══════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp">
+
+            <!-- Teléfono -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_phone"
+                    app:tint="@color/hint_color" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Teléfono"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hint_color"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tv_detalle_telefono"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="+54 9 11 2233 4455" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Divisor -->
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+            <!-- Email -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@android:drawable/ic_dialog_email"
+                    app:tint="@color/hint_color" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hint_color"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tv_detalle_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="juan@gmail.com" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Divisor -->
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+            <!-- Dirección -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/hint_color" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dirección"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hint_color"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tv_detalle_direccion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="Av. Corrientes 1234, CABA" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Divisor -->
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+
+            <!-- Fecha de alta -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/hint_color" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cliente desde"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/hint_color"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:id="@+id/tv_detalle_fecha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        tools:text="24/04/2026" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ══════════════════════════════
+              BOTONES: EDITAR | ELIMINAR
+             ══════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="20dp"
+            android:gravity="center">
+
+            <!-- Editar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_detalle_editar"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Editar"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                app:cornerRadius="14dp"
+                app:strokeColor="#D0D5DD"
+                app:strokeWidth="1.5dp"
+                app:icon="@drawable/ic_edit"
+                app:iconTint="@color/text_primary"
+                app:iconPadding="6dp"
+                app:backgroundTint="@android:color/white" />
+
+            <View android:layout_width="10dp" android:layout_height="1dp" />
+
+            <!-- Eliminar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_detalle_eliminar"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Eliminar"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                app:cornerRadius="14dp"
+                app:backgroundTint="#F04438"
+                app:icon="@drawable/ic_delete"
+                app:iconTint="@android:color/white"
+                app:iconPadding="6dp" />
+
+        </LinearLayout>
+
+        <!-- Cerrar -->
+        <!-- Cerrar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cerrar_detalle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="160dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="Cerrar"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            app:cornerRadius="14dp"
+            app:strokeColor="#D0D5DD"
+            app:strokeWidth="1.5dp"
+            app:backgroundTint="@android:color/white" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,214 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!--
+    ESTRUCTURA (FrameLayout apila 3 capas):
+      1. MaterialCardView  → card principal, con margen top y bottom para los flotantes
+      2. ImageView avatar  → flota en el borde superior centrado
+      3. btnVerDetalle     → flota en el borde inferior derecho
+
+    El color del borde de la card y el fondo de tvEstado se setean dinámicamente
+    desde el Adapter según el estado del cliente.
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="4dp"
-    app:strokeColor="#D0D5DD"
-    app:strokeWidth="2dp">
+    android:layout_margin="6dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- ══════════════════════════════
+                    CARD
+         ══════════════════════════════ -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardCliente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="18dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="#D0D5DD"
+        app:cardBackgroundColor="@android:color/white">
 
-        <!-- ICONO -->
-        <ImageView
-            android:id="@+id/iv_user_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="#E8F1FF"
-            android:padding="8dp"
-            android:src="@drawable/ic_clients"
-            app:tint="#4A90E2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- NOMBRE -->
-        <TextView
-            android:id="@+id/tvNombre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            app:layout_constraintStart_toEndOf="@id/iv_user_icon"
-            app:layout_constraintTop_toTopOf="@id/iv_user_icon"
-            tools:text="Cliente 1" />
-
-        <!-- ESTADO -->
-        <TextView
-            android:id="@+id/tvEstado"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FFF4E5"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="#D4850D"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvNombre"
-            tools:text="Pendiente" />
-
-        <!-- FECHA + TOGGLE -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            app:layout_constraintTop_toBottomOf="@id/tvEstado"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:id="@+id/tvFecha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/hint_color"
-                tools:text="25 Feb" />
-
-            <ImageView
-                android:id="@+id/ivToggle"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_toggle"
-                app:tint="#4A90E2" />
-        </LinearLayout>
-
-        <!-- DESCRIPCION -->
-        <TextView
-            android:id="@+id/tvDescTag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="14sp"
-            android:textColor="@color/text_primary"
-            app:layout_constraintTop_toBottomOf="@id/iv_user_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="Fabricacion de 20 unidades" />
-
-        <!-- DETALLE DESPLEGABLE -->
-        <LinearLayout
-            android:id="@+id/layoutContacto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/tvDescTag"
-            app:layout_constraintStart_toStartOf="parent">
+            android:paddingTop="36dp"
+            android:paddingBottom="24dp"
+            android:gravity="center_horizontal">
 
+            <!-- NOMBRE + APELLIDO -->
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tvNombre"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Contacto:"
-                android:textSize="18sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                android:textColor="@color/text_primary"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Juan Pérez" />
 
-            <!-- TELEFONO -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:text="Teléfono: "
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tvTelefonoValue"
-                    android:textColor="@color/text_primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="+54 9 112233445"/>
-            </LinearLayout>
-
-            <!-- EMAIL -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:text="Email: "
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tvEmailValue"
-                    android:textColor="@color/text_primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="mail@gmail.com"/>
-            </LinearLayout>
-
-            <!-- WHATSAPP -->
-            <LinearLayout
-                android:id="@+id/layoutWhatsapp"
+            <!-- ESTADO — pegado al borde izquierdo, redondeado solo a la derecha -->
+            <TextView
+                android:id="@+id/tvEstado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true">
+                android:layout_gravity="start"
+                android:layout_marginTop="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp"
+                android:paddingVertical="4dp"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_estado_left"
+                tools:text="Nuevo Cliente" />
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_whatsapp"
-                    app:tint="#25D366" />
-
-                <TextView
-                    android:id="@+id/tvWhatsapp"
-                    android:layout_marginStart="8dp"
-                    android:text="Enviar WhatsApp"
-                    android:textColor="#25D366"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <!-- BOTONES -->
+            <!-- CONTADORES: ventas pagadas y ventas pendientes -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="12dp"
-                android:gravity="end"
-                android:orientation="horizontal">
+                android:gravity="center">
 
-                <ImageView
-                    android:id="@+id/ivEdit"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:tint="@color/text_primary"/>
+                <!-- Ventas pagadas -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    app:strokeColor="#D0D5DD"
+                    app:strokeWidth="1.5dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@android:color/white">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:src="@drawable/ic_ventas"
+                            app:tint="#4A90E2" />
+                        <TextView
+                            android:id="@+id/tvVentasPagadas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            tools:text="3" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <ImageView
-                    android:id="@+id/ivDelete"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                <!-- Ventas pendientes -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:src="@android:drawable/ic_menu_delete"
-                    app:tint="#F04438"/>
+                    app:cardCornerRadius="10dp"
+                    app:strokeColor="#D0D5DD"
+                    app:strokeWidth="1.5dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@android:color/white">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:src="@drawable/ic_bell"
+                            app:tint="#F79009" />
+                        <TextView
+                            android:id="@+id/tvVentasPendientes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            tools:text="1" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+    <!-- ══════════════════════════════
+            AVATAR — borde superior
+         ══════════════════════════════ -->
+    <ImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="top|center_horizontal"
+        android:src="@drawable/ic_person"
+        android:padding="12dp"
+        android:scaleType="centerInside"
+        android:elevation="4dp"
+        android:background="@drawable/bg_avatar_circle" />
+
+    <!-- ══════════════════════════════
+         BOTÓN — borde inferior derecho
+         ══════════════════════════════ -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnVerDetalle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="bottom|end"
+        app:cardCornerRadius="18dp"
+        app:cardBackgroundColor="#EBEBEB"
+        app:cardElevation="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="4dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_toggle"
+            app:tint="#4A4A4A" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

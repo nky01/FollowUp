@@ -1,38 +1,33 @@
 package com.followup.data.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.followup.data.entity.Cliente
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClienteDao {
 
-    /* ------------------------------
-            INSERTAR CLIENTE
-    ------------------------------ */
+    /* --------------------------------------------------
+                        INSERTAR
+    -------------------------------------------------- */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cliente: Cliente)
 
-    /* ------------------------------
-            ACTUALIZAR CLIENTE
-    ------------------------------ */
+    /* --------------------------------------------------
+                        ACTUALIZAR
+    -------------------------------------------------- */
     @Update
     suspend fun update(cliente: Cliente)
 
-    /* ------------------------------
-            ELIMINAR CLIENTE
-    ------------------------------ */
-    @Delete
-    suspend fun delete(cliente: Cliente)
+    /* --------------------------------------------------
+                        SOFT DELETE
+    -------------------------------------------------- */
+    @Query("UPDATE Cliente_Tabla SET isDeleted = 1 WHERE id = :clienteId")
+    suspend fun marcarComoEliminado(clienteId: Int)
 
-    /* ------------------------------
-        OBTENER TODOS (POR USUARIO)
-    ------------------------------ */
+    /* --------------------------------------------------
+                OBTENER TODOS (activos, por usuario)
+    -------------------------------------------------- */
     @Query("""
         SELECT * FROM Cliente_Tabla
         WHERE userMail = :userMail
@@ -41,9 +36,15 @@ interface ClienteDao {
     """)
     suspend fun obtenerTodos(userMail: String): List<Cliente>
 
-    /* ------------------------------
-        OBTENER POR EMAIL (MISMO USER)
-    ------------------------------ */
+    /* --------------------------------------------------
+                OBTENER POR ID
+    -------------------------------------------------- */
+    @Query("SELECT * FROM Cliente_Tabla WHERE id = :clienteId LIMIT 1")
+    suspend fun obtenerPorId(clienteId: Int): Cliente?
+
+    /* --------------------------------------------------
+                OBTENER POR EMAIL (mismo usuario)
+    -------------------------------------------------- */
     @Query("""
         SELECT * FROM Cliente_Tabla 
         WHERE email = :email 
@@ -52,9 +53,9 @@ interface ClienteDao {
     """)
     suspend fun obtenerPorEmail(email: String, userMail: String): Cliente?
 
-    /* ------------------------------
-        OBTENER POR ESTADO + USER
-    ------------------------------ */
+    /* --------------------------------------------------
+                OBTENER POR ESTADO
+    -------------------------------------------------- */
     @Query("""
         SELECT * FROM Cliente_Tabla 
         WHERE estado = :estado 
@@ -64,25 +65,58 @@ interface ClienteDao {
     """)
     suspend fun obtenerPorEstado(estado: String, userMail: String): List<Cliente>
 
-    /* ------------------------------
-        SOFT DELETE
-    ------------------------------ */
-    @Query("UPDATE Cliente_Tabla SET isDeleted = 1 WHERE id = :clienteId")
-    suspend fun marcarComoEliminado(clienteId: Int)
+    /* --------------------------------------------------
+        CLIENTES CON ESTADO TRANSITORIO VENCIDO
+        Devuelve clientes cuyo estado es NUEVO_CLIENTE o PAGO_REALIZADO
+        y ya pasaron las 24hs desde el cambio de estado.
+        El Fragment/ViewModel los recalcula al cargar.
+    -------------------------------------------------- */
+    @Query("""
+        SELECT * FROM Cliente_Tabla
+        WHERE isDeleted = 0
+        AND userMail = :userMail
+        AND estado IN ('Nuevo Cliente', 'Pago Realizado')
+        AND fechaCambioEstado IS NOT NULL
+        AND fechaCambioEstado < :limiteMs
+    """)
+    suspend fun obtenerClientesConEstadoVencido(userMail: String, limiteMs: Long): List<Cliente>
 
-    /* ------------------------------
-        FLOW ACTIVOS (POR USER)
-    ------------------------------ */
+    /* --------------------------------------------------
+        CANTIDAD DE VENTAS PAGADAS POR CLIENTE
+    -------------------------------------------------- */
+    @Query("""
+        SELECT COUNT(*) FROM Ventas_Tabla
+        WHERE idClienteVenta = :clienteId
+        AND userMail = :userMail
+        AND isDeleted = 0
+        AND estado = 'Pagado'
+    """)
+    suspend fun contarVentasPagadas(clienteId: Int, userMail: String): Int
+
+    /* --------------------------------------------------
+        CANTIDAD DE VENTAS PENDIENTES POR CLIENTE
+    -------------------------------------------------- */
+    @Query("""
+        SELECT COUNT(*) FROM Ventas_Tabla
+        WHERE idClienteVenta = :clienteId
+        AND userMail = :userMail
+        AND isDeleted = 0
+        AND estado = 'Pendiente'
+    """)
+    suspend fun contarVentasPendientes(clienteId: Int, userMail: String): Int
+
+    /* --------------------------------------------------
+                FLOWS (observación reactiva)
+    -------------------------------------------------- */
+
     @Query("""
         SELECT * FROM Cliente_Tabla 
         WHERE isDeleted = 0 
         AND userMail = :userMail
+        ORDER BY fecha DESC
     """)
     fun getClientesActivos(userMail: String): Flow<List<Cliente>>
 
-    /* ------------------------------
-        FLOW PAPELERA (POR USER)
-    ------------------------------ */
     @Query("""
         SELECT * FROM Cliente_Tabla 
         WHERE isDeleted = 1 

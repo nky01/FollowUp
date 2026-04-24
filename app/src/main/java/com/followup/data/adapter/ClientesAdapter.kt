@@ -1,169 +1,134 @@
 package com.followup.data.adapter
 
-import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
 import com.followup.data.entity.Cliente
-import java.text.SimpleDateFormat
-import java.util.*
+import com.followup.data.entity.EstadoCliente
+import com.google.android.material.card.MaterialCardView
+import android.content.Intent
+import android.net.Uri
 
+/**
+ * Adapter del RecyclerView de clientes.
+ *
+ * Recibe una lista de [Triple] (cliente, ventasPagadas, ventasPendientes)
+ * para poder mostrar los contadores sin queries extra desde el ViewHolder.
+ *
+ * Los colores del borde de la card y del fondo del estado se asignan
+ * automáticamente según [EstadoCliente].
+ */
 class ClientesAdapter(
     private val listener: OnClienteClickListener
-) : RecyclerView.Adapter<ClientesAdapter.ClienteViewHolder>() {
+) : ListAdapter<Triple<Cliente, Int, Int>, ClientesAdapter.ClienteViewHolder>(DiffCallback()) {
 
-    private val items = mutableListOf<Cliente>()
-    private val dateFormatter = SimpleDateFormat("dd MMM", Locale.forLanguageTag("es-AR"))
+    /* ========================================================================================
+                                        INTERFAZ DE CLICKS
+       ======================================================================================== */
 
     interface OnClienteClickListener {
-        fun onDeleteClick(cliente: Cliente)
         fun onEditClick(cliente: Cliente)
+        fun onDeleteClick(cliente: Cliente)
+        fun onDetalleClick(cliente: Cliente)   // abre el dialog de detalle
     }
 
-    fun submitList(clientes: List<Cliente>) {
-        items.clear()
-        items.addAll(clientes)
-        notifyDataSetChanged()
+    /* ========================================================================================
+                                        COLORES POR ESTADO
+       ========================================================================================
+       Centralizado acá para no repetirlo en cada bind.
+    */
+    private object ColoresEstado {
+        const val AZUL    = "#286DFF"   // Nuevo Cliente
+        const val NARANJA = "#F79009"   // Pago Pendiente
+        const val VERDE   = "#12B76A"   // Pago Realizado
+        const val GRIS    = "#98A2B3"   // No Asignado
     }
+
+    /** Devuelve el color hex correspondiente al estado del cliente. */
+    private fun colorParaEstado(estado: String): String = when (estado) {
+        EstadoCliente.NUEVO_CLIENTE  -> ColoresEstado.AZUL
+        EstadoCliente.PAGO_PENDIENTE -> ColoresEstado.NARANJA
+        EstadoCliente.PAGO_REALIZADO -> ColoresEstado.VERDE
+        else                         -> ColoresEstado.GRIS    // NO_ASIGNADO o desconocido
+    }
+
+    /* ========================================================================================
+                                        VIEWHOLDER
+       ======================================================================================== */
+
+    inner class ClienteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val card: MaterialCardView = itemView.findViewById(R.id.cardCliente)
+        private val tvNombre: TextView     = itemView.findViewById(R.id.tvNombre)
+        private val tvEstado: TextView     = itemView.findViewById(R.id.tvEstado)
+        private val tvPagadas: TextView    = itemView.findViewById(R.id.tvVentasPagadas)
+        private val tvPendientes: TextView = itemView.findViewById(R.id.tvVentasPendientes)
+        private val btnDetalle: MaterialCardView = itemView.findViewById(R.id.btnVerDetalle)
+
+        fun bind(cliente: Cliente, ventasPagadas: Int, ventasPendientes: Int) {
+
+            // Nombre + apellido
+            tvNombre.text = "${cliente.nombre} ${cliente.apellido}".trim()
+
+            // Estado
+            tvEstado.text = cliente.estado
+
+            // Contadores
+            tvPagadas.text    = ventasPagadas.toString()
+            tvPendientes.text = ventasPendientes.toString()
+
+            // Color dinámico según estado
+            val color = Color.parseColor(colorParaEstado(cliente.estado))
+            card.strokeColor = color
+            tvEstado.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
+
+            // Botón de detalle → abre el dialog
+            btnDetalle.setOnClickListener { listener.onDetalleClick(cliente) }
+        }
+    }
+
+    /* ========================================================================================
+                                    MÉTODOS DEL ADAPTER
+       ======================================================================================== */
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClienteViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cliente, parent, false)
-        return ClienteViewHolder(view, listener)
+        return ClienteViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ClienteViewHolder, position: Int) {
-        holder.bind(items[position], dateFormatter)
+        val (cliente, pagadas, pendientes) = getItem(position)
+        holder.bind(cliente, pagadas, pendientes)
     }
 
-    override fun getItemCount(): Int = items.size
+    /**
+     * Método especial para cargar la lista ya con los contadores.
+     * Lo llama el Fragment después de hacer las queries de conteo.
+     */
+    fun submitListConContadores(data: List<Triple<Cliente, Int, Int>>) {
+        submitList(data)
+    }
 
-    class ClienteViewHolder(
-        itemView: View,
-        private val listener: OnClienteClickListener
-    ) : RecyclerView.ViewHolder(itemView) {
+    /* ========================================================================================
+                                        DIFFCALLBACK
+       ======================================================================================== */
 
-        private val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
-        private val tvEstado: TextView = itemView.findViewById(R.id.tvEstado)
-        private val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
-        private val tvDescTag: TextView = itemView.findViewById(R.id.tvDescTag)
-        private val tvTelefonoValue: TextView = itemView.findViewById(R.id.tvTelefonoValue)
-        private val tvEmailValue: TextView = itemView.findViewById(R.id.tvEmailValue)
-        private val ivEdit: ImageView = itemView.findViewById(R.id.ivEdit)
-        private val ivDelete: ImageView = itemView.findViewById(R.id.ivDelete)
+    class DiffCallback : DiffUtil.ItemCallback<Triple<Cliente, Int, Int>>() {
+        override fun areItemsTheSame(
+            oldItem: Triple<Cliente, Int, Int>,
+            newItem: Triple<Cliente, Int, Int>
+        ) = oldItem.first.id == newItem.first.id
 
-        private val ivToggle: ImageView = itemView.findViewById(R.id.ivToggle)
-        private val layoutContacto: LinearLayout = itemView.findViewById(R.id.layoutContacto)
-
-        // WHATSAPP
-        private val layoutWhatsapp: LinearLayout = itemView.findViewById(R.id.layoutWhatsapp)
-
-        fun bind(cliente: Cliente, formatter: SimpleDateFormat) {
-
-            tvNombre.text = cliente.nombre
-            tvDescTag.text =
-                if (cliente.descripcion.isBlank()) "Sin descripcion" else cliente.descripcion
-
-            tvEstado.text = cliente.estado
-            tvFecha.text = formatter.format(Date(cliente.fecha))
-
-            tvTelefonoValue.text = cliente.telefono
-            tvEmailValue.text = cliente.email
-
-            val colors = estadoColors(cliente.estado)
-            tvEstado.setBackgroundColor(colors.first)
-            tvEstado.setTextColor(colors.second)
-
-            // EDITAR
-            ivEdit.setOnClickListener {
-                listener.onEditClick(cliente)
-            }
-
-            // ELIMINAR
-            ivDelete.setOnClickListener {
-                listener.onDeleteClick(cliente)
-            }
-
-            layoutContacto.visibility = if (cliente.expandido) View.VISIBLE else View.GONE
-            ivToggle.rotation = if (cliente.expandido) 90f else 0f
-
-            ivToggle.setOnClickListener {
-                cliente.expandido = !cliente.expandido
-
-                if (cliente.expandido) {
-                    layoutContacto.visibility = View.VISIBLE
-                    ivToggle.animate().rotation(90f).setDuration(200).start()
-                } else {
-                    layoutContacto.visibility = View.GONE
-                    ivToggle.animate().rotation(0f).setDuration(200).start()
-                }
-            }
-
-            layoutWhatsapp.setOnClickListener {
-
-                val telefonoRaw = cliente.telefono
-                    .replace(" ", "")
-                    .replace("+", "")
-
-                val telefonoFinal = if (!telefonoRaw.startsWith("54")) {
-                    "549$telefonoRaw"
-                } else {
-                    telefonoRaw
-                }
-
-                val mensaje = "Hola ${cliente.nombre}! Me contacto desde FollowUp 👋"
-
-                val url = "https://wa.me/$telefonoFinal?text=${Uri.encode(mensaje)}"
-
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url)
-
-                itemView.context.startActivity(intent)
-            }
-        }
-        private fun estadoColors(estado: String): Pair<Int, Int> {
-            return when (estado.lowercase(Locale.ROOT)) {
-
-                "venta finalizada" -> Pair(
-                    Color.parseColor("#E8F5E9"),
-                    Color.parseColor("#2E7D32")
-                )
-
-                "pendiente" -> Pair(
-                    Color.parseColor("#FFF4E5"),
-                    Color.parseColor("#D4850D")
-                )
-
-                "nuevo cliente" -> Pair(
-                    Color.parseColor("#E3F2FD"),
-                    Color.parseColor("#1E88E5")
-                )
-
-                "cliente potencial" -> Pair(
-                    Color.parseColor("#F3E5F5"),
-                    Color.parseColor("#8E24AA")
-                )
-
-                "llamar" -> Pair(
-                    Color.parseColor("#FFFDE7"),
-                    Color.parseColor("#F9A825")
-                )
-
-                "sin asignar" -> Pair(
-                    Color.parseColor("#F2F4F7"),
-                    Color.parseColor("#98A2B3")
-                )
-
-                else -> Pair(
-                    Color.parseColor("#F2F4F7"),
-                    Color.parseColor("#475467")
-                )
-            }
-        }
+        override fun areContentsTheSame(
+            oldItem: Triple<Cliente, Int, Int>,
+            newItem: Triple<Cliente, Int, Int>
+        ) = oldItem == newItem
     }
 }

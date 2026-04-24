@@ -5,58 +5,39 @@ package com.followup.fragments
 ---------------------------------------------------------------------------------------- */
 
 import android.app.AlertDialog
-// Diálogo estándar Android
-
 import android.app.Dialog
-// Diálogo personalizado
-
-import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
-// Validación de email
-
 import android.view.*
 import android.widget.*
-
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.followup.R
 import com.followup.data.adapter.ClientesAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
-
+import com.followup.data.entity.EstadoCliente
 import com.followup.presentation.settings.SessionManager
-
-import com.google.android.material.button.*
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.textfield.*
-
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
-
-
-/* ----------------------------------------------------------------------------------------
-                                      FRAGMENT CLIENTES
----------------------------------------------------------------------------------------- */
-/*
-    [+] - Muestra la lista de clientes
-    [+] - CRUD completo
-    [+] - Filtros + búsqueda
-    [+] - Manejo de UI (FAB + dialogs)
-*/
 
 class ClientesFragment : Fragment() {
 
-    /* ----------------------------------------------------------------------------------------
-                                            ATRIBUTOS
-    ---------------------------------------------------------------------------------------- */
+    /* ========================================================================================
+                                        COMPONENTES DE VISTA
+       ======================================================================================== */
 
-    // -------- UI --------
     private lateinit var rvClientes: RecyclerView
     private lateinit var searchInput: TextInputEditText
 
@@ -65,38 +46,39 @@ class ClientesFragment : Fragment() {
     private lateinit var fabOverlay: View
     private lateinit var btnNuevoCliente: MaterialButton
 
-    // -------- Filtros --------
-    private lateinit var filterGroup: MaterialButtonToggleGroup
-    private lateinit var btnFiltroTodos: MaterialButton
-    private lateinit var btnFiltroVendidos: MaterialButton
-    private lateinit var btnFiltroPendiente: MaterialButton
+    private lateinit var btnFiltroEstado: MaterialCardView
 
-    // -------- Data --------
+    private lateinit var dropdownEstados: LinearLayout
+
+    /* ========================================================================================
+                                        ESTADO INTERNO
+       ======================================================================================== */
+
     private lateinit var adapter: ClientesAdapter
-    private val clientesCargados = mutableListOf<Cliente>()
+
+    /** Lista base sin filtrar. Cada item guarda el cliente + sus contadores de ventas. */
+    private val clientesCargados = mutableListOf<Triple<Cliente, Int, Int>>()
 
     private var filtroActual: String? = null
     private var isFabMenuOpen = false
-
     private lateinit var sessionManager: SessionManager
 
-
-    /* ----------------------------------------------------------------------------------------
-                                      CICLO DE VIDA
-    ---------------------------------------------------------------------------------------- */
+    /* ========================================================================================
+                                        CICLO DE VIDA
+       ======================================================================================== */
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_clientes, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        initServices()
+        sessionManager = SessionManager(requireContext())
+
         initViews(view)
         initRecycler()
         initListeners()
-        initDefaultState()
-
         cargarClientes()
     }
 
@@ -110,62 +92,41 @@ class ClientesFragment : Fragment() {
         isFabMenuOpen = false
     }
 
-
-    /* ----------------------------------------------------------------------------------------
-                                      INICIALIZACIÓN
-    ---------------------------------------------------------------------------------------- */
-
-    private fun initServices() {
-        sessionManager = SessionManager(requireContext())
-    }
+    /* ========================================================================================
+                                        INICIALIZACIÓN
+       ======================================================================================== */
 
     private fun initViews(view: View) {
-        rvClientes = view.findViewById(R.id.rv_clientes)
-        searchInput = view.findViewById(R.id.search)
-
-        fabMain = view.findViewById(R.id.fab_main)
-        fabMenuContainer = view.findViewById(R.id.fab_menu_container)
-        fabOverlay = view.findViewById(R.id.fab_overlay)
-        btnNuevoCliente = view.findViewById(R.id.btn_nuevo_cliente)
-
-        btnFiltroTodos = view.findViewById(R.id.btn_filter_todos)
-        btnFiltroVendidos = view.findViewById(R.id.btn_filter_vendidos)
-        btnFiltroPendiente = view.findViewById(R.id.btn_filter_pendiente)
-
-        filterGroup = view.findViewById(R.id.filter_group)
+        rvClientes         = view.findViewById(R.id.rv_clientes)
+        searchInput        = view.findViewById(R.id.search)
+        fabMain            = view.findViewById(R.id.fab_main)
+        fabMenuContainer   = view.findViewById(R.id.fab_menu_container)
+        fabOverlay         = view.findViewById(R.id.fab_overlay)
+        btnNuevoCliente    = view.findViewById(R.id.btn_nuevo_cliente)
+        btnFiltroEstado  = view.findViewById(R.id.btn_filtro_estado)
+        dropdownEstados  = view.findViewById(R.id.dropdown_estados)
     }
 
+    /** 2 columnas en el RecyclerView con clipChildren=false para que los avatares no se corten */
     private fun initRecycler() {
-
-        rvClientes.layoutManager = LinearLayoutManager(requireContext())
+        rvClientes.layoutManager = GridLayoutManager(requireContext(), 2)
+        rvClientes.clipChildren = false
+        rvClientes.clipToPadding = false
 
         adapter = ClientesAdapter(object : ClientesAdapter.OnClienteClickListener {
-
-            override fun onDeleteClick(cliente: Cliente) {
-                mostrarDialogEliminar(cliente)
-            }
-
-            override fun onEditClick(cliente: Cliente) {
-                mostrarDialogEditar(cliente)
-            }
+            override fun onDeleteClick(cliente: Cliente) = mostrarDialogEliminar(cliente)
+            override fun onEditClick(cliente: Cliente)   = mostrarDialogEditar(cliente)
+            override fun onDetalleClick(cliente: Cliente) = mostrarDialogDetalle(cliente)
         })
 
         rvClientes.adapter = adapter
     }
 
-    private fun initDefaultState() {
-        filterGroup.check(R.id.btn_filter_todos)
-        actualizarEstilosFiltros(R.id.btn_filter_todos)
-    }
-
-
-    /* ----------------------------------------------------------------------------------------
-                                      LISTENERS
-    ---------------------------------------------------------------------------------------- */
+    /* ========================================================================================
+                                        LISTENERS
+       ======================================================================================== */
 
     private fun initListeners() {
-
-        // FAB
         fabMain.setOnClickListener { toggleFabMenu() }
         fabOverlay.setOnClickListener { closeFabMenu() }
 
@@ -174,157 +135,362 @@ class ClientesFragment : Fragment() {
             showNuevoClienteDialog()
         }
 
-        // Búsqueda
-        searchInput.doAfterTextChanged {
-            aplicarBusquedaYRender(it.toString())
+        searchInput.doAfterTextChanged { aplicarBusquedaYRender(it.toString()) }
+
+        // Botón que abre/cierra el dropdown
+        btnFiltroEstado.setOnClickListener {
+            dropdownEstados.visibility =
+                if (dropdownEstados.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
-        // Filtros
-        filterGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-
-            filtroActual = when (checkedId) {
-                R.id.btn_filter_vendidos -> "Vendido"
-                R.id.btn_filter_pendiente -> "Pendiente"
-                else -> null
-            }
-
-            actualizarEstilosFiltros(checkedId)
+        // Opciones del dropdown
+        requireView().findViewById<TextView>(R.id.filtro_todos).setOnClickListener {
+            filtroActual = null
+            dropdownEstados.visibility = View.GONE
+            cargarClientes()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_nuevo_cliente).setOnClickListener {
+            filtroActual = EstadoCliente.NUEVO_CLIENTE
+            dropdownEstados.visibility = View.GONE
+            cargarClientes()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_pago_pendiente).setOnClickListener {
+            filtroActual = EstadoCliente.PAGO_PENDIENTE
+            dropdownEstados.visibility = View.GONE
+            cargarClientes()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_pago_realizado).setOnClickListener {
+            filtroActual = EstadoCliente.PAGO_REALIZADO
+            dropdownEstados.visibility = View.GONE
+            cargarClientes()
+        }
+        requireView().findViewById<TextView>(R.id.filtro_no_asignado).setOnClickListener {
+            filtroActual = EstadoCliente.NO_ASIGNADO
+            dropdownEstados.visibility = View.GONE
             cargarClientes()
         }
     }
 
+    /* ========================================================================================
+                                    CARGA Y FILTRADO DE CLIENTES
+       ======================================================================================== */
 
-    /* ----------------------------------------------------------------------------------------
-                                      FAB MENU
-    ---------------------------------------------------------------------------------------- */
-
-    private fun toggleFabMenu() {
-        if (isFabMenuOpen) closeFabMenu() else openFabMenu()
-    }
-
-    private fun openFabMenu() {
-
-        isFabMenuOpen = true
-
-        fabOverlay.visibility = View.VISIBLE
-        fabMenuContainer.visibility = View.VISIBLE
-
-        fabOverlay.animate().alpha(1f).setDuration(150).start()
-        fabMenuContainer.animate().alpha(1f).translationY(0f).setDuration(180).start()
-
-        fabMain.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
-    }
-
-    private fun closeFabMenu() {
-
-        if (!isFabMenuOpen) return
-
-        isFabMenuOpen = false
-
-        fabOverlay.animate().alpha(0f).withEndAction {
-            fabOverlay.visibility = View.GONE
-        }.start()
-
-        fabMenuContainer.animate().alpha(0f).translationY(20f).withEndAction {
-            fabMenuContainer.visibility = View.GONE
-        }.start()
-
-        fabMain.setImageResource(android.R.drawable.ic_input_add)
-    }
-
-
-    /* ----------------------------------------------------------------------------------------
-                                      FILTROS / BÚSQUEDA
-    ---------------------------------------------------------------------------------------- */
-
-    private fun actualizarEstilosFiltros(selectedId: Int) {
-
-        val botones = listOf(btnFiltroTodos, btnFiltroVendidos, btnFiltroPendiente)
-
-        botones.forEach {
-            if (it.id == selectedId) {
-                it.setBackgroundColor(Color.parseColor("#286DFF"))
-                it.setTextColor(Color.WHITE)
-            } else {
-                it.setBackgroundColor(Color.WHITE)
-                it.setTextColor(Color.parseColor("#475467"))
-            }
-        }
-    }
-
-    private fun aplicarBusquedaYRender(query: String) {
-
-        val texto = query.trim().lowercase()
-
-        val listaFiltrada = if (texto.isEmpty()) {
-            clientesCargados
-        } else {
-            clientesCargados.filter { coincideBusqueda(it, texto) }
-        }
-
-        adapter.submitList(listaFiltrada)
-    }
-
-    // 🔹 Separamos la lógica de búsqueda (más limpio y reutilizable)
-    private fun coincideBusqueda(cliente: Cliente, texto: String): Boolean {
-        return cliente.nombre.lowercase().contains(texto) ||
-                cliente.email.lowercase().contains(texto) ||
-                cliente.telefono.lowercase().contains(texto) ||
-                cliente.descripcion.lowercase().contains(texto)
-    }
-
-
-    /* ----------------------------------------------------------------------------------------
-                                      BASE DE DATOS
-    ---------------------------------------------------------------------------------------- */
-
+    /**
+     * Trae los clientes de la BD, recalcula estados vencidos (NUEVO_CLIENTE / PAGO_REALIZADO
+     * que ya cumplieron sus 24hs) y luego aplica filtro + búsqueda.
+     */
     private fun cargarClientes() {
-
         lifecycleScope.launch {
-
-            val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
+            val dao      = AppDatabase.getDatabase(requireContext()).clienteDao()
             val userMail = sessionManager.getUserMail()
 
+            // 1. Recalcular estados vencidos antes de mostrar
+            recalcularEstadosVencidos(userMail)
+
+            // 2. Traer lista según filtro activo
             val clientes = if (filtroActual == null) {
                 dao.obtenerTodos(userMail)
             } else {
                 dao.obtenerPorEstado(filtroActual!!, userMail)
             }
 
-            clientesCargados.clear()
-            clientesCargados.addAll(clientes)
+            // 3. Cargar contadores de ventas para cada cliente
+            val clientesConContadores = clientes.map { cliente ->
+                val pagadas   = dao.contarVentasPagadas(cliente.id, userMail)
+                val pendientes = dao.contarVentasPendientes(cliente.id, userMail)
+                Triple(cliente, pagadas, pendientes)
+            }
 
-            aplicarBusquedaYRender(searchInput.text.toString())
+            clientesCargados.clear()
+            clientesCargados.addAll(clientesConContadores)
+
+            adapter.submitListConContadores(clientesConContadores)
         }
     }
 
+    /**
+     * Revisa si algún cliente tiene un estado transitorio (NUEVO_CLIENTE o PAGO_REALIZADO)
+     * que ya venció sus 24hs y lo recalcula automáticamente.
+     */
+    private suspend fun recalcularEstadosVencidos(userMail: String) {
+        val dao     = AppDatabase.getDatabase(requireContext()).clienteDao()
+        val ahora   = System.currentTimeMillis()
+        val limite  = ahora - EstadoCliente.DURACION_TRANSITORIO_MS
 
-    /* ----------------------------------------------------------------------------------------
-                                      CRUD - ELIMINAR
-    ---------------------------------------------------------------------------------------- */
+        val vencidos = dao.obtenerClientesConEstadoVencido(userMail, limite)
 
-    private fun mostrarDialogEliminar(cliente: Cliente) {
+        vencidos.forEach { cliente ->
+            val pendientes = dao.contarVentasPendientes(cliente.id, userMail)
 
-        val dialog = Dialog(requireContext())
+            val nuevoEstado = when {
+                pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE
+                else           -> EstadoCliente.NO_ASIGNADO
+            }
 
-        val view = layoutInflater.inflate(R.layout.dialog_eliminar_cliente, null)
-        dialog.setContentView(view)
+            dao.update(cliente.copy(
+                estado            = nuevoEstado,
+                fechaCambioEstado = null  // ya no es transitorio
+            ))
+        }
+    }
 
-        // Eliminar fondo por defecto
+    private fun aplicarBusquedaYRender(query: String) {
+        val texto = query.trim().lowercase()
+        val filtrados = if (texto.isEmpty()) clientesCargados
+        else clientesCargados.filter { (cliente, _, _) -> coincideBusqueda(cliente, texto) }
+        adapter.submitListConContadores(filtrados)
+    }
+
+    private fun coincideBusqueda(cliente: Cliente, texto: String): Boolean =
+        cliente.nombre.lowercase().contains(texto)   ||
+                cliente.apellido.lowercase().contains(texto) ||
+                cliente.email.lowercase().contains(texto)    ||
+                cliente.telefono.lowercase().contains(texto) ||
+                cliente.descripcion.lowercase().contains(texto)
+
+    /* ========================================================================================
+                                    DIÁLOGO: DETALLE DEL CLIENTE
+       ======================================================================================== */
+
+    /**
+     * Se abre al presionar el botón flotante del borde inferior derecho del item.
+     * Por ahora muestra los datos básicos del cliente.
+     */
+    private fun mostrarDialogDetalle(cliente: Cliente) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_detalle_cliente, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Opcional (pero recomendado)
+        // — Nombre
+        dialogView.findViewById<TextView>(R.id.tv_detalle_nombre).text =
+            "${cliente.nombre} ${cliente.apellido}".trim()
+
+        // — Estado con color dinámico
+        val tvEstado = dialogView.findViewById<TextView>(R.id.tv_detalle_estado)
+        tvEstado.text = cliente.estado
+        val colorEstado = when (cliente.estado) {
+            EstadoCliente.NUEVO_CLIENTE  -> "#286DFF"
+            EstadoCliente.PAGO_PENDIENTE -> "#F79009"
+            EstadoCliente.PAGO_REALIZADO -> "#12B76A"
+            else                         -> "#98A2B3"
+        }
+
+        (tvEstado.background as? android.graphics.drawable.GradientDrawable)
+            ?.setColor(Color.parseColor(colorEstado))
+
+        // — Datos
+        dialogView.findViewById<TextView>(R.id.tv_detalle_email).text    = cliente.email
+        dialogView.findViewById<TextView>(R.id.tv_detalle_telefono).text = cliente.telefono
+        dialogView.findViewById<TextView>(R.id.tv_detalle_direccion).text =
+            cliente.direccion.ifEmpty { "Sin dirección" }
+
+        // — Fecha formateada
+        val fecha = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            .format(java.util.Date(cliente.fecha))
+        dialogView.findViewById<TextView>(R.id.tv_detalle_fecha).text = fecha
+
+        // — Descripción: mostrar solo si tiene texto
+        val layoutDesc = dialogView.findViewById<View>(R.id.layout_descripcion)
+        val tvDesc     = dialogView.findViewById<TextView>(R.id.tv_detalle_descripcion)
+        if (cliente.descripcion.isNotEmpty()) {
+            layoutDesc.visibility = View.VISIBLE
+            tvDesc.text = cliente.descripcion
+        }
+
+        // — Botón Editar
+        dialogView.findViewById<MaterialButton>(R.id.btn_detalle_editar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogEditar(cliente)
+        }
+
+        // — Botón Eliminar
+        dialogView.findViewById<MaterialButton>(R.id.btn_detalle_eliminar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogEliminar(cliente)
+        }
+
+        // — Botón Cerrar
+        dialogView.findViewById<MaterialButton>(R.id.btn_cerrar_detalle)
+            .setOnClickListener { dialog.dismiss() }
+
+        // — WhatsApp
+        dialogView.findViewById<View>(R.id.btn_wsp).setOnClickListener {
+            val numero = cliente.telefono.replace(Regex("[^0-9]"), "") // limpia caracteres
+            val uri = Uri.parse("https://wa.me/$numero")
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        }
+
+        // — Email
+        dialogView.findViewById<View>(R.id.btn_mail).setOnClickListener {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:${cliente.email}")
+            }
+            startActivity(Intent.createChooser(intent, "Enviar email"))
+        }
+
+        dialog.show()
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    /* ========================================================================================
+                                    DIÁLOGO: NUEVO CLIENTE
+       ======================================================================================== */
+
+    private fun showNuevoClienteDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_nuevo_cliente)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val views = obtenerViewsNuevoCliente(dialog)
+
+        views.btnGuardar.setOnClickListener  { procesarNuevoCliente(dialog, views) }
+        views.btnCancelar.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    private fun procesarNuevoCliente(dialog: Dialog, v: NuevoClienteViews) {
+        val nombre    = v.nombre.text.toString().trim()
+        val apellido  = v.apellido.text.toString().trim()
+        val telefono  = v.telefono.text.toString().trim()
+        val email     = v.email.text.toString().trim()
+        val direccion = v.direccion.text.toString().trim()
+        val desc      = v.descripcion.text.toString().trim()
+
+        if (!validarCliente(nombre, telefono, email, v.tilNombre, v.tilTelefono, v.tilEmail)) return
+
+        lifecycleScope.launch {
+            val dao      = AppDatabase.getDatabase(requireContext()).clienteDao()
+            val userMail = sessionManager.getUserMail()
+
+            if (dao.obtenerPorEmail(email, userMail) != null) {
+                v.tilEmail.error = "Email ya en uso"
+                return@launch
+            }
+
+            val ahora = System.currentTimeMillis()
+
+            dao.insert(Cliente(
+                userMail          = userMail,
+                nombre            = nombre,
+                apellido          = apellido,
+                telefono          = telefono,
+                email             = email,
+                direccion         = direccion,
+                descripcion       = desc,
+                estado            = EstadoCliente.NUEVO_CLIENTE,  // siempre automático
+                fecha             = ahora,
+                fechaCambioEstado = ahora                          // empieza el conteo de 24hs
+            ))
+
+            cargarClientes()
+            Toast.makeText(requireContext(), "Cliente guardado", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+    }
+
+    /* ========================================================================================
+                                    DIÁLOGO: EDITAR CLIENTE
+       ======================================================================================== */
+
+    private fun mostrarDialogEditar(cliente: Cliente) {
+        val view = layoutInflater.inflate(R.layout.dialog_editar_cliente, null)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(view)
+            .create()
+
+        val v = obtenerViewsEditar(view)
+
+        // Precargar datos — el estado NO se edita manualmente
+        v.nombre.setText(cliente.nombre)
+        v.apellido.setText(cliente.apellido)
+        v.telefono.setText(cliente.telefono)
+        v.email.setText(cliente.email)
+        v.direccion.setText(cliente.direccion)
+        v.descripcion.setText(cliente.descripcion)
+
+        // Limpiar errores al escribir
+        v.nombre.doAfterTextChanged   { v.tilNombre.error = null }
+        v.telefono.doAfterTextChanged { v.tilTelefono.error = null }
+        v.email.doAfterTextChanged    { v.tilEmail.error = null }
+
+        v.btnCancelar.setOnClickListener { dialog.dismiss() }
+
+        v.btnGuardar.setOnClickListener {
+            val nombre    = v.nombre.text.toString().trim()
+            val apellido  = v.apellido.text.toString().trim()
+            val telefono  = v.telefono.text.toString().trim()
+            val email     = v.email.text.toString().trim()
+            val direccion = v.direccion.text.toString().trim()
+            val desc      = v.descripcion.text.toString().trim()
+
+            if (!validarCliente(nombre, telefono, email, v.tilNombre, v.tilTelefono, v.tilEmail)) return@setOnClickListener
+
+            lifecycleScope.launch {
+                val dao      = AppDatabase.getDatabase(requireContext()).clienteDao()
+                val userMail = sessionManager.getUserMail()
+
+                if (email != cliente.email && dao.obtenerPorEmail(email, userMail) != null) {
+                    v.tilEmail.error = "Email ya en uso"
+                    return@launch
+                }
+
+                dao.update(cliente.copy(
+                    nombre    = nombre,
+                    apellido  = apellido,
+                    telefono  = telefono,
+                    email     = email,
+                    direccion = direccion,
+                    descripcion = desc
+                    // estado NO se toca — es automático
+                ))
+
+                cargarClientes()
+                Toast.makeText(requireContext(), "Cliente actualizado", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+
+    /* ========================================================================================
+                                    DIÁLOGO: ELIMINAR CLIENTE
+       ======================================================================================== */
+
+    private fun mostrarDialogEliminar(cliente: Cliente) {
+        val view = layoutInflater.inflate(R.layout.dialog_eliminar_cliente, null)
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(view)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        view.findViewById<TextView>(R.id.tv_titulo_eliminar)
-            .text = "¿Eliminar a ${cliente.nombre}?"
+        view.findViewById<TextView>(R.id.tv_titulo_eliminar).text =
+            "¿Eliminar a ${cliente.nombre}?"
 
         view.findViewById<MaterialButton>(R.id.btn_eliminar_cliente).setOnClickListener {
-            eliminarClienteConfirmado(cliente)
+            lifecycleScope.launch {
+                AppDatabase.getDatabase(requireContext()).clienteDao()
+                    .marcarComoEliminado(cliente.id)
+                cargarClientes()
+                Toast.makeText(requireContext(), "Cliente eliminado", Toast.LENGTH_SHORT).show()
+            }
             dialog.dismiss()
         }
 
@@ -334,327 +500,120 @@ class ClientesFragment : Fragment() {
         dialog.show()
     }
 
-    private fun eliminarClienteConfirmado(cliente: Cliente) {
+    /* ========================================================================================
+                                        VALIDACIONES
+       ======================================================================================== */
 
-        lifecycleScope.launch {
-
-            val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
-
-            dao.marcarComoEliminado(cliente.id)
-
-            cargarClientes()
-
-            Toast.makeText(requireContext(), "Cliente eliminado", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    /* ----------------------------------------------------------------------------------------
-                                      VALIDACIONES
-    ---------------------------------------------------------------------------------------- */
-
-    private fun validarClienteFrontend(
+    private fun validarCliente(
         nombre: String,
         telefono: String,
         email: String,
-        estado: String,
         tilNombre: TextInputLayout,
         tilTelefono: TextInputLayout,
-        tilEmail: TextInputLayout,
-        tilEstado: TextInputLayout
+        tilEmail: TextInputLayout
     ): Boolean {
-
         var valido = true
 
         if (nombre.isEmpty()) {
             tilNombre.error = "Obligatorio"
             valido = false
         }
-
         if (telefono.length < 8) {
             tilTelefono.error = "Teléfono inválido"
             valido = false
         }
-
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Email inválido"
-            valido = false
-        }
-
-        if (estado.isEmpty()) {
-            tilEstado.error = "Seleccionar estado"
             valido = false
         }
 
         return valido
     }
 
+    /* ========================================================================================
+                                        MENÚ FAB
+       ======================================================================================== */
 
-    /* ----------------------------------------------------------------------------------------
-                                      DIALOGOS
-    ---------------------------------------------------------------------------------------- */
-
-    private fun mostrarDialogEditar(cliente: Cliente) {
-
-        val view = layoutInflater.inflate(R.layout.dialog_editar_cliente, null)
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(view)
-            .create()
-
-        val views = obtenerViewsEditar(view)
-
-        configurarDropdownEstado(views.estado)
-        cargarDatosClienteEnDialog(views, cliente)
-        setupValidacionesEnTiempoReal(views)
-
-        views.btnGuardar.setOnClickListener {
-            procesarEdicionCliente(cliente, views, dialog)
-        }
-
-        views.btnCancelar.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+    private fun toggleFabMenu() {
+        if (isFabMenuOpen) closeFabMenu() else openFabMenu()
     }
 
-    private fun obtenerViewsEditar(view: View) = EditarClienteViews(
-        nombre = view.findViewById(R.id.tiet_cliente_nombre),
-        telefono = view.findViewById(R.id.tiet_cliente_telefono),
-        email = view.findViewById(R.id.tiet_cliente_email),
-        estado = view.findViewById(R.id.actv_cliente_estado),
-        descripcion = view.findViewById(R.id.tiet_cliente_descripcion),
-        tilNombre = view.findViewById(R.id.til_cliente_nombre),
-        tilTelefono = view.findViewById(R.id.til_cliente_telefono),
-        tilEmail = view.findViewById(R.id.til_cliente_email),
-        tilEstado = view.findViewById(R.id.til_cliente_estado),
-        btnGuardar = view.findViewById(R.id.btn_guardar_cliente),
-        btnCancelar = view.findViewById(R.id.btn_cancelar_cliente)
-    )
-
-    private fun cargarDatosClienteEnDialog(v: EditarClienteViews, cliente: Cliente) {
-
-        v.nombre.setText(cliente.nombre)
-        v.telefono.setText(cliente.telefono)
-        v.email.setText(cliente.email)
-        v.descripcion.setText(cliente.descripcion)
-        v.estado.setText(cliente.estado, false)
+    private fun openFabMenu() {
+        isFabMenuOpen = true
+        fabOverlay.visibility = View.VISIBLE
+        fabMenuContainer.visibility = View.VISIBLE
+        fabOverlay.animate().alpha(1f).setDuration(150).start()
+        fabMenuContainer.animate().alpha(1f).translationY(0f).setDuration(180).start()
+        fabMain.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
     }
 
-    private fun setupValidacionesEnTiempoReal(v: EditarClienteViews) {
-        v.nombre.doAfterTextChanged { v.tilNombre.error = null }
-        v.telefono.doAfterTextChanged { v.tilTelefono.error = null }
-        v.email.doAfterTextChanged { v.tilEmail.error = null }
-        v.estado.doAfterTextChanged { v.tilEstado.error = null }
+    private fun closeFabMenu() {
+        if (!isFabMenuOpen) return
+        isFabMenuOpen = false
+        fabOverlay.animate().alpha(0f).withEndAction { fabOverlay.visibility = View.GONE }.start()
+        fabMenuContainer.animate().alpha(0f).translationY(20f).withEndAction {
+            fabMenuContainer.visibility = View.GONE
+        }.start()
+        fabMain.setImageResource(android.R.drawable.ic_input_add)
     }
 
-    /* ---------- LÓGICA DE FORMULARIOS ---------- */
-    private fun procesarEdicionCliente(
-        clienteOriginal: Cliente,
-        v: EditarClienteViews,
-        dialog: AlertDialog
-    ) {
+    /* ========================================================================================
+                                    DATA CLASSES DE VISTAS
+       ======================================================================================== */
 
-        val nombre = v.nombre.text.toString().trim()
-        val telefono = v.telefono.text.toString().trim()
-        val email = v.email.text.toString().trim()
-        val estado = v.estado.text.toString().trim()
-        val descripcion = v.descripcion.text.toString().trim()
-
-        val esValido = validarClienteFrontend(
-            nombre,
-            telefono,
-            email,
-            estado,
-            v.tilNombre,
-            v.tilTelefono,
-            v.tilEmail,
-            v.tilEstado
-        )
-
-        if (!esValido) return
-
-        val clienteActualizado = clienteOriginal.copy(
-            nombre = nombre,
-            telefono = telefono,
-            email = email,
-            descripcion = descripcion,
-            estado = estado
-        )
-
-        actualizarCliente(clienteActualizado, clienteOriginal.email, v.tilEmail, dialog)
-    }
-
-    private fun showNuevoClienteDialog() {
-
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_nuevo_cliente)
-
-        val views = obtenerViewsNuevoCliente(dialog)
-
-        configurarDropdownEstado(views.estado)
-
-        views.btnGuardar.setOnClickListener {
-            procesarNuevoCliente(dialog, views)
-        }
-
-        views.btnCancelar.setOnClickListener { dialog.dismiss() }
-
-        dialog.show()
-    }
-
-    // 🔹 Encapsulamos referencias (clave para no ensuciar)
-    private fun obtenerViewsNuevoCliente(dialog: Dialog) = NuevoClienteViews(
-        nombre = dialog.findViewById(R.id.tiet_cliente_nombre),
-        telefono = dialog.findViewById(R.id.tiet_cliente_telefono),
-        email = dialog.findViewById(R.id.tiet_cliente_email),
-        estado = dialog.findViewById(R.id.actv_cliente_estado),
-        descripcion = dialog.findViewById(R.id.tiet_cliente_descripcion),
-        tilNombre = dialog.findViewById(R.id.til_cliente_nombre),
-        tilTelefono = dialog.findViewById(R.id.til_cliente_telefono),
-        tilEmail = dialog.findViewById(R.id.til_cliente_email),
-        tilEstado = dialog.findViewById(R.id.til_cliente_estado),
-        btnGuardar = dialog.findViewById(R.id.btn_guardar_cliente),
-        btnCancelar = dialog.findViewById(R.id.btn_cancelar_cliente)
-    )
-
-    private object EstadoCliente {
-        const val NUEVO = "Nuevo cliente"
-        const val POTENCIAL = "Cliente potencial"
-        const val LLAMAR = "Llamar"
-        const val PENDIENTE = "Pendiente"
-    }
-    private fun configurarDropdownEstado(view: AutoCompleteTextView) {
-        val estados = listOf(
-            EstadoCliente.NUEVO,
-            EstadoCliente.POTENCIAL,
-            EstadoCliente.LLAMAR,
-            EstadoCliente.PENDIENTE
-        )
-
-        view.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, estados))
-    }
-
-    private fun procesarNuevoCliente(dialog: Dialog, v: NuevoClienteViews) {
-
-        val nombre = v.nombre.text.toString().trim()
-        val telefono = v.telefono.text.toString().trim()
-        val email = v.email.text.toString().trim()
-        val estado = v.estado.text.toString().trim()
-        val descripcion = v.descripcion.text.toString().trim()
-
-        if (validarClienteFrontend(nombre, telefono, email, estado, v.tilNombre, v.tilTelefono, v.tilEmail, v.tilEstado)) {
-            registrarCliente(nombre, telefono, email, estado, descripcion, dialog, v.tilEmail)
-        }
-    }
-
-
-    /* ----------------------------------------------------------------------------------------
-                                      MODELO AUXILIAR (UI)
-    ---------------------------------------------------------------------------------------- */
-
-    // 🔹 Esto es CLAVE: reduce ruido visual brutalmente
     data class NuevoClienteViews(
         val nombre: TextInputEditText,
+        val apellido: TextInputEditText,
         val telefono: TextInputEditText,
         val email: TextInputEditText,
-        val estado: AutoCompleteTextView,
+        val direccion: TextInputEditText,
         val descripcion: TextInputEditText,
         val tilNombre: TextInputLayout,
         val tilTelefono: TextInputLayout,
         val tilEmail: TextInputLayout,
-        val tilEstado: TextInputLayout,
         val btnGuardar: MaterialButton,
         val btnCancelar: MaterialButton
     )
 
     data class EditarClienteViews(
         val nombre: TextInputEditText,
+        val apellido: TextInputEditText,
         val telefono: TextInputEditText,
         val email: TextInputEditText,
-        val estado: AutoCompleteTextView,
+        val direccion: TextInputEditText,
         val descripcion: TextInputEditText,
         val tilNombre: TextInputLayout,
         val tilTelefono: TextInputLayout,
         val tilEmail: TextInputLayout,
-        val tilEstado: TextInputLayout,
         val btnGuardar: MaterialButton,
         val btnCancelar: MaterialButton
     )
 
+    private fun obtenerViewsNuevoCliente(dialog: Dialog) = NuevoClienteViews(
+        nombre      = dialog.findViewById(R.id.tiet_cliente_nombre),
+        apellido    = dialog.findViewById(R.id.tiet_cliente_apellido),
+        telefono    = dialog.findViewById(R.id.tiet_cliente_telefono),
+        email       = dialog.findViewById(R.id.tiet_cliente_email),
+        direccion   = dialog.findViewById(R.id.tiet_cliente_direccion),
+        descripcion = dialog.findViewById(R.id.tiet_cliente_descripcion),
+        tilNombre   = dialog.findViewById(R.id.til_cliente_nombre),
+        tilTelefono = dialog.findViewById(R.id.til_cliente_telefono),
+        tilEmail    = dialog.findViewById(R.id.til_cliente_email),
+        btnGuardar  = dialog.findViewById(R.id.btn_guardar_cliente),
+        btnCancelar = dialog.findViewById(R.id.btn_cancelar_cliente)
+    )
 
-    /* ----------------------------------------------------------------------------------------
-                                      CRUD - DB
-    ---------------------------------------------------------------------------------------- */
-
-    private fun registrarCliente(
-        nombre: String,
-        telefono: String,
-        email: String,
-        estado: String,
-        descripcion: String,
-        dialog: Dialog,
-        tilEmail: TextInputLayout
-    ) {
-        lifecycleScope.launch {
-
-            val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
-            val userMail = sessionManager.getUserMail()
-
-            val existe = dao.obtenerPorEmail(email, userMail)
-
-            if (existe == null) {
-
-                dao.insert(
-                    Cliente(
-                        nombre = nombre,
-                        telefono = telefono,
-                        email = email,
-                        descripcion = descripcion,
-                        estado = estado,
-                        fecha = System.currentTimeMillis(),
-                        userMail = userMail
-                    )
-                )
-
-                cargarClientes()
-                Toast.makeText(requireContext(), "Cliente guardado", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-
-            } else {
-                tilEmail.error = "Email ya en uso"
-            }
-        }
-    }
-
-    private fun actualizarCliente(
-        cliente: Cliente,
-        emailOriginal: String,
-        tilEmail: TextInputLayout,
-        dialog: AlertDialog
-    ) {
-        lifecycleScope.launch {
-
-            val dao = AppDatabase.getDatabase(requireContext()).clienteDao()
-
-            if (cliente.email != emailOriginal) {
-
-                val userMail = sessionManager.getUserMail()
-                val existe = dao.obtenerPorEmail(cliente.email, userMail)
-
-                if (existe != null) {
-                    tilEmail.error = "Email ya en uso"
-                    return@launch
-                }
-            }
-
-            dao.update(cliente)
-
-            cargarClientes()
-            Toast.makeText(requireContext(), "Cliente actualizado", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
-    }
-
+    private fun obtenerViewsEditar(view: View) = EditarClienteViews(
+        nombre      = view.findViewById(R.id.tiet_cliente_nombre),
+        apellido    = view.findViewById(R.id.tiet_cliente_apellido),
+        telefono    = view.findViewById(R.id.tiet_cliente_telefono),
+        email       = view.findViewById(R.id.tiet_cliente_email),
+        direccion   = view.findViewById(R.id.tiet_cliente_direccion),
+        descripcion = view.findViewById(R.id.tiet_cliente_descripcion),
+        tilNombre   = view.findViewById(R.id.til_cliente_nombre),
+        tilTelefono = view.findViewById(R.id.til_cliente_telefono),
+        tilEmail    = view.findViewById(R.id.til_cliente_email),
+        btnGuardar  = view.findViewById(R.id.btn_guardar_cliente),
+        btnCancelar = view.findViewById(R.id.btn_cancelar_cliente)
+    )
 }
