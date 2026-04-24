@@ -449,7 +449,7 @@ class VentasFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.tv_titulo_eliminar).text =
             "¿Eliminar venta de ${venta.nombreCliente}?"
-        view.findViewById<MaterialButton>(R.id.btn_eliminar_cliente).text = "Eliminar Venta"
+        view.findViewById<MaterialButton>(R.id.btn_eliminar_cliente).text = "Eliminar"
 
         view.findViewById<MaterialButton>(R.id.btn_cancelar_cliente).setOnClickListener {
             dialog.dismiss()
