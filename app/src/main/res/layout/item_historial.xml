@@ -4,81 +4,144 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="#E0E0E0"
-    app:strokeWidth="1dp">
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#D0D5DD"
+    app:strokeWidth="1.5dp"
+    app:cardBackgroundColor="@android:color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="14dp">
 
-        <ImageView
-            android:id="@+id/iv_tipo_icono"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_circle_light"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_menu_myplaces"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <!-- Ícono tipo -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/iv_tipo_icono_container"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            app:cardCornerRadius="23dp"
+            app:cardBackgroundColor="#EBF1FF"
+            app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#4A90E2" />
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <ImageView
+                android:id="@+id/iv_tipo_icono"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_ventas"
+                app:tint="#286DFF" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Textos principales -->
         <LinearLayout
             android:id="@+id/container_textos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_restaurar_item"
-            app:layout_constraintStart_toEndOf="@id/iv_tipo_icono"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toEndOf="@id/iv_tipo_icono_container"
+            app:layout_constraintEnd_toStartOf="@id/container_acciones"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <!-- Nombre -->
             <TextView
                 android:id="@+id/tv_nombre_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Nombre del Elemento"
+                android:text="Nombre del elemento"
                 android:textColor="@color/text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
+            <!-- Detalle secundario -->
             <TextView
                 android:id="@+id/tv_detalle_secundario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
+                android:layout_marginTop="2dp"
+                android:text="Detalle"
+                android:textColor="@color/hint_color"
+                android:textSize="12sp"
                 android:maxLines="1"
-                android:text="Monto: $0.00 | Tel: 12345"
-                android:textColor="#667085"
-                android:textSize="14sp" />
+                android:ellipsize="end" />
+
+            <!-- Badge de tipo (Cliente / Venta) -->
+            <TextView
+                android:id="@+id/tv_badge_tipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Cliente"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_estado_rounded" />
+
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_restaurar_item"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <!-- Botones Restaurar + Eliminar -->
+        <LinearLayout
+            android:id="@+id/container_acciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="8dp"
-            android:text="Restaurar"
-            android:textAllCaps="false"
-            android:textColor="@color/primary_blue"
-            app:icon="@android:drawable/ic_menu_revert"
-            app:iconPadding="4dp"
-            app:iconSize="18dp"
-            app:iconTint="#4A90E2"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:spacing="4dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Restaurar -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_restaurar_item"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="#EBF1FF"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="#286DFF" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Eliminar permanentemente -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btn_eliminar_permanente"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="#FFF1F0"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_delete"
+                    app:tint="#F04438" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -126,6 +126,7 @@ interface ClienteDao {
                     Contar Ventas Caducadas
     -------------------------------------------------- */
 
+    /** Cuenta ventas con estado 'Pago caducado' activas para un cliente. */
     @Query("""
     SELECT COUNT(*) FROM Ventas_Tabla
     WHERE idClienteVenta = :clienteId
@@ -153,4 +154,9 @@ interface ClienteDao {
         AND userMail = :userMail
     """)
     fun getClientesEnPapelera(userMail: String): Flow<List<Cliente>>
+
+    /** Elimina el cliente de la base de datos de forma permanente. */
+    @Query("DELETE FROM Cliente_Tabla WHERE id = :clienteId")
+    suspend fun eliminarFisico(clienteId: Int)
+
 }

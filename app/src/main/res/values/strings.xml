@@ -87,7 +87,7 @@
     <string name="editar_venta">Editar Venta</string>
 
     <!-- Historial -->
-    <string name="gestion_historial_titulo">Gestión de\nHistorial</string>
+    <string name="gestion_historial_titulo">Gestión de Historial</string>
     <string name="buscar_historial">Filtrar por Nombre, Mail o Teléfono...</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -108,4 +108,15 @@ interface VentaDao {
         WHERE id = :idVenta
     """)
     suspend fun restaurarVenta(idVenta: Int)
+
+    /** Elimina la venta de la base de datos de forma permanente. */
+    @Query("DELETE FROM Ventas_Tabla WHERE id = :ventaId")
+    suspend fun eliminarFisico(ventaId: Int)
+
+    /**
+     * Elimina físicamente TODAS las ventas de un cliente (activas y en papelera).
+     * Se usa al hacer baja física de un cliente para limpiar en cascada.
+     */
+    @Query("DELETE FROM Ventas_Tabla WHERE idClienteVenta = :clienteId AND userMail = :userMail")
+    suspend fun eliminarVentasPorCliente(clienteId: Int, userMail: String)
 }

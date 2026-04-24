@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,53 +8,45 @@
     android:background="@color/primary_blue"
     tools:context=".fragments.HistorialFragment">
 
+    <!-- ══════════════════════════════
+                  HEADER
+         ══════════════════════════════
+         Misma estructura que fragment_clientes y fragment_ventas:
+           - Título centrado
+           - Buscador + botón filtro (misma fila)
+           - Pills de filtro (fila debajo)
+         Así el contenido blanco siempre arranca a la misma altura.
+    -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iconCheck"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
-            android:src="@mipmap/logo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#FDFDFD" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_profile_picture"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:src="@android:color/darker_gray"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <!-- Título -->
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
             android:text="@string/gestion_historial_titulo"
             android:textColor="@color/white"
-            android:textSize="32sp"
+            android:textSize="26sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iconCheck" />
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Buscador -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_search"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
             app:boxBackgroundColor="@color/white"
             app:boxCornerRadiusBottomEnd="14dp"
             app:boxCornerRadiusBottomStart="14dp"
@@ -62,7 +55,6 @@
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:hintEnabled="false"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
             app:startIconDrawable="@android:drawable/ic_menu_search"
@@ -78,66 +70,105 @@
                 android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/filter_group"
-            android:layout_width="0dp"
+        <!-- Botón filtro (alineado con buscador, igual que en clientes/ventas) -->
+
+        <!-- Pills de filtro: Todos / Clientes / Ventas -->
+        <LinearLayout
+            android:id="@+id/pills_container"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
             app:layout_constraintTop_toBottomOf="@id/til_search"
-            app:selectionRequired="true"
-            app:singleSelection="true">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.button.MaterialButton
+            <!-- Pill: Todos -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_filter_todos"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Todos"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:backgroundTint="#286DFF"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
 
-            <com.google.android.material.button.MaterialButton
+                <TextView
+                    android:id="@+id/tv_filter_todos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingHorizontal="18dp"
+                    android:text="Todos"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary_blue" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <View android:layout_width="8dp" android:layout_height="1dp" />
+
+            <!-- Pill: Clientes -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_filter_clientes"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Clientes"
-                android:textAllCaps="false"
-                android:textColor="#475467"
-                android:textSize="12sp"
-                app:backgroundTint="#FFF"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="#33FFFFFF"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
 
-            <com.google.android.material.button.MaterialButton
+                <TextView
+                    android:id="@+id/tv_filter_clientes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingHorizontal="18dp"
+                    android:text="Clientes"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <View android:layout_width="8dp" android:layout_height="1dp" />
+
+            <!-- Pill: Ventas -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_filter_ventas"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Ventas"
-                android:textAllCaps="false"
-                android:textColor="#475467"
-                android:textSize="12sp"
-                app:backgroundTint="#FFF"
-                app:cornerRadius="20dp"
-                app:strokeWidth="0dp" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="#33FFFFFF"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <TextView
+                    android:id="@+id/tv_filter_ventas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingHorizontal="18dp"
+                    android:text="Ventas"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- ══════════════════════════════
+              CONTENIDO PRINCIPAL
+         ══════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
