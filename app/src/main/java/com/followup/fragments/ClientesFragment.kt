@@ -217,19 +217,26 @@ class ClientesFragment : Fragment() {
         val ahora   = System.currentTimeMillis()
         val limite  = ahora - EstadoCliente.DURACION_TRANSITORIO_MS
 
+        // — Estados transitorios vencidos (Nuevo Cliente / Pago Realizado de +24hs)
         val vencidos = dao.obtenerClientesConEstadoVencido(userMail, limite)
-
         vencidos.forEach { cliente ->
             val pendientes = dao.contarVentasPendientes(cliente.id, userMail)
-
             val nuevoEstado = when {
                 pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE
                 else           -> EstadoCliente.NO_ASIGNADO
             }
-
             dao.update(cliente.copy(
                 estado            = nuevoEstado,
-                fechaCambioEstado = null  // ya no es transitorio
+                fechaCambioEstado = null
+            ))
+        }
+
+        // — Caducados: ventas pendientes cuya fecha de seguimiento ya pasó
+        val caducados = dao.obtenerClientesConSeguimientoVencido(userMail, ahora)
+        caducados.forEach { cliente ->
+            dao.update(cliente.copy(
+                estado            = EstadoCliente.PAGO_CADUCADO,
+                fechaCambioEstado = null
             ))
         }
     }

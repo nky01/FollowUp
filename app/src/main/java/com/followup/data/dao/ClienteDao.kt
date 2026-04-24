@@ -106,6 +106,23 @@ interface ClienteDao {
     suspend fun contarVentasPendientes(clienteId: Int, userMail: String): Int
 
     /* --------------------------------------------------
+            obtenerClientesConSeguimientoVencido
+    -------------------------------------------------- */
+
+    @Query("""
+    SELECT c.* FROM Cliente_Tabla c
+    INNER JOIN Ventas_Tabla v ON v.idClienteVenta = c.id
+    WHERE c.isDeleted = 0
+    AND c.userMail = :userMail
+    AND c.estado = 'Pago Pendiente'
+    AND v.isDeleted = 0
+    AND v.estado = 'Pendiente'
+    AND v.fechaSeguimiento < :ahora
+    GROUP BY c.id
+""")
+    suspend fun obtenerClientesConSeguimientoVencido(userMail: String, ahora: Long): List<Cliente>
+
+    /* --------------------------------------------------
                 FLOWS (observación reactiva)
     -------------------------------------------------- */
 

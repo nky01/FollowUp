@@ -48,6 +48,7 @@ class ClientesAdapter(
         const val NARANJA = "#F79009"   // Pago Pendiente
         const val VERDE   = "#12B76A"   // Pago Realizado
         const val GRIS    = "#98A2B3"   // No Asignado
+
     }
 
     /** Devuelve el color hex correspondiente al estado del cliente. */
@@ -55,7 +56,8 @@ class ClientesAdapter(
         EstadoCliente.NUEVO_CLIENTE  -> ColoresEstado.AZUL
         EstadoCliente.PAGO_PENDIENTE -> ColoresEstado.NARANJA
         EstadoCliente.PAGO_REALIZADO -> ColoresEstado.VERDE
-        else                         -> ColoresEstado.GRIS    // NO_ASIGNADO o desconocido
+        EstadoCliente.PAGO_CADUCADO  -> "#F04438" // ROJO OSCURO
+        else                         -> ColoresEstado.GRIS
     }
 
     /* ========================================================================================

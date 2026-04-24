@@ -38,6 +38,7 @@ import com.followup.R
 import com.followup.data.adapter.VentasAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
+import com.followup.data.entity.EstadoCliente
 import com.followup.data.entity.Venta
 import com.followup.presentation.settings.SessionManager
 
@@ -95,9 +96,9 @@ class VentasFragment : Fragment() {
        Centralizar los strings de estado evita errores de tipeo en comparaciones.
     */
     private object Estado {
-        const val PENDIENTE   = "Falta pagar"
+        const val PENDIENTE   = "Pendiente"   // antes era "Falta pagar"
         const val PAGADO      = "Pagado"
-        const val NO_ASIGNADO = "No asignado"
+        const val NO_ASIGNADO = "No Asignado"
     }
 
     /* ========================================================================================
@@ -587,39 +588,44 @@ class VentasFragment : Fragment() {
     /** Construye la entidad Venta a partir del formulario validado y la persiste en la BD. */
     private fun registrarVenta(form: VentaFormData, dialog: Dialog) {
         lifecycleScope.launch {
-            val db       = AppDatabase.getDatabase(requireContext())
-            val userMail = sessionManager.getUserMail()
+            try {
+                val db       = AppDatabase.getDatabase(requireContext())
+                val userMail = sessionManager.getUserMail()
 
-            // Buscar el cliente para obtener email y teléfono (necesarios para el buscador)
-            val cliente = db.clienteDao()
-                .obtenerTodos(userMail)
-                .find { it.id == form.clienteId }
+                val cliente = db.clienteDao()
+                    .obtenerTodos(userMail)
+                    .find { it.id == form.clienteId }
 
-            val estado = if (form.pagoTotal >= form.montoTotal) Estado.PAGADO else Estado.PENDIENTE
+                val estado = if (form.pagoTotal >= form.montoTotal) Estado.PAGADO else Estado.PENDIENTE
 
-            val venta = Venta(
-                idClienteVenta   = form.clienteId,
-                nombreCliente    = form.nombreCliente,
-                userMail         = userMail,
-                emailCliente     = cliente?.email ?: "",
-                telefonoCliente  = cliente?.telefono ?: "",
-                montoTotal       = form.montoTotal,
-                pagoTotal        = form.pagoTotal,
-                fechaVenta       = form.fechaVenta,
-                fechaSeguimiento = form.fechaSeguimiento,
-                descripcion      = form.descripcion,
-                total            = form.montoTotal,
-                fecha            = form.fechaVenta,
-                formaPago        = "Pago total",
-                estado           = estado
-            )
+                val venta = Venta(
+                    idClienteVenta   = form.clienteId,
+                    nombreCliente    = form.nombreCliente,
+                    userMail         = userMail,
+                    emailCliente     = cliente?.email.orEmpty(),
+                    telefonoCliente  = cliente?.telefono.orEmpty(),
+                    montoTotal       = form.montoTotal,
+                    pagoTotal        = form.pagoTotal,
+                    fechaVenta       = form.fechaVenta,
+                    fechaSeguimiento = form.fechaSeguimiento,
+                    descripcion      = form.descripcion,
+                    total            = form.montoTotal,
+                    fecha            = form.fechaVenta,
+                    formaPago        = "Pago total",
+                    estado           = estado
+                )
 
-            db.ventaDao().insert(venta)
-            actualizarEstadoCliente(form.clienteId)
-            cargarVentas()
+                db.ventaDao().insert(venta)
+                actualizarEstadoCliente(form.clienteId)
+                cargarVentas()
 
-            Toast.makeText(requireContext(), "Venta guardada con éxito", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
+                Toast.makeText(requireContext(), "Venta guardada", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+
+            } catch (e: Exception) {
+                android.util.Log.e("VENTAS_ERROR", "Error al guardar venta: ${e.message}", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -640,19 +646,32 @@ class VentasFragment : Fragment() {
         val db       = AppDatabase.getDatabase(requireContext())
         val userMail = sessionManager.getUserMail()
 
-        val estados = db.ventaDao().obtenerEstadosPorCliente(clienteId, userMail)
+        val cliente = db.clienteDao().obtenerPorId(clienteId) ?: return
+
+        // No tocar clientes en estado transitorio — ClientesFragment los maneja
+        if (cliente.estado == EstadoCliente.NUEVO_CLIENTE) return
+
+        val pendientes = db.clienteDao().contarVentasPendientes(clienteId, userMail)
+        val pagadas    = db.clienteDao().contarVentasPagadas(clienteId, userMail)
 
         val nuevoEstado = when {
-            estados.isEmpty()                                                  -> Estado.NO_ASIGNADO
-            estados.any { it.equals(Estado.PENDIENTE, ignoreCase = true) }    -> Estado.PENDIENTE
-            else                                                               -> "Venta finalizada"
+            pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE
+            pagadas > 0    -> {
+                // Todas pagadas → PAGO_REALIZADO transitorio por 24hs
+                val ahora = System.currentTimeMillis()
+                db.clienteDao().update(cliente.copy(
+                    estado            = EstadoCliente.PAGO_REALIZADO,
+                    fechaCambioEstado = ahora
+                ))
+                return
+            }
+            else -> EstadoCliente.NO_ASIGNADO
         }
 
-        val cliente = db.clienteDao()
-            .obtenerTodos(userMail)
-            .find { it.id == clienteId } ?: return
-
-        db.clienteDao().update(cliente.copy(estado = nuevoEstado))
+        db.clienteDao().update(cliente.copy(
+            estado            = nuevoEstado,
+            fechaCambioEstado = null
+        ))
     }
 
 

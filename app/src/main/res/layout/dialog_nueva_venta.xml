@@ -1,156 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="6dp">
+    android:orientation="vertical"
+    android:background="@drawable/background_content_top_rounded">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/agregar_venta_titulo"
-            android:textColor="@color/text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_cliente"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/nombre_cliente">
-
-            <AutoCompleteTextView
-                android:id="@+id/actv_venta_cliente"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_monto_total"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/monto_total">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_venta_monto_total"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_pago_total"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/pago_total">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_venta_pago_total"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- SWITCH ACTIVAR ALERTA -->
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_alerta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Crear alerta de seguimiento"
-            android:layout_marginTop="12dp"/>
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/layout_alerta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginTop="8dp">
+            android:padding="24dp">
 
+            <!-- TÍTULO -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Nueva Venta"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp" />
+
+            <!-- CLIENTE -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_cliente"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Frecuencia">
-
+                android:hint="Cliente"
+                android:layout_marginBottom="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
                 <AutoCompleteTextView
-                    android:id="@+id/actv_frecuencia"
+                    android:id="@+id/actv_venta_cliente"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_fecha_seguimiento"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/fecha_seguimiento">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_venta_fecha_seguimiento"
+            <!-- MONTO TOTAL -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_monto_total"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Monto total"
+                android:layout_marginBottom="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_venta_monto_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_venta_descripcion"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/descripcion">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_venta_descripcion"
+            <!-- PAGO TOTAL -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_pago_total"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:minLines="3" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Pago realizado"
+                android:layout_marginBottom="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_venta_pago_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="end"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_cancelar_venta"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+            <!-- FECHA DE VENTA -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_fecha_venta"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cancelar"
-                android:textAllCaps="false" />
+                android:hint="Fecha de venta"
+                android:layout_marginBottom="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconTint="@color/hint_color">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_venta_fecha_venta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_guardar_venta"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
+            <!-- FECHA DE SEGUIMIENTO -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_fecha_seguimiento"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/guardar"
-                android:textAllCaps="false" />
+                android:hint="Fecha de seguimiento"
+                android:layout_marginBottom="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconTint="@color/hint_color">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_venta_fecha_seguimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- DESCRIPCIÓN -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_venta_descripcion"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Descripción"
+                android:layout_marginBottom="24dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_venta_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- BOTONES -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_cancelar_venta"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:text="Cancelar"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary"
+                    app:strokeColor="#D0D5DD"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@android:color/white" />
+
+                <View android:layout_width="10dp" android:layout_height="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_guardar_venta"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:text="Guardar"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="#286DFF"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+</LinearLayout>

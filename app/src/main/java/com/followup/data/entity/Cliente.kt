@@ -19,9 +19,10 @@ object EstadoCliente {
     const val NUEVO_CLIENTE  = "Nuevo Cliente"
     const val PAGO_PENDIENTE = "Pago Pendiente"
     const val PAGO_REALIZADO = "Pago Realizado"
+    const val PAGO_CADUCADO  = "Pago Caducado"
     const val NO_ASIGNADO    = "No Asignado"
 
-    const val DURACION_TRANSITORIO_MS = 24 * 60 * 60 * 1000L // 24 horas en milisegundos
+    const val DURACION_TRANSITORIO_MS = 24 * 60 * 60 * 1000L
 }
 
 @Entity(tableName = "Cliente_Tabla")
