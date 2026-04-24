@@ -4,13 +4,20 @@ package com.followup.fragments
                                            IMPORTS
 ---------------------------------------------------------------------------------------- */
 
+import android.content.Intent
 import android.content.SharedPreferences
 // Almacenamiento local clave-valor (guardar sesión)
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
 // Contenedor de datos del Activity
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 // Clase base para Activities
 
 import androidx.fragment.app.Fragment
@@ -26,9 +33,16 @@ import com.followup.data.database.AppDatabase
 // Base de datos ROOM
 
 import com.followup.fragments.*
+import com.followup.fragments.menuLateral.AgendaFragment
+import com.followup.fragments.menuLateral.ConfiguracionFragment
+import com.followup.fragments.menuLateral.EstadisticasFragment
+import com.followup.presentation.login.Login
+import com.followup.presentation.settings.Configuracion
+import com.followup.presentation.settings.SessionManager
 // Fragments de navegación (Inicio, Clientes, etc.)
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 // Barra de navegación inferior
 
 import com.google.firebase.auth.FirebaseAuth
@@ -41,37 +55,53 @@ import kotlinx.coroutines.launch
                                    ACTIVITY PRINCIPAL
 ---------------------------------------------------------------------------------------- */
 /*
-    [+] - Activity principal de la app luego del login
-    [+] - Maneja navegación entre fragments
-    [+] - Sincroniza estado de usuario con Firebase
+    [+] Activity principal luego del login
+    [+] Maneja navegación entre fragments (Bottom + Drawer)
+    [+] Oculta o muestra el BottomNavigation según la sección
+    [+] Sincroniza estado de usuario con Firebase
 */
 
 class PrincipalActivity : AppCompatActivity() {
 
     /* ----------------------------------------------------------------------------------------
-                                            ATRIBUTOS
+                                            UI
     ---------------------------------------------------------------------------------------- */
 
     private lateinit var bottomNavigationView: BottomNavigationView
-    // Barra de navegación inferior
+    // Navegación inferior principal
+
+    private lateinit var drawerLayout: DrawerLayout
+    // Contenedor del menú lateral
+
+    private lateinit var navigationView: NavigationView
+    // Menú lateral (drawer)
+
+    private lateinit var btnCerrarSesion: TextView
+    // Botón footer del drawer (logout)
+
+    private lateinit var txtName: TextView
+    // Nombre del usuario en el header del menú lateral
+
+    /* ----------------------------------------------------------------------------------------
+                                            SERVICIOS
+    ---------------------------------------------------------------------------------------- */
 
     private lateinit var firebaseAuth: FirebaseAuth
-    // Manejo de autenticación Firebase
+    // Autenticación Firebase
 
     private lateinit var sharedPreferences: SharedPreferences
-    // Almacenamiento local (sesión usuario)
+    // Persistencia local de usuario
 
-    /* ---------- Listener de autenticación ---------- */
+    /* ----------------------------------------------------------------------------------------
+                              AUTH LISTENER (SYNC USUARIO)
+    ---------------------------------------------------------------------------------------- */
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
 
         val firebaseEmail = firebaseAuth.currentUser?.email?.lowercase()
-        // Email actual de Firebase
-
         val savedEmail = sharedPreferences.getString("USER_MAIL", "")?.lowercase()
-        // Email guardado localmente
 
-        // Si cambió el email en Firebase → sincronizar con Room y SharedPreferences
+        // Si el usuario cambió en Firebase, sincroniza DB local
         if (firebaseEmail != null && firebaseEmail != savedEmail) {
 
             lifecycleScope.launch {
@@ -91,11 +121,10 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
     /* ----------------------------------------------------------------------------------------
-                                      MÉTODOS PREDEFINIDOS
+                                      CICLO DE VIDA
     ---------------------------------------------------------------------------------------- */
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
         setupUI()
@@ -106,19 +135,15 @@ class PrincipalActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         firebaseAuth.removeAuthStateListener(authStateListener)
-        // Evita fugas de memoria (memory leaks)
     }
 
     /* ----------------------------------------------------------------------------------------
-                                          SETUP INICIAL
+                                          SETUP UI
     ---------------------------------------------------------------------------------------- */
 
     private fun setupUI() {
-
         setContentView(R.layout.activity_principal)
-        // Conecta con XML principal
     }
 
     /* ----------------------------------------------------------------------------------------
@@ -126,7 +151,6 @@ class PrincipalActivity : AppCompatActivity() {
     ---------------------------------------------------------------------------------------- */
 
     private fun initComponents() {
-
         initServices()
         initViews()
     }
@@ -134,29 +158,40 @@ class PrincipalActivity : AppCompatActivity() {
     private fun initServices() {
 
         sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
-        // Inicializa almacenamiento local
 
         firebaseAuth = FirebaseAuth.getInstance()
-        // Inicializa Firebase Auth
-
         firebaseAuth.addAuthStateListener(authStateListener)
-        // Escucha cambios en autenticación
     }
 
     private fun initViews() {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-        // Inicializa Bottom Navigation
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+        btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
+
+        // ---------- Header del Drawer ----- */
+        val headerView = navigationView.getHeaderView(0)
+        txtName = headerView.findViewById(R.id.txtName)
+
+        // ---------- Cargar Nombre de Usuario ----- */
+        cargarNombreUsuario()
+
     }
 
     /* ----------------------------------------------------------------------------------------
-                                      LISTENERS (EVENTOS)
+                                      LISTENERS
     ---------------------------------------------------------------------------------------- */
 
     private fun initListeners() {
-
         setupBottomNavigation()
+        setupDrawer()
+        setupCerrarSesion()
     }
+
+    /* ----------------------------------------------------------------------------------------
+                              BOTTOM NAVIGATION
+    ---------------------------------------------------------------------------------------- */
 
     private fun setupBottomNavigation() {
 
@@ -165,21 +200,26 @@ class PrincipalActivity : AppCompatActivity() {
             when (menuItem.itemId) {
 
                 R.id.bottom_Inicio -> {
+                    // Este es el fragment principal que contiene tu lógica general
+                    showBottomNavigation(true)
                     replaceFragment(InicioFragment())
                     true
                 }
 
                 R.id.bottom_Clientes -> {
+                    showBottomNavigation(true)
                     replaceFragment(ClientesFragment())
                     true
                 }
 
                 R.id.bottom_Ventas -> {
+                    showBottomNavigation(true)
                     replaceFragment(VentasFragment())
                     true
                 }
 
                 R.id.bottom_Historial -> {
+                    showBottomNavigation(true)
                     replaceFragment(HistorialFragment())
                     true
                 }
@@ -190,27 +230,138 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
     /* ----------------------------------------------------------------------------------------
-                                      NAVEGACIÓN
+                              DRAWER NAVIGATION
+    ---------------------------------------------------------------------------------------- */
+
+    private fun setupDrawer() {
+
+        navigationView.setNavigationItemSelectedListener {
+
+            when (it.itemId) {
+
+                R.id.nav_inicio -> {
+                    // Vuelve a la pantalla principal y muestra el bottom nav
+                    showBottomNavigation(true)
+                    replaceFragment(InicioFragment())
+                }
+
+                R.id.nav_agenda -> {
+                    // Sección del drawer: oculta el bottom nav
+                    showBottomNavigation(false)
+                    replaceFragment(AgendaFragment())
+                }
+
+                R.id.nav_estadisticas -> {
+                    showBottomNavigation(false)
+                    replaceFragment(EstadisticasFragment())
+                }
+
+                R.id.nav_configuracion -> {
+                    startActivity(Intent(this, Configuracion::class.java))
+                }
+            }
+
+            drawerLayout.closeDrawers()
+            true
+        }
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                      CARGAR NOMBRE DE USUARIO
+    ---------------------------------------------------------------------------------------- */
+
+    private fun cargarNombreUsuario() {
+
+        // Tomo el mail que guardaste al loguearte
+        val mail = sharedPreferences.getString("USER_MAIL", "") ?: ""
+
+        if (mail.isBlank()) {
+            txtName.text = "Usuario"
+            return
+        }
+
+        lifecycleScope.launch {
+
+            val database = AppDatabase.getDatabase(applicationContext)
+            val usuario = database.usuarioDao().obtenerPorMail(mail)
+
+            // Si encuentra el usuario, muestra su nombre
+            txtName.text = usuario?.nombre ?: "Usuario"
+        }
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                              CERRAR SESIÓN
+    ---------------------------------------------------------------------------------------- */
+
+    private fun setupCerrarSesion() {
+        btnCerrarSesion.setOnClickListener {
+            cerrarSesion()
+        }
+    }
+
+    private fun cerrarSesion() {
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_logout, null)
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnAccept = dialogView.findViewById<Button>(R.id.btnAccept)
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnAccept.setOnClickListener {
+
+            firebaseAuth.signOut()
+
+            val intent = Intent(this, Login::class.java)
+            intent.flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            startActivity(intent)
+        }
+
+        dialog.show()
+
+        // 🔥 quitar fondo por defecto del dialog
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                              NAVEGACIÓN PRINCIPAL
     ---------------------------------------------------------------------------------------- */
 
     private fun initDefaultFragment() {
-
+        // Pantalla inicial: PrincipalFragment con bottom visible
+        showBottomNavigation(true)
         replaceFragment(InicioFragment())
-        // Fragment inicial al abrir la app
     }
 
     private fun replaceFragment(fragment: Fragment) {
 
-        val fragmentManager = supportFragmentManager
+        val currentFragment =
+            supportFragmentManager.findFragmentById(R.id.frame_container)
 
-        val currentFragment = fragmentManager.findFragmentById(R.id.frame_container)
-
-        // Evita recargar el mismo fragment innecesariamente
+        // Evita recargar el mismo fragment
         if (currentFragment?.javaClass == fragment.javaClass) return
 
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
             .replace(R.id.frame_container, fragment)
-            .setReorderingAllowed(true) // Optimiza transiciones
+            .setReorderingAllowed(true)
             .commit()
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                              VISIBILIDAD DEL BOTTOM NAV
+    ---------------------------------------------------------------------------------------- */
+
+    private fun showBottomNavigation(visible: Boolean) {
+        bottomNavigationView.visibility = if (visible) View.VISIBLE else View.GONE
     }
 }
