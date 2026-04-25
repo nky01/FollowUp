@@ -3,7 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)}
+    alias(libs.plugins.google.services)
+}
+
+kotlin {
+    jvmToolchain(11)
+}
 
 android {
     namespace = "com.followup"
@@ -32,9 +37,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
@@ -54,7 +56,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.circleimageview)
-    implementation(libs.mpandroidchart) // Librería de gráficos
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Google Firebase para usar el servicio de autenticación de Google
@@ -72,9 +73,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.google.material)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.biometric)
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)

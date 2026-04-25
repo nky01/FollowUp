@@ -1,7 +1,5 @@
 package com.followup.presentation.settings
 
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
@@ -9,7 +7,10 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.followup.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -35,7 +36,14 @@ class CambiarMail : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_cambiar_mail)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         inicializarViews()
         inicializarSharedPreferences()
@@ -56,7 +64,7 @@ class CambiarMail : AppCompatActivity() {
     }
 
     private fun inicializarSharedPreferences() {
-        sharedPreferences = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
     }
 
     private fun inicializarFirebaseAuth() {
@@ -65,7 +73,6 @@ class CambiarMail : AppCompatActivity() {
 
     private fun configurarClickListener() {
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            startActivity(Intent(this, Configuracion::class.java))
             finish()
         }
 
@@ -110,7 +117,7 @@ class CambiarMail : AppCompatActivity() {
                 isReauthenticated = true
                 mostrarFormularioNuevoMail()
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener { _ ->
                 tvError.text = "Contraseña incorrecta"
                 tvError.visibility = View.VISIBLE
                 btnVerificar.isEnabled = true

@@ -1,372 +1,215 @@
 package com.followup.presentation.login
 
-/* ----------------------------------------------------------------------------------------
-                                           IMPORTS
----------------------------------------------------------------------------------------- */
-
-import android.content.Context
-    // Permite acceder a recursos del sistema (SharedPreferences, Intents, etc.)
-
 import android.content.Intent
-    // Sirve para navegar entre Activities
-
 import android.content.SharedPreferences
-    // Almacenamiento local clave-valor (guardar sesión, datos simples)
-
 import android.os.Bundle
-    // Contenedor de datos que se pasa entre Activities
-
-import android.util.Log
-    // Permite imprimir logs en la consola (debug)
-
 import android.util.Patterns
-    // Contiene patrones predefinidos (ej: validación de email)
-
 import android.widget.TextView
-    // Componente de texto en la UI
-
 import android.widget.Toast
-    // Mensajes cortos emergentes en pantalla
-
 import androidx.activity.enableEdgeToEdge
-    // Permite usar toda la pantalla (debajo de la barra superior)
-
 import androidx.appcompat.app.AppCompatActivity
-    // Clase base para Activities (compatibilidad con versiones antiguas)
-
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-    // Extensión para editar SharedPreferences de forma más simple
-
 import androidx.core.view.ViewCompat
-    // Utilidades para trabajar con vistas (compatibilidad)
-
 import androidx.core.view.WindowInsetsCompat
-    // Manejo de espacios del sistema (status bar, navigation bar)
-
 import androidx.lifecycle.lifecycleScope
-    // Scope de corrutinas ligado al ciclo de vida del Activity
-
 import com.followup.R
-    // Acceso a recursos del proyecto (layouts, strings, ids, etc.)
-
 import com.followup.data.database.AppDatabase
-    // Clase principal de la base de datos ROOM
-
 import com.followup.fragments.PrincipalActivity
-    // Activity principal de la app (pantalla luego del login)
-
 import com.followup.fragments.ReestablecerFragment
-    // Pantalla para recuperar contraseña
-
 import com.followup.presentation.register.RegistrarCuenta
-    // Activity para registrar un nuevo usuario
-
 import com.google.android.material.button.MaterialButton
-    // Botón con estilo Material Design
-
 import com.google.android.material.textfield.TextInputEditText
-    // Campo de texto editable (Material Design)
-
 import com.google.android.material.textfield.TextInputLayout
-    // Contenedor del input (maneja errores, estilos, iconos)
-
 import com.google.firebase.auth.FirebaseAuth
-    // Maneja autenticación con Firebase
-
-import kotlinx.coroutines.Dispatchers
-    // Define en qué hilo se ejecuta la corrutina (Main, IO, etc.)
-
 import kotlinx.coroutines.launch
-    // Permite iniciar una corrutina
-
-import kotlinx.coroutines.withContext
-    // Permite cambiar de hilo dentro de una corrutina
-
-/* ----------------------------------------------------------------------------------------
-                                        ACTIVITY LOGIN
----------------------------------------------------------------------------------------- */
-/*
-    [+] - Se ejecuta al finalizar el "Activity" "Bienvenida"
-*/
+import java.util.concurrent.Executor
 
 class Login : AppCompatActivity() {
-
-    /* ----------------------------------------------------------------------------------------
-                                            ATRIBUTOS
-    ---------------------------------------------------------------------------------------- */
-
     private lateinit var sharedPreferences: SharedPreferences
-    // Guarda datos simples en el celular (Sesión de Usuario)
-
     private lateinit var firebaseAuth: FirebaseAuth
-    // Permite autenticar usuarios con Firebase
-
     private lateinit var database: AppDatabase
-    // Base de datos local (ROOM)
-
-    /* ---------- Componentes UI ---------- */
-
-    private lateinit var tilEmail: TextInputLayout
-    private lateinit var tietEmail: TextInputEditText
-    private lateinit var tilPassword: TextInputLayout
-    private lateinit var tietPassword: TextInputEditText
     private lateinit var btnLogin: MaterialButton
-    private lateinit var tvRegister: TextView
-    private lateinit var tvForgotPassword: TextView
-
-    /* ----------------------------------------------------------------------------------------
-                                      MÉTODOS PREDEFINIDOS
-    ---------------------------------------------------------------------------------------- */
+    private lateinit var executor: Executor
+    private lateinit var biometricPrompt: BiometricPrompt
+    
+    private var pendingEmail: String = ""
+    private var pendingUserName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
-        setupUI() // Configura UI
-        initComponents()
-        initListeners()
-    }
-
-    /* ----------------------------------------------------------------------------------------
-                                          SETUP INICIAL
-    ---------------------------------------------------------------------------------------- */
-
-    private fun setupUI() {
-
         enableEdgeToEdge()
-            // Permite usar toda la pantalla (incluye zona del status bar)
-
         setContentView(R.layout.activity_login)
-            // Conecta este Activity con su XML
-
-        applyInsets()
-            // Ajusta márgenes para no superponer con barras del sistema
-    }
-
-    private fun applyInsets() {
+        sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
+        firebaseAuth = FirebaseAuth.getInstance()
+        database = AppDatabase.getDatabase(this)
+        
+        setupBiometric()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                // Obtiene tamaño de barras del sistema (arriba y abajo)
-
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-                // Aplica padding dinámico
-
             insets
         }
-    }
 
-    /* ----------------------------------------------------------------------------------------
-                                      INICIALIZACIÓN
-    ---------------------------------------------------------------------------------------- */
-
-    private fun initComponents() {
-        initServices()
-        initViews()
-    }
-
-    private fun initServices() {
-
-        sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
-            // Acceso a almacenamiento local
-
-        firebaseAuth = FirebaseAuth.getInstance()
-            // Inicializa Firebase Auth
-
-        database = AppDatabase.getDatabase(this)
-            // Inicializa base de datos Room
-    }
-
-    private fun initViews() {
-
-        tilEmail = findViewById(R.id.til_Email)
-        tietEmail = findViewById(R.id.tiet_Email)
-
-        tilPassword = findViewById(R.id.til_Password)
-        tietPassword = findViewById(R.id.tiet_Password)
-
-        btnLogin = findViewById(R.id.btn_Login)
-
-        tvRegister = findViewById(R.id.tv_Register)
-        tvForgotPassword = findViewById(R.id.tv_ForgotPassword)
-    }
-
-    /* ----------------------------------------------------------------------------------------
-                                      LISTENERS (EVENTOS)
-    ---------------------------------------------------------------------------------------- */
-
-    private fun initListeners() {
-
-        setupRegisterListener()
-        setupLoginListener()
-        setupForgotPasswordListener()
-    }
-
-    private fun setupRegisterListener() {
+        val tilEmail = findViewById<TextInputLayout>(R.id.til_Email)
+        val tietEmail = findViewById<TextInputEditText>(R.id.tiet_Email)
+        val tilPassword = findViewById<TextInputLayout>(R.id.til_Password)
+        val tietPassword = findViewById<TextInputEditText>(R.id.tiet_Password)
+        btnLogin = findViewById<MaterialButton>(R.id.btn_Login)
+        val tvRegister = findViewById<TextView>(R.id.tv_Register)
+        val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
 
         tvRegister.setOnClickListener {
-
-            startActivity(Intent(this, RegistrarCuenta::class.java))
-                // Navega a pantalla de registro
+            val intent = Intent(this, RegistrarCuenta::class.java)
+            startActivity(intent)
         }
-    }
-
-    private fun setupLoginListener() {
 
         btnLogin.setOnClickListener {
-
             val email = tietEmail.text.toString().trim()
             val password = tietPassword.text.toString().trim()
 
-            if (validarFront(email, password)) {
+            if (validarFront(email, password, tilEmail, tilPassword)) {
                 ejecutarLogin(email, password)
             }
         }
-    }
-
-    private fun setupForgotPasswordListener() {
 
         tvForgotPassword.setOnClickListener {
-
             val email = tietEmail.text.toString().trim()
-
             if (email.isEmpty()) {
                 tilEmail.error = "Ingresá tu email primero"
                 return@setOnClickListener
             }
-
             val intent = Intent(this, ReestablecerFragment::class.java)
             intent.putExtra("email", email)
-
             startActivity(intent)
         }
     }
 
-    /* ----------------------------------------------------------------------------------------
-                                      VALIDACIONES
-    ---------------------------------------------------------------------------------------- */
-
-    private fun validarFront(email: String, password: String): Boolean {
-
-        limpiarErrores()
-
+    private fun validarFront(email: String, password: String, tilEmail: TextInputLayout, tilPassword: TextInputLayout): Boolean {
         var esValido = true
 
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
             esValido = false
-
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Formato de email inválido"
             esValido = false
+        } else {
+            tilEmail.error = null
         }
 
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
             esValido = false
+        } else {
+            tilPassword.error = null
         }
 
         return esValido
     }
 
-    private fun limpiarErrores() {
-
-        tilEmail.error = null
-        tilPassword.error = null
-            // Limpia errores previos antes de validar
-    }
-
-    /* ----------------------------------------------------------------------------------------
-                                      LOGIN (FIREBASE)
-    ---------------------------------------------------------------------------------------- */
-
     private fun ejecutarLogin(email: String, password: String) {
+        btnLogin.isEnabled = false
+        btnLogin.text = "Ingresando..."
+        btnLogin.setBackgroundColor(getColor(R.color.primary_blue_disabled))
 
         val emailLower = email.lowercase()
-            // Normaliza email para evitar problemas de comparación
-
         firebaseAuth.signInWithEmailAndPassword(emailLower, password)
             .addOnCompleteListener(this) { task ->
-
+                btnLogin.isEnabled = true
+                btnLogin.text = getString(R.string.ingresar)
+                btnLogin.setBackgroundColor(getColor(R.color.primary_blue))
                 if (task.isSuccessful) {
-
-                    onLoginSuccess(emailLower)
-
+                    lifecycleScope.launch {
+                        try {
+                            val dao = database.usuarioDao()
+                            val usuario = dao.obtenerPorMail(emailLower)
+                            
+                            val userName = usuario?.nombre ?: "Usuario"
+                            
+                            sharedPreferences.edit {
+                                putString("USER_MAIL", emailLower)
+                                putString("USER_NAME", userName)
+                            }
+                            
+                            pendingEmail = emailLower
+                            pendingUserName = userName
+                            
+                            val biometricEnabled = sharedPreferences.getBoolean("biometric_enabled", false)
+                            if (biometricEnabled && canAuthenticateWithBiometric()) {
+                                showBiometricPrompt()
+                            } else {
+                                navigateToMain()
+                            }
+                        } catch (_: Exception) {
+                            Toast.makeText(this@Login, "Error al cargar datos del usuario", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } else {
-
-                    manejarErrorLogin(task.exception?.message)
+                    val errorMessage = task.exception?.message
+                    when {
+                        errorMessage?.contains("no user record", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Email).error = "Este correo no está registrado"
+                        }
+                        errorMessage?.contains("wrong password", ignoreCase = true) == true ||
+                        errorMessage?.contains("password", ignoreCase = true) == true -> {
+                            findViewById<TextInputLayout>(R.id.til_Password).error = "Contraseña incorrecta"
+                        }
+                        else -> {
+                            Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
     }
 
-    private fun onLoginSuccess(email: String) {
+    private fun setupBiometric() {
+        executor = ContextCompat.getMainExecutor(this)
+        
+        biometricPrompt = BiometricPrompt(this, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && 
+                        errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        Toast.makeText(this@Login, "Error: $errString", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    navigateToMain()
+                }
 
-            try {
-                val usuario = database.usuarioDao().obtenerPorMail(email)
-
-                guardarSesionYEntrar(usuario?.nombre ?: "Usuario", email)
-
-            } catch (e: Exception) {
-
-                Log.e("LOGIN_ERROR", "DB error: ${e.message}")
-
-                mostrarError("Error al cargar datos")
-            }
-        }
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(this@Login, "Huella no reconocida", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
-    /* ----------------------------------------------------------------------------------------
-                                      POST LOGIN
-    ---------------------------------------------------------------------------------------- */
-
-    private suspend fun guardarSesionYEntrar(nombre: String, email: String) {
-
-        withContext(Dispatchers.Main) {
-
-            sharedPreferences.edit {
-                putString("USER_MAIL", email)
-                putString("USER_NAME", nombre)
-            }
-
-            startActivity(Intent(this@Login, PrincipalActivity::class.java))
-                // Navega a pantalla principal
-
-            finish()
-                // Cierra login
-        }
+    private fun canAuthenticateWithBiometric(): Boolean {
+        val biometricManager = BiometricManager.from(this)
+        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
     }
 
-    /* ----------------------------------------------------------------------------------------
-                                      MANEJO DE ERRORES
-    ---------------------------------------------------------------------------------------- */
-
-    private fun manejarErrorLogin(errorMessage: String?) {
-
-        when {
-            errorMessage?.contains("no user record", true) == true -> {
-                tilEmail.error = "Este correo no está registrado"
-            }
-
-            errorMessage?.contains("wrong password", true) == true ||
-                    errorMessage?.contains("password", true) == true -> {
-                tilPassword.error = "Contraseña incorrecta"
-            }
-
-            else -> {
-                mostrarError("Error: $errorMessage")
-            }
-        }
+    private fun showBiometricPrompt() {
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Verificación biométrica")
+            .setSubtitle("Verifica tu identidad para acceder a la app")
+            .setNegativeButtonText("Usar contraseña")
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            .build()
+        
+        biometricPrompt.authenticate(promptInfo)
     }
 
-    private fun mostrarError(mensaje: String) {
-
-        runOnUiThread {
-            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
-        }
-
+    private fun navigateToMain() {
+        val intent = Intent(this@Login, PrincipalActivity::class.java)
+        startActivity(intent)
+        finish()
     }
-
 }
