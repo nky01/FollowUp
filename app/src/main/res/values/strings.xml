@@ -68,6 +68,12 @@
     <string name="holanombre">Hola, %s</string>
     <string name="cargando_datos">Cargando datos…</string>
     <string name="alertas">Alertas</string>
+    <string name="cambiar_contrasenia_title">Cambiar contraseña</string>
+    <string name="cambiar_contrasenia_descripcion">Recibirás un enlace en tu correo para restablecer tu contraseña.</string>
+    <string name="seudispositivo_actual">Tu dispositivo actual</string>
+    <string name="enviar_link_cambio_contrasenia">Enviar enlace</string>
+    <string name="link_enviado">Enlace enviado. Revisa tu correo.</string>
+    <string name="error_envio_link">Error al enviar el enlace. Intenta de nuevo.</string>
     <string name="clientes">Clientes</string>
     <string name="ventas">Ventas</string>
 </resources>

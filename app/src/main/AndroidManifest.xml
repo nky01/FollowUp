@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FollowUp">
         <activity
-            android:name=".fragments.ReestablecerFragment"
-            android:exported="false" />
-        <activity
             android:name=".fragments.CodigoFragment"
             android:exported="false" />
         <activity
@@ -47,10 +44,10 @@
             android:name=".presentation.settings.Seguridad"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.settings.CambiarContrasenia"
             android:exported="false" />
         <activity
-            android:name=".presentation.Perfil"
+            android:name=".MainActivity"
             android:exported="false" />
     </application>
 
