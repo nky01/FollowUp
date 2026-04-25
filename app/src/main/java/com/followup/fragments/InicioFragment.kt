@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +26,7 @@ import com.followup.presentation.settings.Configuracion
 import com.followup.presentation.settings.SessionManager
 import de.hdodenhof.circleimageview.CircleImageView
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -53,6 +57,13 @@ class InicioFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_inicio, container, false)
+        
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, 0)
+            insets
+        }
+        
         initServices()
         initComponents(view)
         setupRecyclerViews()
@@ -103,7 +114,7 @@ class InicioFragment : Fragment() {
 
         barChart.axisRight.isEnabled = false
         barChart.legend.isEnabled = false
-        barChart.setNoDataText("Cargando datos...")
+        barChart.setNoDataText(getString(R.string.cargando_datos))
         barChart.extraBottomOffset = 10f
     }
 // Carga los datos de ventas y actualiza la interfaz
@@ -142,7 +153,7 @@ class InicioFragment : Fragment() {
              entries.add(BarEntry(i.toFloat(), facturacionPorMes[i]))
         }
 
-        val dataSet = BarDataSet(entries, "Facturación")
+        val dataSet = BarDataSet(entries, getString(R.string.facturacion))
         dataSet.color = ContextCompat.getColor(requireContext(), R.color.primary_blue)
         dataSet.setDrawValues(false)
 
@@ -168,7 +179,7 @@ class InicioFragment : Fragment() {
         val uriString = prefs.getString("profile_image_uri", null)
         uriString?.let {
             try {
-                ivProfile.setImageURI(Uri.parse(it))
+                ivProfile.setImageURI(it.toUri())
             } catch (_: Exception) {
                 ivProfile.setImageResource(android.R.color.darker_gray)
             }
@@ -220,12 +231,12 @@ class InicioFragment : Fragment() {
 
     private fun animarToggle(iv: ImageView, tv: TextView, expandido: Boolean) {
         iv.animate().rotation(if (expandido) 90f else 0f).setDuration(200).start()
-        tv.text = if (expandido) "Ver menos" else "Ver todos"
+        tv.text = if (expandido) getString(R.string.ver_menos) else getString(R.string.ver_todos)
     }
 
     private fun actualizarSaludo() {
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
-        view?.findViewById<TextView>(R.id.tv_saludo)?.text = "Hola, $userName"
+        view?.findViewById<TextView>(R.id.tv_saludo)?.text = getString(R.string.holanombre, userName)
     }
 
     // Actualiza las métricas de clientes, ventas y alertas en la interfaz

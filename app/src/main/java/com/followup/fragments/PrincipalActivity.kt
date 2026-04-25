@@ -10,12 +10,16 @@ import android.content.SharedPreferences
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 // Contenedor de datos del Activity
 
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 // Clase base para Activities
@@ -127,6 +131,16 @@ class PrincipalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+        
+        setContentView(R.layout.activity_principal)
+        
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, 0)
+            insets
+        }
+        
         setupUI()
         initComponents()
         initListeners()
@@ -166,7 +180,7 @@ class PrincipalActivity : AppCompatActivity() {
     private fun initViews() {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-        drawerLayout = findViewById(R.id.drawerLayout)
+        drawerLayout = findViewById(R.id.main)
         navigationView = findViewById(R.id.navigationView)
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion)
 

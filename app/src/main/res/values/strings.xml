@@ -51,4 +51,23 @@
     <string name="cambiar_mail_titulo">Cambiar mail</string>
     <string name="ingres_tu_contrase_a_actual_para_confirmar_tu_identidad">Ingresá tu contraseña actual para confirmar tu identidad.</string>
     <string name="enviar_enlace_de_verificacion_btn">Enviar enlace de verificación</string>
+    <string name="editar_venta">Editar Venta</string>
+    <string name="monto_total">Monto total</string>
+    <string name="pago_total">Pago total</string>
+    <string name="fecha_venta">Fecha venta</string>
+    <string name="fecha_seguimiento">Fecha seguimiento</string>
+    <string name="descripcion">Descripción</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="guardar">Guardar</string>
+    <string name="gestion_ventas_titulo">Gestión de Ventas</string>
+    <string name="gestion_historial_titulo">Historial</string>
+    <string name="buscar_historial">Buscar en historial…</string>
+    <string name="facturacion">Facturación</string>
+    <string name="ver_menos">Ver menos</string>
+    <string name="ver_todos">Ver todos</string>
+    <string name="holanombre">Hola, %s</string>
+    <string name="cargando_datos">Cargando datos…</string>
+    <string name="alertas">Alertas</string>
+    <string name="clientes">Clientes</string>
+    <string name="ventas">Ventas</string>
 </resources>
