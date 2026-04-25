@@ -38,6 +38,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.18.0")
+        force("androidx.core:core-ktx:1.18.0")
+    }
 }
 
 dependencies {
@@ -68,7 +76,9 @@ dependencies {
 
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:21.5.1")
-    
+
+    implementation("com.kizitonwose.calendar:view:2.5.0")
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
