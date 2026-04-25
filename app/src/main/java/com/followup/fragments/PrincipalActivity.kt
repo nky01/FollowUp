@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.GravityCompat
+import androidx.core.content.edit
 import androidx.drawerlayout.widget.DrawerLayout
 // Clase base para Activities
 
@@ -143,8 +144,36 @@ class PrincipalActivity : AppCompatActivity() {
         
         setupUI()
         initComponents()
+        syncUserNameIfNeeded()
         initListeners()
         initDefaultFragment()
+    }
+
+    private fun syncUserNameIfNeeded() {
+        val userMail = sharedPreferences.getString("USER_MAIL", null) ?: return
+
+        lifecycleScope.launch {
+            try {
+                val db = AppDatabase.getDatabase(applicationContext)
+                val usuario = db.usuarioDao().obtenerPorMail(userMail)
+                val nombre = usuario?.nombre
+
+                if (nombre.isNullOrBlank()) return@launch  // don't overwrite with empty
+
+                sharedPreferences.edit {
+                    putString("USER_NAME", nombre)
+                }
+
+                // Refresh the greeting in InicioFragment if it's currently visible
+                val fragment = supportFragmentManager.findFragmentById(R.id.frame_container)
+                if (fragment is InicioFragment) {
+                    fragment.actualizarSaludo()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onDestroy() {

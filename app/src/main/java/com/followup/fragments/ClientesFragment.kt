@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class ClientesFragment : Fragment() {
 
@@ -179,6 +180,11 @@ class ClientesFragment : Fragment() {
             dropdownEstados.visibility = View.GONE
             cargarClientes()
         }
+        requireView().findViewById<TextView>(R.id.filtro_pago_caducado).setOnClickListener {
+            filtroActual = EstadoCliente.PAGO_CADUCADO
+            dropdownEstados.visibility = View.GONE
+            cargarClientes()
+        }
     }
 
     /* ========================================================================================
@@ -223,9 +229,17 @@ class ClientesFragment : Fragment() {
      * que ya venció sus 24hs y lo recalcula automáticamente.
      */
     private suspend fun recalcularEstadosVencidos(userMail: String) {
-        val dao     = AppDatabase.getDatabase(requireContext()).clienteDao()
-        val ahora   = System.currentTimeMillis()
-        val limite  = ahora - EstadoCliente.DURACION_TRANSITORIO_MS
+        val dao      = AppDatabase.getDatabase(requireContext()).clienteDao()
+        val ahora    = System.currentTimeMillis()
+        val limite   = ahora - EstadoCliente.DURACION_TRANSITORIO_MS
+
+        // Caducado solo si fechaSeguimiento es ANTERIOR a hoy (no el mismo día)
+        val inicioDehoy = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
 
         // — Estados transitorios vencidos (Nuevo Cliente / Pago Realizado de +24hs)
         val vencidos = dao.obtenerClientesConEstadoVencido(userMail, limite)
@@ -242,7 +256,7 @@ class ClientesFragment : Fragment() {
         }
 
         // — Caducados: ventas pendientes cuya fecha de seguimiento ya pasó
-        val caducados = dao.obtenerClientesConSeguimientoVencido(userMail, ahora)
+        val caducados = dao.obtenerClientesConSeguimientoVencido(userMail, inicioDehoy)
         caducados.forEach { cliente ->
             dao.update(cliente.copy(
                 estado            = EstadoCliente.PAGO_CADUCADO,
@@ -293,11 +307,13 @@ class ClientesFragment : Fragment() {
             EstadoCliente.NUEVO_CLIENTE  -> "#286DFF"
             EstadoCliente.PAGO_PENDIENTE -> "#F79009"
             EstadoCliente.PAGO_REALIZADO -> "#12B76A"
+            EstadoCliente.PAGO_CADUCADO  -> "#F04438"
             else                         -> "#98A2B3"
         }
 
-        (tvEstado.background as? android.graphics.drawable.GradientDrawable)
-            ?.setColor(Color.parseColor(colorEstado))
+        // backgroundTintList es la forma correcta con Material — igual que en el Adapter
+        tvEstado.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(Color.parseColor(colorEstado))
 
         // — Datos
         dialogView.findViewById<TextView>(R.id.tv_detalle_email).text    = cliente.email

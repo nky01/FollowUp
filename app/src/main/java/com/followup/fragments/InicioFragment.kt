@@ -57,13 +57,13 @@ class InicioFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_inicio, container, false)
-        
+
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
-        
+
         initServices()
         initComponents(view)
         setupRecyclerViews()
@@ -234,9 +234,9 @@ class InicioFragment : Fragment() {
         tv.text = if (expandido) getString(R.string.ver_menos) else getString(R.string.ver_todos)
     }
 
-    private fun actualizarSaludo() {
+    fun actualizarSaludo() {
         val userName = sharedPreferences.getString("USER_NAME", "Usuario")
-        view?.findViewById<TextView>(R.id.tv_saludo)?.text = getString(R.string.holanombre, userName)
+        view?.findViewById<TextView>(R.id.tv_saludo)?.text = getString(R.string.saludo_formato, userName)
     }
 
     // Actualiza las métricas de clientes, ventas y alertas en la interfaz

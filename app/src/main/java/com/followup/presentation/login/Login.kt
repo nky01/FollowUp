@@ -130,10 +130,10 @@ class Login : AppCompatActivity() {
                             
                             val userName = usuario?.nombre ?: "Usuario"
                             
-                            sharedPreferences.edit {
-                                putString("USER_MAIL", emailLower)
-                                putString("USER_NAME", userName)
-                            }
+                            val editor = sharedPreferences.edit()
+                            editor.putString("USER_MAIL", emailLower)
+                            editor.putString("USER_NAME", userName)
+                            editor.apply()
                             
                             pendingEmail = emailLower
                             pendingUserName = userName

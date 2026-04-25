@@ -306,45 +306,34 @@ class HistorialFragment : Fragment() {
 
     private suspend fun recalcularEstadoCliente(clienteId: Int, userMail: String) {
         val db      = AppDatabase.getDatabase(requireContext())
-        val cliente = db.clienteDao().obtenerPorId(clienteId) ?: return
+        val dao     = db.clienteDao()
+        val cliente = dao.obtenerPorId(clienteId) ?: return
 
-        val caducadas  = db.clienteDao().contarVentasCaducadas(clienteId, userMail)
-        val pendientes = db.clienteDao().contarVentasPendientes(clienteId, userMail)
-        val pagadas    = db.clienteDao().contarVentasPagadas(clienteId, userMail)
+        // Marcar ventas caducadas antes de contar
+        val ahora = System.currentTimeMillis()
+        db.ventaDao().marcarVentasCaducadas(clienteId, userMail, ahora)
+
+        val caducadas  = dao.contarVentasCaducadas(clienteId, userMail)
+        val pendientes = dao.contarVentasPendientes(clienteId, userMail)
+        val pagadas    = dao.contarVentasPagadas(clienteId, userMail)
 
         if (caducadas == 0 && pendientes == 0 && pagadas == 0) {
-            db.clienteDao().update(cliente.copy(
+            dao.update(cliente.copy(
                 estado            = EstadoCliente.NO_ASIGNADO,
                 fechaCambioEstado = null
             ))
             return
         }
 
-        val nuevoEstado: String
-        val fechaCambio: Long?
-
-        when {
-            caducadas  > 0 -> { nuevoEstado = EstadoCliente.PAGO_CADUCADO; fechaCambio = null }
-            pendientes > 0 -> { nuevoEstado = EstadoCliente.PAGO_PENDIENTE; fechaCambio = null }
-            else -> {
-                val ahora        = System.currentTimeMillis()
-                val fechaExist   = cliente.fechaCambioEstado
-                val dentroDelPlazo = fechaExist != null &&
-                        (ahora - fechaExist) < EstadoCliente.DURACION_TRANSITORIO_MS
-
-                if (dentroDelPlazo) {
-                    nuevoEstado = EstadoCliente.PAGO_REALIZADO
-                    fechaCambio = fechaExist
-                } else {
-                    nuevoEstado = EstadoCliente.NO_ASIGNADO
-                    fechaCambio = null
-                }
-            }
+        val (nuevoEstado, fechaCambio) = when {
+            caducadas  > 0 -> EstadoCliente.PAGO_CADUCADO  to null
+            pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE to null
+            else           -> EstadoCliente.PAGO_REALIZADO to ahora
         }
 
         if (cliente.estado == nuevoEstado && cliente.fechaCambioEstado == fechaCambio) return
 
-        db.clienteDao().update(cliente.copy(
+        dao.update(cliente.copy(
             estado            = nuevoEstado,
             fechaCambioEstado = fechaCambio
         ))

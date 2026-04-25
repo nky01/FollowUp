@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.followup.R
 import com.followup.presentation.login.Bienvenida
 import com.google.firebase.auth.FirebaseAuth
+import androidx.core.content.edit
 
 class Configuracion : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
@@ -53,7 +54,7 @@ class Configuracion : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.ll_CerrarSesion).setOnClickListener {
             firebaseAuth.signOut()
-            sharedPreferences.edit().clear().apply()
+            sharedPreferences.edit { clear() }
             Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, Bienvenida::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
