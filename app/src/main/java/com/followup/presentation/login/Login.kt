@@ -1,9 +1,11 @@
 package com.followup.presentation.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -11,26 +13,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.followup.R
-import com.followup.data.database.AppDatabase
 import com.followup.fragments.PrincipalActivity
-import com.followup.fragments.ReestablecerFragment
 import com.followup.presentation.register.RegistrarCuenta
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
-import androidx.core.content.edit
 
 class Login : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var database: AppDatabase
+    private lateinit var tilEmail: TextInputLayout
     private lateinit var btnLogin: MaterialButton
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
@@ -41,7 +39,6 @@ class Login : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         sharedPreferences = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
         firebaseAuth = FirebaseAuth.getInstance()
-        database = AppDatabase.getDatabase(this)
 
         setupBiometric()
 
@@ -65,13 +62,14 @@ class Login : AppCompatActivity() {
     }
 
     private fun setupForm() {
-        val tilEmail = findViewById<TextInputLayout>(R.id.til_Email)
+        tilEmail = findViewById(R.id.til_Email)
         val tietEmail = findViewById<TextInputEditText>(R.id.tiet_Email)
         val tilPassword = findViewById<TextInputLayout>(R.id.til_Password)
         val tietPassword = findViewById<TextInputEditText>(R.id.tiet_Password)
         btnLogin = findViewById(R.id.btn_Login)
         val tvRegister = findViewById<TextView>(R.id.tv_Register)
         val tvForgotPassword = findViewById<TextView>(R.id.tv_ForgotPassword)
+        val progressBar = findViewById<View>(R.id.progressBar)
 
         tvRegister.setOnClickListener {
             startActivity(Intent(this, RegistrarCuenta::class.java))
@@ -91,9 +89,28 @@ class Login : AppCompatActivity() {
                 tilEmail.error = "Ingresá tu email primero"
                 return@setOnClickListener
             }
-            val intent = Intent(this, ReestablecerFragment::class.java)
-            intent.putExtra("email", email)
-            startActivity(intent)
+            tilEmail.error = null
+            progressBar.visibility = View.VISIBLE
+            tvForgotPassword.isEnabled = false
+
+            firebaseAuth.sendPasswordResetEmail(email.lowercase())
+                .addOnCompleteListener { task ->
+                    progressBar.visibility = View.GONE
+                    tvForgotPassword.isEnabled = true
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            this,
+                            "Enlace enviado. Revisa tu correo.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Error al enviar el enlace. Verificá el email.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
         }
     }
 
@@ -120,6 +137,7 @@ class Login : AppCompatActivity() {
         return esValido
     }
 
+    @SuppressLint("SetTextI18n")
     private fun ejecutarLogin(email: String, password: String) {
         btnLogin.isEnabled = false
         btnLogin.text = "Ingresando..."
@@ -133,29 +151,14 @@ class Login : AppCompatActivity() {
                 btnLogin.setBackgroundColor(getColor(R.color.primary_blue))
 
                 if (task.isSuccessful) {
-                    lifecycleScope.launch {
-                        try {
-                            val usuario = database.usuarioDao().obtenerPorMail(emailLower)
-                            val userName = usuario?.nombre ?: "Usuario"
+                    val userName = firebaseAuth.currentUser?.displayName ?: "Usuario"
 
-                            sharedPreferences.edit {
-                                putString("USER_MAIL", emailLower)
-                                    .putString("USER_NAME", userName)
-                            }
-
-                            // After successful password login, go straight to main.
-                            // Biometric is only used as a shortcut on subsequent opens,
-                            // not as a second factor after password auth.
-                            navigateToMain()
-
-                        } catch (_: Exception) {
-                            Toast.makeText(
-                                this@Login,
-                                "Error al cargar datos del usuario",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    sharedPreferences.edit {
+                        putString("USER_MAIL", emailLower)
+                            .putString("USER_NAME", userName)
                     }
+
+                    navigateToMain()
                 } else {
                     val errorMessage = task.exception?.message
                     when {

@@ -1,5 +1,6 @@
 package com.followup.presentation.settings
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ImageButton
@@ -26,10 +27,10 @@ class Seguridad : AppCompatActivity() {
 
     companion object {
         private const val BIOMETRIC_ENABLED_KEY = "biometric_enabled"
-        private fun showBiometricPrompt(seguridad: Seguridad, enable: Boolean) {
+        private fun showBiometricPrompt(seguridad: Seguridad) {
             val promptInfo = BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Verificación biométrica")
-                .setSubtitle(if (enable) "Verifica tu identidad para habilitar el desbloqueo biométrico" else "Verifica tu identidad")
+                .setSubtitle("Verifica tu identidad para habilitar el desbloqueo biométrico")
                 .setNegativeButtonText("Cancelar")
                 .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 .build()
@@ -91,7 +92,7 @@ class Seguridad : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.ll_CambiarContrasenia).setOnClickListener {
-            // TODO: Navegar a pantalla de cambio de contraseña
+            startActivity(Intent(this, CambiarContrasenia::class.java))
         }
 
         findViewById<LinearLayout>(R.id.ll_SegundoFactor).setOnClickListener {
@@ -104,7 +105,7 @@ class Seguridad : AppCompatActivity() {
         switchBiometrico.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (canAuthenticateWithBiometric()) {
-                    showBiometricPrompt(this, enable = true)
+                    showBiometricPrompt(this)
                 } else {
                     switchBiometrico.isChecked = false
                     Toast.makeText(this, "Huella no disponible en este dispositivo", Toast.LENGTH_SHORT).show()
