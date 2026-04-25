@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
@@ -27,6 +26,16 @@ class Seguridad : AppCompatActivity() {
 
     companion object {
         private const val BIOMETRIC_ENABLED_KEY = "biometric_enabled"
+        private fun showBiometricPrompt(seguridad: Seguridad, enable: Boolean) {
+            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Verificación biométrica")
+                .setSubtitle(if (enable) "Verifica tu identidad para habilitar el desbloqueo biométrico" else "Verifica tu identidad")
+                .setNegativeButtonText("Cancelar")
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .build()
+
+            seguridad.biometricPrompt.authenticate(promptInfo)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +70,9 @@ class Seguridad : AppCompatActivity() {
                     super.onAuthenticationSucceeded(result)
                     val isEnabled = sharedPreferences.getBoolean(BIOMETRIC_ENABLED_KEY, false)
                     if (!isEnabled) {
-                        sharedPreferences.edit { putBoolean(BIOMETRIC_ENABLED_KEY, true) }
+                        sharedPreferences.edit {
+                            putBoolean(BIOMETRIC_ENABLED_KEY, true)
+                        }
                         Toast.makeText(this@Seguridad, "Huella habilitada", Toast.LENGTH_SHORT).show()
                     }
                     switchBiometrico.isChecked = true
@@ -76,7 +87,7 @@ class Seguridad : AppCompatActivity() {
 
     private fun setupUI() {
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
         findViewById<LinearLayout>(R.id.ll_CambiarContrasenia).setOnClickListener {
@@ -93,22 +104,19 @@ class Seguridad : AppCompatActivity() {
         switchBiometrico.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (canAuthenticateWithBiometric()) {
-                    showBiometricPrompt(enable = true)
+                    showBiometricPrompt(this, enable = true)
                 } else {
                     switchBiometrico.isChecked = false
                     Toast.makeText(this, "Huella no disponible en este dispositivo", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                sharedPreferences.edit { putBoolean(BIOMETRIC_ENABLED_KEY, false) }
+                sharedPreferences.edit {
+                    putBoolean(BIOMETRIC_ENABLED_KEY, false)
+                }
                 Toast.makeText(this, "Huella deshabilitada", Toast.LENGTH_SHORT).show()
             }
         }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        })
     }
 
     private fun canAuthenticateWithBiometric(): Boolean {
@@ -117,17 +125,6 @@ class Seguridad : AppCompatActivity() {
             BiometricManager.BIOMETRIC_SUCCESS -> true
             else -> false
         }
-    }
-
-    private fun showBiometricPrompt(enable: Boolean) {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Verificación biométrica")
-            .setSubtitle(if (enable) "Verifica tu identidad para habilitar el desbloqueo biométrico" else "Verifica tu identidad")
-            .setNegativeButtonText("Cancelar")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-            .build()
-
-        biometricPrompt.authenticate(promptInfo)
     }
 
 }
