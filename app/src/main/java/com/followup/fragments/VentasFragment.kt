@@ -28,6 +28,7 @@ import com.followup.data.database.AppDatabase
 import com.followup.data.entity.EstadoCliente
 import com.followup.data.entity.Venta
 import com.followup.presentation.settings.SessionManager
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -501,14 +502,11 @@ class VentasFragment : Fragment() {
         dialog.findViewById<TextView>(R.id.tv_detalle_venta_porcentaje).text = "$porcentaje%"
         dialog.findViewById<ProgressBar>(R.id.progress_detalle_pago).progress = porcentaje
 
-        val color = when (venta.estado.lowercase()) {
-            "pagado"       -> "#12B76A"
-            "pendiente"    -> "#F79009"
-            "pago caducado"-> "#F04438"
-            else           -> "#98A2B3"
-        }
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_estado).backgroundTintList =
-            ColorStateList.valueOf(Color.parseColor(color))
+        EstadoColorHelper.aplicarBadgeVenta(
+            requireContext(),
+            dialog.findViewById(R.id.tv_detalle_venta_estado),
+            venta.estado
+        )
 
         dialog.findViewById<View>(R.id.btn_cerrar_detalle_venta).setOnClickListener { dialog.dismiss() }
         dialog.findViewById<View>(R.id.btn_detalle_venta_eliminar).setOnClickListener {

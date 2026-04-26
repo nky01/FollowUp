@@ -14,6 +14,7 @@ import com.followup.data.entity.EstadoCliente
 import com.google.android.material.card.MaterialCardView
 import android.content.Intent
 import android.net.Uri
+import com.followup.ui.EstadoColorHelper
 
 /**
  * Adapter del RecyclerView de clientes.
@@ -86,9 +87,7 @@ class ClientesAdapter(
             tvPendientes.text = ventasPendientes.toString()
 
             // Color dinámico según estado
-            val color = Color.parseColor(colorParaEstado(cliente.estado))
-            card.strokeColor = color
-            tvEstado.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
+            EstadoColorHelper.aplicarEstadoCompleto(itemView.context, card, tvEstado, cliente.estado)
 
             // Botón de detalle → abre el dialog
             btnDetalle.setOnClickListener { listener.onDetalleClick(cliente) }

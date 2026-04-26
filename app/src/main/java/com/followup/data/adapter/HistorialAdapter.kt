@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.followup.R
 import com.followup.data.entity.Cliente
+import com.followup.data.entity.EstadoCliente
 import com.followup.data.entity.Venta
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.card.MaterialCardView
 
 /* ========================================================================================
@@ -69,8 +71,7 @@ class HistorialAdapter(
                     tvDetalle.text = c.email
 
                     tvBadge.text = "Cliente"
-                    tvBadge.backgroundTintList =
-                        ColorStateList.valueOf(Color.parseColor("#286DFF"))
+                    EstadoColorHelper.aplicarBadgeCliente(itemView.context, tvBadge, EstadoCliente.NUEVO_CLIENTE)
 
                     ivIcono.setImageResource(R.drawable.ic_clients)
                     iconContainer.setCardBackgroundColor(Color.parseColor("#EBF1FF"))
@@ -86,8 +87,7 @@ class HistorialAdapter(
                     tvDetalle.text = v.descripcion.ifEmpty { v.estado }
 
                     tvBadge.text = "Venta"
-                    tvBadge.backgroundTintList =
-                        ColorStateList.valueOf(Color.parseColor("#F79009"))
+                    EstadoColorHelper.aplicarBadgeVenta(itemView.context, tvBadge, "Pendiente")
 
                     ivIcono.setImageResource(R.drawable.ic_ventas)
                     iconContainer.setCardBackgroundColor(Color.parseColor("#FFF4E5"))

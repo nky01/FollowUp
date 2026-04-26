@@ -62,10 +62,48 @@ class Configuracion : AppCompatActivity() {
             finish()
         }
 
+        findViewById<LinearLayout>(R.id.ll_Apariencia).setOnClickListener {
+            mostrarDialogApariencia()
+        }
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 finish()
             }
         })
     }
+
+    private fun mostrarDialogApariencia() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_apariencia, null)
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val switchDark = dialogView.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.switch_dark_mode)
+
+        // Cargar preferencia guardada
+        val isDark = sharedPreferences.getBoolean("dark_mode", false)
+        switchDark.isChecked = isDark
+
+        switchDark.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                else androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+
+        dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_cerrar_apariencia)
+            .setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.88f).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
 }

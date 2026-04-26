@@ -56,6 +56,8 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 // Corrutinas
 
+import androidx.appcompat.app.AppCompatDelegate
+
 /* ----------------------------------------------------------------------------------------
                                    ACTIVITY PRINCIPAL
 ---------------------------------------------------------------------------------------- */
@@ -141,7 +143,14 @@ class PrincipalActivity : AppCompatActivity() {
             v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
-        
+
+        val prefs = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
+        val isDark = prefs.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         setupUI()
         initComponents()
         syncUserNameIfNeeded()
@@ -162,12 +171,6 @@ class PrincipalActivity : AppCompatActivity() {
 
                 sharedPreferences.edit {
                     putString("USER_NAME", nombre)
-                }
-
-                // Refresh the greeting in InicioFragment if it's currently visible
-                val fragment = supportFragmentManager.findFragmentById(R.id.frame_container)
-                if (fragment is InicioFragment) {
-                    fragment.actualizarSaludo()
                 }
 
             } catch (e: Exception) {

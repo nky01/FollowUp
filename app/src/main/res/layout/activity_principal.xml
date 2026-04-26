@@ -6,11 +6,12 @@
     android:layout_height="match_parent">
 
     <!-- ===================== -->
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL   -->
     <!-- ===================== -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background_header">
 
         <!-- FRAGMENTS -->
         <FrameLayout
@@ -38,9 +39,9 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/surface_primary">
 
-        <!-- PARTE ARRIBA -->
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigationView"
             android:layout_width="match_parent"
@@ -49,7 +50,6 @@
             app:headerLayout="@layout/drawer_header"
             app:menu="@menu/drawer_menu"/>
 
-        <!-- FOOTER FIJO ABAJO -->
         <TextView
             android:id="@+id/btnCerrarSesion"
             android:layout_width="match_parent"
@@ -58,8 +58,8 @@
             android:padding="16dp"
             android:drawableStart="@drawable/ic_logout"
             android:gravity="center_vertical"
-            android:background="#FFFFFF"
-            android:textColor="@android:color/black"/>
+            android:background="@color/surface_primary"
+            android:textColor="@color/text_primary"/>
 
     </LinearLayout>
 

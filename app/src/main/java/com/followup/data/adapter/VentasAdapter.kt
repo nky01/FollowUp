@@ -16,8 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.widget.ProgressBar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.card.MaterialCardView
 
 class VentasAdapter(
@@ -60,9 +62,8 @@ class VentasAdapter(
             val porcentaje = ((venta.pagoTotal / venta.montoTotal) * 100).toInt().coerceIn(0, 100)
             progressPago.progress = porcentaje
 
-            val color = Color.parseColor(colorParaEstado(venta.estado))
-            card.strokeColor = color
-            tvEstado.backgroundTintList = ColorStateList.valueOf(color)
+            EstadoColorHelper.aplicarBadgeVenta(itemView.context, tvEstado, venta.estado)
+            card.strokeColor = ContextCompat.getColor(itemView.context, EstadoColorHelper.badgeBgColorResVenta(venta.estado))
 
             btnDetalle.setOnClickListener { listener.onDetalleClick(venta) }
         }

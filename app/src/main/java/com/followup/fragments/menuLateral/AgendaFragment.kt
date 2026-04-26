@@ -21,6 +21,7 @@ import com.followup.R
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Venta
 import com.followup.presentation.settings.SessionManager
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.button.MaterialButton
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -317,9 +318,7 @@ class AgendaFragment : Fragment() {
             holder.tvDesc.text    = venta.descripcion.ifEmpty { "Sin descripción" }
 
             // Color dinámico del badge de estado
-            val color = if (venta.estado == "Pago caducado") "#F04438" else "#F79009"
-            holder.tvEstado.backgroundTintList =
-                ColorStateList.valueOf(Color.parseColor(color))
+            EstadoColorHelper.aplicarBadgeVenta(holder.itemView.context, holder.tvEstado, venta.estado)
 
             holder.btnWsp.setOnClickListener  { onWspClick(venta) }
             holder.btnMail.setOnClickListener { onMailClick(venta) }

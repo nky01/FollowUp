@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_blue"
+    android:background="@color/background_header"
     tools:context=".fragments.InicioFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -19,37 +19,27 @@
             android:padding="24dp">
 
             <ImageView
-                android:id="@+id/iv_logo_small"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/imageView"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_marginTop="16dp"
                 android:src="@mipmap/logo"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_profile_picture"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:src="@android:color/darker_gray"
-                app:civ_border_color="@color/white"
-                app:civ_border_width="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:tint="@color/always_white" />
 
             <TextView
                 android:id="@+id/tv_saludo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/saludo_formato"
-                android:textColor="@color/white"
+                android:text="FollowUp"
+                android:textColor="@color/always_white"
                 android:textSize="32sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_logo_small" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -66,7 +56,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Stats Cards -->
+            <!-- ── Stats Cards ── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,9 +71,10 @@
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#F2F4F7">
+                    app:strokeColor="@color/surface_stroke"
+                    app:cardBackgroundColor="@color/surface_primary">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -96,7 +87,7 @@
                             android:background="@drawable/background_circle_light_blue"
                             android:foreground="@drawable/ic_person"
                             android:foregroundTint="@color/primary_blue"
-                            android:foregroundGravity="center"/>
+                            android:foregroundGravity="center" />
                         <TextView
                             android:id="@+id/tv_count_clientes"
                             android:layout_width="wrap_content"
@@ -105,7 +96,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:layout_marginTop="8dp"/>
+                            android:layout_marginTop="8dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -122,9 +113,10 @@
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#F2F4F7">
+                    app:strokeColor="@color/surface_stroke"
+                    app:cardBackgroundColor="@color/surface_primary">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -136,8 +128,8 @@
                             android:layout_height="40dp"
                             android:background="@drawable/background_circle_light_green"
                             android:foreground="@drawable/ic_ventas"
-                            android:foregroundTint="#27AE60"
-                            android:foregroundGravity="center"/>
+                            android:foregroundTint="@color/chart_venta_icon"
+                            android:foregroundGravity="center" />
                         <TextView
                             android:id="@+id/tv_count_ventas"
                             android:layout_width="wrap_content"
@@ -146,7 +138,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:layout_marginTop="8dp"/>
+                            android:layout_marginTop="8dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -162,9 +154,10 @@
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#F2F4F7">
+                    app:strokeColor="@color/surface_stroke"
+                    app:cardBackgroundColor="@color/surface_primary">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -176,8 +169,8 @@
                             android:layout_height="40dp"
                             android:background="@drawable/background_circle_light_orange"
                             android:foreground="@android:drawable/ic_popup_reminder"
-                            android:foregroundTint="#F2994A"
-                            android:foregroundGravity="center"/>
+                            android:foregroundTint="@color/chart_seguimiento_icon"
+                            android:foregroundGravity="center" />
                         <TextView
                             android:id="@+id/tv_count_alertas"
                             android:layout_width="wrap_content"
@@ -186,7 +179,7 @@
                             android:textColor="@color/text_primary"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:layout_marginTop="8dp"/>
+                            android:layout_marginTop="8dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -195,9 +188,10 @@
                             android:textSize="12sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
-            <!-- Gráfico de Facturación -->
+            <!-- ── Gráfico ── -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
@@ -205,7 +199,8 @@
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#F2F4F7">
+                app:strokeColor="@color/surface_stroke"
+                app:cardBackgroundColor="@color/surface_primary">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -218,7 +213,7 @@
                         android:textColor="@color/primary_blue"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp"/>
+                        android:layout_marginBottom="12dp" />
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/barChart"
                         android:layout_width="match_parent"
@@ -226,8 +221,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-
-            <!-- Próximos seguimientos -->
+            <!-- ── Próximos seguimientos ── -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -261,8 +255,8 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_right_arrow"
-                        app:tint="@color/primary_blue"
-                        android:layout_marginStart="4dp"/>
+                        android:layout_marginStart="4dp"
+                        app:tint="@color/primary_blue" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -274,7 +268,7 @@
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_seguimiento_home" />
 
-            <!-- Ventas Recientes -->
+            <!-- ── Ventas Recientes ── -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -308,8 +302,8 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_right_arrow"
-                        app:tint="@color/primary_blue"
-                        android:layout_marginStart="4dp"/>
+                        android:layout_marginStart="4dp"
+                        app:tint="@color/primary_blue" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -320,6 +314,10 @@
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_seguimiento_home" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -26,6 +26,7 @@ import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Cliente
 import com.followup.data.entity.EstadoCliente
 import com.followup.presentation.settings.SessionManager
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.card.MaterialCardView
@@ -303,17 +304,8 @@ class ClientesFragment : Fragment() {
         // — Estado con color dinámico
         val tvEstado = dialogView.findViewById<TextView>(R.id.tv_detalle_estado)
         tvEstado.text = cliente.estado
-        val colorEstado = when (cliente.estado) {
-            EstadoCliente.NUEVO_CLIENTE  -> "#286DFF"
-            EstadoCliente.PAGO_PENDIENTE -> "#F79009"
-            EstadoCliente.PAGO_REALIZADO -> "#12B76A"
-            EstadoCliente.PAGO_CADUCADO  -> "#F04438"
-            else                         -> "#98A2B3"
-        }
 
-        // backgroundTintList es la forma correcta con Material — igual que en el Adapter
-        tvEstado.backgroundTintList =
-            android.content.res.ColorStateList.valueOf(Color.parseColor(colorEstado))
+        EstadoColorHelper.aplicarBadgeCliente(requireContext(), tvEstado, cliente.estado)
 
         // — Datos
         dialogView.findViewById<TextView>(R.id.tv_detalle_email).text    = cliente.email
