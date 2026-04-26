@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/bg_dialog_rounded"
         android:padding="20dp">
 
         <!-- TÍTULO -->
@@ -117,19 +118,28 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancelar_venta"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancelar"
-                android:textAllCaps="false" />
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textColor="@color/text_primary"
+                app:cornerRadius="14dp"
+                android:layout_marginRight="8dp"
+                app:strokeColor="@color/surface_stroke"
+                app:strokeWidth="1.5dp"
+                app:backgroundTint="@color/surface_primary"  />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_guardar_venta"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/guardar"
-                android:textAllCaps="false" />
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Guardar"
+                android:textAllCaps="false"
+                android:textColor="@color/always_white"
+                app:cornerRadius="14dp"
+                app:backgroundTint="@color/primary_blue_dark" />
 
         </LinearLayout>
 

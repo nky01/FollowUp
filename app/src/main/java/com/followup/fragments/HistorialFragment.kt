@@ -1,7 +1,5 @@
 package com.followup.fragments
 
-import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -28,29 +27,15 @@ import kotlinx.coroutines.launch
 
 class HistorialFragment : Fragment() {
 
-    /* ========================================================================================
-                                        COMPONENTES
-    ======================================================================================== */
-
     private lateinit var rvHistorial: RecyclerView
     private lateinit var etSearch: TextInputEditText
-
-    // Pills — ya no son MaterialButton sino MaterialCardView
     private lateinit var pillTodos: MaterialCardView
     private lateinit var pillClientes: MaterialCardView
     private lateinit var pillVentas: MaterialCardView
-
     private lateinit var adapter: HistorialAdapter
     private var listaCompleta = mutableListOf<HistorialItem>()
-
-    /** Filtro activo: null = Todos, "cliente" = solo clientes, "venta" = solo ventas */
     private var filtroActivo: String? = null
-
     private lateinit var sessionManager: SessionManager
-
-    /* ========================================================================================
-                                        CICLO DE VIDA
-    ======================================================================================== */
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,33 +43,23 @@ class HistorialFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_historial, container, false)
-        
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
-        
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         sessionManager = SessionManager(requireContext())
-
         initComponents(view)
         setupRecyclerView()
         initListeners()
         cargarDatos()
-
-        // Seleccionar "Todos" por defecto
         seleccionarPill(pillTodos)
     }
-
-    /* ========================================================================================
-                                        INICIALIZACIÓN
-    ======================================================================================== */
 
     private fun initComponents(view: View) {
         rvHistorial  = view.findViewById(R.id.historial)
@@ -103,30 +78,22 @@ class HistorialFragment : Fragment() {
         rvHistorial.adapter = adapter
     }
 
-    /* ========================================================================================
-                                        LISTENERS
-    ======================================================================================== */
-
     private fun initListeners() {
-
         pillTodos.setOnClickListener {
             filtroActivo = null
             seleccionarPill(pillTodos)
             aplicarFiltrosYBusqueda()
         }
-
         pillClientes.setOnClickListener {
             filtroActivo = "cliente"
             seleccionarPill(pillClientes)
             aplicarFiltrosYBusqueda()
         }
-
         pillVentas.setOnClickListener {
             filtroActivo = "venta"
             seleccionarPill(pillVentas)
             aplicarFiltrosYBusqueda()
         }
-
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -134,17 +101,8 @@ class HistorialFragment : Fragment() {
         })
     }
 
-    /* ========================================================================================
-                                    ESTILOS DE PILLS
-    ======================================================================================== */
-
-    /**
-     * Actualiza el aspecto visual de las pills.
-     * La activa queda blanca con texto azul; las demás semitransparentes con texto blanco.
-     */
     private fun seleccionarPill(pillActiva: MaterialCardView) {
         val pills = listOf(pillTodos, pillClientes, pillVentas)
-
         pills.forEach { pill ->
             val tvId = when (pill.id) {
                 R.id.btn_filter_todos    -> R.id.tv_filter_todos
@@ -155,24 +113,25 @@ class HistorialFragment : Fragment() {
             val tv = pill.findViewById<android.widget.TextView>(tvId)
 
             if (pill.id == pillActiva.id) {
-                pill.setCardBackgroundColor(Color.WHITE)
-                tv.setTextColor(Color.parseColor("#286DFF"))
+                // Activa — superficie clara para que resalte
+                pill.setCardBackgroundColor(
+                    requireContext().getColor(R.color.surface_secondary)
+                )
+                tv.setTextColor(requireContext().getColor(R.color.primary_blue))
             } else {
-                pill.setCardBackgroundColor(Color.parseColor("#33FFFFFF"))
-                tv.setTextColor(Color.WHITE)
+                // Inactiva — semitransparente sobre el header
+                pill.setCardBackgroundColor(
+                    requireContext().getColor(R.color.primary_blue_disabled)
+                )
+                tv.setTextColor(requireContext().getColor(R.color.always_white))
             }
         }
     }
-
-    /* ========================================================================================
-                                    CARGA Y FILTRADO
-    ======================================================================================== */
 
     private fun cargarDatos() {
         lifecycleScope.launch {
             val db       = AppDatabase.getDatabase(requireContext())
             val userMail = sessionManager.getUserMail()
-
             combine(
                 db.clienteDao().getClientesEnPapelera(userMail),
                 db.ventaDao().getVentasEliminadas(userMail)
@@ -195,19 +154,17 @@ class HistorialFragment : Fragment() {
 
     private fun aplicarFiltrosYBusqueda() {
         val query = etSearch.text.toString().lowercase().trim()
-
         var listaFiltrada: List<HistorialItem> = when (filtroActivo) {
             "cliente" -> listaCompleta.filterIsInstance<HistorialItem.ClienteItem>()
             "venta"   -> listaCompleta.filterIsInstance<HistorialItem.VentaItem>()
             else      -> listaCompleta
         }
-
         if (query.isNotEmpty()) {
             listaFiltrada = listaFiltrada.filter { item ->
                 when (item) {
                     is HistorialItem.ClienteItem ->
-                        item.cliente.nombre.lowercase().contains(query)   ||
-                                item.cliente.email.lowercase().contains(query)    ||
+                        item.cliente.nombre.lowercase().contains(query) ||
+                                item.cliente.email.lowercase().contains(query)  ||
                                 item.cliente.telefono.contains(query)
                     is HistorialItem.VentaItem ->
                         item.venta.nombreCliente.lowercase().contains(query) ||
@@ -215,21 +172,15 @@ class HistorialFragment : Fragment() {
                 }
             }
         }
-
         adapter.submitList(listaFiltrada)
     }
-
-    /* ========================================================================================
-                                        RESTAURAR
-    ======================================================================================== */
 
     private fun confirmarRestaurar(item: HistorialItem) {
         val nombre = when (item) {
             is HistorialItem.ClienteItem -> item.cliente.nombre
             is HistorialItem.VentaItem   -> "Venta #${item.venta.id}"
         }
-
-        AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext(), R.style.Dialog_FollowUp)
             .setTitle("Restaurar")
             .setMessage("¿Restaurar $nombre?")
             .setPositiveButton("Restaurar") { _, _ ->
@@ -237,6 +188,26 @@ class HistorialFragment : Fragment() {
                     when (item) {
                         is HistorialItem.ClienteItem -> restaurarCliente(item.cliente)
                         is HistorialItem.VentaItem   -> restaurarVenta(item.venta)
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun confirmarEliminarFisico(item: HistorialItem) {
+        val nombre = when (item) {
+            is HistorialItem.ClienteItem -> item.cliente.nombre
+            is HistorialItem.VentaItem   -> "Venta #${item.venta.id}"
+        }
+        AlertDialog.Builder(requireContext(), R.style.Dialog_FollowUp)
+            .setTitle("Eliminar permanentemente")
+            .setMessage("Esta acción no se puede deshacer. ¿Eliminar $nombre de forma permanente?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                lifecycleScope.launch {
+                    when (item) {
+                        is HistorialItem.ClienteItem -> eliminarClienteFisico(item.cliente)
+                        is HistorialItem.VentaItem   -> eliminarVentaFisica(item.venta)
                     }
                 }
             }
@@ -260,31 +231,6 @@ class HistorialFragment : Fragment() {
         Toast.makeText(requireContext(), "Venta restaurada", Toast.LENGTH_SHORT).show()
     }
 
-    /* ========================================================================================
-                                    ELIMINACIÓN FÍSICA
-    ======================================================================================== */
-
-    private fun confirmarEliminarFisico(item: HistorialItem) {
-        val nombre = when (item) {
-            is HistorialItem.ClienteItem -> item.cliente.nombre
-            is HistorialItem.VentaItem   -> "Venta #${item.venta.id}"
-        }
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("Eliminar permanentemente")
-            .setMessage("Esta acción no se puede deshacer. ¿Eliminar $nombre de forma permanente?")
-            .setPositiveButton("Eliminar") { _, _ ->
-                lifecycleScope.launch {
-                    when (item) {
-                        is HistorialItem.ClienteItem -> eliminarClienteFisico(item.cliente)
-                        is HistorialItem.VentaItem   -> eliminarVentaFisica(item.venta)
-                    }
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
-
     private suspend fun eliminarClienteFisico(cliente: Cliente) {
         val db = AppDatabase.getDatabase(requireContext())
         db.ventaDao().eliminarVentasPorCliente(cliente.id, sessionManager.getUserMail())
@@ -300,16 +246,11 @@ class HistorialFragment : Fragment() {
         Toast.makeText(requireContext(), "Venta eliminada permanentemente", Toast.LENGTH_SHORT).show()
     }
 
-    /* ========================================================================================
-                            RECALCULAR ESTADO DEL CLIENTE
-    ======================================================================================== */
-
     private suspend fun recalcularEstadoCliente(clienteId: Int, userMail: String) {
         val db      = AppDatabase.getDatabase(requireContext())
         val dao     = db.clienteDao()
         val cliente = dao.obtenerPorId(clienteId) ?: return
 
-        // Marcar ventas caducadas antes de contar
         val ahora = System.currentTimeMillis()
         db.ventaDao().marcarVentasCaducadas(clienteId, userMail, ahora)
 
@@ -318,10 +259,7 @@ class HistorialFragment : Fragment() {
         val pagadas    = dao.contarVentasPagadas(clienteId, userMail)
 
         if (caducadas == 0 && pendientes == 0 && pagadas == 0) {
-            dao.update(cliente.copy(
-                estado            = EstadoCliente.NO_ASIGNADO,
-                fechaCambioEstado = null
-            ))
+            dao.update(cliente.copy(estado = EstadoCliente.NO_ASIGNADO, fechaCambioEstado = null))
             return
         }
 
@@ -333,9 +271,6 @@ class HistorialFragment : Fragment() {
 
         if (cliente.estado == nuevoEstado && cliente.fechaCambioEstado == fechaCambio) return
 
-        dao.update(cliente.copy(
-            estado            = nuevoEstado,
-            fechaCambioEstado = fechaCambio
-        ))
+        dao.update(cliente.copy(estado = nuevoEstado, fechaCambioEstado = fechaCambio))
     }
 }
