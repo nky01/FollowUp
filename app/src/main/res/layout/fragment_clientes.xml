@@ -286,7 +286,7 @@
                 android:text="Agregar cliente"
                 android:textAllCaps="false"
                 android:textColor="@color/primary_blue"
-                app:backgroundTint="#E8F1FF"
+                app:backgroundTint="@color/primary_blue_surface"
                 app:icon="@android:drawable/ic_input_add"
                 app:iconPadding="8dp"
                 app:iconTint="@color/primary_blue" />
@@ -304,7 +304,7 @@
             app:backgroundTint="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white" />
+            app:tint="@color/always_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

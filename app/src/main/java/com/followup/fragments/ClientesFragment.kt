@@ -436,6 +436,8 @@ class ClientesFragment : Fragment() {
             .setView(view)
             .create()
 
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
         val v = obtenerViewsEditar(view)
 
         // Precargar datos — el estado NO se edita manualmente

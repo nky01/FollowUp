@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-    ESTRUCTURA DEL DIALOG:
-      - Header: avatar + nombre + estado
-      - Botones rápidos: WhatsApp | Email
-      - Descripción (solo si hay texto)
-      - Datos del cliente: teléfono, email, dirección, fecha
-      - Botones de acción: Editar | Eliminar
--->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -20,12 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/background_content_top_rounded"
+        android:background="@drawable/bg_dialog_rounded"
         android:paddingBottom="24dp">
 
-        <!-- ══════════════════════════════
-                      HEADER
-             ══════════════════════════════ -->
+        <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +24,6 @@
             android:paddingBottom="16dp"
             android:paddingHorizontal="24dp">
 
-            <!-- Avatar -->
             <ImageView
                 android:id="@+id/ivAvatar"
                 android:layout_width="64dp"
@@ -47,7 +35,6 @@
                 android:elevation="4dp"
                 android:background="@drawable/bg_avatar_circle" />
 
-            <!-- Nombre + Apellido -->
             <TextView
                 android:id="@+id/tv_detalle_nombre"
                 android:layout_width="wrap_content"
@@ -59,7 +46,6 @@
                 android:gravity="center"
                 tools:text="Juan Pérez" />
 
-            <!-- Estado -->
             <TextView
                 android:id="@+id/tv_detalle_estado"
                 android:layout_width="wrap_content"
@@ -69,15 +55,13 @@
                 android:paddingVertical="4dp"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@color/always_white"
                 android:background="@drawable/bg_estado_rounded"
                 tools:text="Nuevo Cliente" />
 
         </LinearLayout>
 
-        <!-- ══════════════════════════════
-              BOTONES RÁPIDOS: WSP + MAIL
-             ══════════════════════════════ -->
+        <!-- BOTONES RÁPIDOS: WSP + MAIL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,7 +70,6 @@
             android:gravity="center"
             android:layout_marginBottom="16dp">
 
-            <!-- WhatsApp -->
             <LinearLayout
                 android:id="@+id/btn_wsp"
                 android:layout_width="0dp"
@@ -103,19 +86,18 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_whatsapp"
-                    app:tint="#25D366" />
+                    app:tint="@color/wsp_green" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="WhatsApp"
-                    android:textColor="#25D366"
+                    android:textColor="@color/wsp_green"
                     android:textStyle="bold"
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Email -->
             <LinearLayout
                 android:id="@+id/btn_mail"
                 android:layout_width="0dp"
@@ -132,14 +114,14 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_dialog_email"
-                    app:tint="#286DFF" />
+                    app:tint="@color/primary_blue" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Email"
-                    android:textColor="#286DFF"
+                    android:textColor="@color/primary_blue"
                     android:textStyle="bold"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -151,13 +133,9 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="24dp"
-            android:background="#F2F4F7" />
+            android:background="@color/surface_divider" />
 
-        <!-- ══════════════════════════════
-                DESCRIPCIÓN (condicional)
-             Visible solo si hay texto.
-             Se maneja desde el Fragment.
-             ══════════════════════════════ -->
+        <!-- DESCRIPCIÓN -->
         <LinearLayout
             android:id="@+id/layout_descripcion"
             android:layout_width="match_parent"
@@ -185,20 +163,17 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary"
                 android:lineSpacingMultiplier="1.4"
-                tools:text="Cliente interesado en el pack premium de fabricación." />
+                tools:text="Cliente interesado en el pack premium." />
 
-            <!-- Divisor -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
-                android:background="#F2F4F7" />
+                android:background="@color/surface_divider" />
 
         </LinearLayout>
 
-        <!-- ══════════════════════════════
-                  DATOS DEL CLIENTE
-             ══════════════════════════════ -->
+        <!-- DATOS DEL CLIENTE -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -213,40 +188,22 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingVertical="8dp">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_phone"
-                    app:tint="@color/hint_color" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Teléfono"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hint_color"
-                        android:letterSpacing="0.08" />
-
-                    <TextView
-                        android:id="@+id/tv_detalle_telefono"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
+                <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                    android:src="@drawable/ic_phone" app:tint="@color/hint_color" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginStart="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Teléfono" android:textSize="11sp" android:textStyle="bold"
+                        android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                    <TextView android:id="@+id/tv_detalle_telefono"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="@color/text_primary"
                         tools:text="+54 9 11 2233 4455" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Divisor -->
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/surface_divider" />
 
             <!-- Email -->
             <LinearLayout
@@ -255,40 +212,22 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingVertical="8dp">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@android:drawable/ic_dialog_email"
-                    app:tint="@color/hint_color" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Email"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hint_color"
-                        android:letterSpacing="0.08" />
-
-                    <TextView
-                        android:id="@+id/tv_detalle_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
+                <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                    android:src="@android:drawable/ic_dialog_email" app:tint="@color/hint_color" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginStart="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Email" android:textSize="11sp" android:textStyle="bold"
+                        android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                    <TextView android:id="@+id/tv_detalle_email"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="@color/text_primary"
                         tools:text="juan@gmail.com" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Divisor -->
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/surface_divider" />
 
             <!-- Dirección -->
             <LinearLayout
@@ -297,85 +236,47 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingVertical="8dp">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_location"
-                    app:tint="@color/hint_color" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dirección"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hint_color"
-                        android:letterSpacing="0.08" />
-
-                    <TextView
-                        android:id="@+id/tv_detalle_direccion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
+                <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                    android:src="@drawable/ic_location" app:tint="@color/hint_color" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginStart="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Dirección" android:textSize="11sp" android:textStyle="bold"
+                        android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                    <TextView android:id="@+id/tv_detalle_direccion"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="@color/text_primary"
                         tools:text="Av. Corrientes 1234, CABA" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Divisor -->
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/surface_divider" />
 
-            <!-- Fecha de alta -->
+            <!-- Fecha -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingVertical="8dp">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_calendar"
-                    app:tint="@color/hint_color" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cliente desde"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hint_color"
-                        android:letterSpacing="0.08" />
-
-                    <TextView
-                        android:id="@+id/tv_detalle_fecha"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
+                <ImageView android:layout_width="18dp" android:layout_height="18dp"
+                    android:src="@drawable/ic_calendar" app:tint="@color/hint_color" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginStart="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Cliente desde" android:textSize="11sp" android:textStyle="bold"
+                        android:textColor="@color/hint_color" android:letterSpacing="0.08" />
+                    <TextView android:id="@+id/tv_detalle_fecha"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="@color/text_primary"
                         tools:text="24/04/2026" />
                 </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- ══════════════════════════════
-              BOTONES: EDITAR | ELIMINAR
-             ══════════════════════════════ -->
+        <!-- BOTONES: EDITAR | ELIMINAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -384,7 +285,6 @@
             android:paddingTop="20dp"
             android:gravity="center">
 
-            <!-- Editar -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_detalle_editar"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -396,16 +296,15 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary"
                 app:cornerRadius="14dp"
-                app:strokeColor="#D0D5DD"
+                app:strokeColor="@color/surface_stroke"
                 app:strokeWidth="1.5dp"
                 app:icon="@drawable/ic_edit"
                 app:iconTint="@color/text_primary"
                 app:iconPadding="6dp"
-                app:backgroundTint="@android:color/white" />
+                app:backgroundTint="@color/surface_primary" />
 
             <View android:layout_width="10dp" android:layout_height="1dp" />
 
-            <!-- Eliminar -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_detalle_eliminar"
                 style="@style/Widget.MaterialComponents.Button"
@@ -415,16 +314,15 @@
                 android:text="Eliminar"
                 android:textAllCaps="false"
                 android:textSize="14sp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/always_white"
                 app:cornerRadius="14dp"
-                app:backgroundTint="#F04438"
+                app:backgroundTint="@color/danger_red"
                 app:icon="@drawable/ic_delete"
-                app:iconTint="@android:color/white"
+                app:iconTint="@color/always_white"
                 app:iconPadding="6dp" />
 
         </LinearLayout>
 
-        <!-- Cerrar -->
         <!-- Cerrar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cerrar_detalle"
@@ -439,9 +337,9 @@
             android:textSize="14sp"
             android:textColor="@color/text_primary"
             app:cornerRadius="14dp"
-            app:strokeColor="#D0D5DD"
+            app:strokeColor="@color/surface_stroke"
             app:strokeWidth="1.5dp"
-            app:backgroundTint="@android:color/white" />
+            app:backgroundTint="@color/surface_primary" />
 
     </LinearLayout>
 
