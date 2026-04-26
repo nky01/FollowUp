@@ -103,10 +103,13 @@
     <color name="input_background">@color/surface_secondary</color>
     <color name="hint_color">@color/text_hint</color>
 
+    <!-- ************************************************************************** -->
+
     <!-- ══════════════════════════════════════════════════════════
                 Items
      ══════════════════════════════════════════════════════════ -->
 
     <color name="nav_item">#FFFFFF</color>
+    <color name="strokeBorder">#1B1A29</color>
 
 </resources>
