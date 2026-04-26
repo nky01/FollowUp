@@ -27,6 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:itemIconSize="32dp"
+            android:background="@color/surface_primary"
+            app:itemIconTint="@color/nav_item"
+            app:itemTextColor="@color/nav_item"
             app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/bottom_menu"/>
 
@@ -40,13 +43,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:orientation="vertical"
-        android:background="@color/surface_primary">
+        android:background="@color/background_header">
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigationView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/surface_primary"
             app:headerLayout="@layout/drawer_header"
             app:menu="@menu/drawer_menu"/>
 
