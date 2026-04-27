@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    MODO OSCURO — res/values-night/colors.xml
+
+    Paleta:
+      Fondo header:          #242333
+      Fondo contenido:       #1A1A24  (RecyclerView, listas — surface_secondary)
+      Fondo cards/dialogs:   #252436  (surface_primary)
+      Acento íconos:         #A188FF  (primary_blue)
+      Acento botones:        #6F4BF8  (primary_blue_dark)
+-->
+<resources>
+
+    <!-- ══════════════════════════════════════════════════════════
+                        COLORES BASE
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="always_white">#FFFFFF</color>
+
+    <color name="white">#FF252436</color>               <!-- superficie cards/dialogs -->
+    <color name="black">#FFFFFFFF</color>
+
+    <color name="primary_blue">#FFA188FF</color>        <!-- violeta suave — íconos, tints -->
+    <color name="primary_blue_disabled">#FF4A3880</color>
+    <color name="primary_blue_surface">#FF2A2840</color>
+    <color name="primary_blue_dark">#FF6F4BF8</color>   <!-- violeta vibrante — botones primarios -->
+
+    <!-- ══════════════════════════════════════════════════════════
+                        COLORES DE TEXTO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="text_primary">#FFF0F0F0</color>
+    <color name="text_secondary">#FF9090A0</color>
+    <color name="text_hint">#FF5E5E70</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DE FONDO / SUPERFICIE
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="surface_primary">#FF252436</color>     <!-- cards, dialogs -->
+    <color name="surface_secondary">#FF1A1A24</color>   <!-- fondo contenido — RecyclerView, listas -->
+    <color name="surface_border">#FF35334D</color>
+    <color name="surface_divider">#FF2A2840</color>
+    <color name="surface_stroke">#FF35334D</color>
+
+    <!-- Fondo del header — oscuro fijo, sin violeta -->
+    <color name="background_header">#FF242333</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES SEMÁNTICOS DE ESTADO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="estado_nuevo_bg">#FF2A2840</color>
+    <color name="estado_nuevo_stroke">#FFA188FF</color>
+    <color name="estado_nuevo_text">#FFA188FF</color>
+
+    <color name="estado_pendiente_bg">#FF332200</color>
+    <color name="estado_pendiente_stroke">#FFFFA040</color>
+    <color name="estado_pendiente_text">#FFFFA040</color>
+
+    <color name="estado_realizado_bg">#FF0A2618</color>
+    <color name="estado_realizado_stroke">#FF34D399</color>
+    <color name="estado_realizado_text">#FF34D399</color>
+
+    <color name="estado_caducado_bg">#FF330D0D</color>
+    <color name="estado_caducado_stroke">#FFFF6B6B</color>
+    <color name="estado_caducado_text">#FFFF6B6B</color>
+
+    <color name="estado_no_asignado_bg">#FF252436</color>
+    <color name="estado_no_asignado_stroke">#FF6E6E80</color>
+    <color name="estado_no_asignado_text">#FF6E6E80</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DE ACCIÓN / BOTONES
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="wsp_green">#FF34D399</color>
+    <color name="wsp_green_surface">#FF0A2618</color>
+
+    <color name="danger_red">#FFFF6B6B</color>
+    <color name="danger_red_surface">#FF330D0D</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DEL GRÁFICO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="chart_seguimiento_bg">#FF332200</color>
+    <color name="chart_seguimiento_icon">#FFFFA040</color>
+
+    <color name="chart_venta_bg">#FF0A2618</color>
+    <color name="chart_venta_icon">#FF34D399</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    LEGADO
+         ══════════════════════════════════════════════════════════ -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="red">#FFFF6B6B</color>
+
+    <color name="input_background">@color/surface_secondary</color>
+    <color name="hint_color">@color/text_hint</color>
+
+    <!-- ************************************************************************** -->
+
+    <!-- ══════════════════════════════════════════════════════════
+                Items
+     ══════════════════════════════════════════════════════════ -->
+
+    <color name="nav_item">#FFFFFF</color>
+    <color name="strokeBorder">#1B1A29</color>
+
+</resources>

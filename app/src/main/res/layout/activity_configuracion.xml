@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/surface_secondary">
 
     <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:background="#3498db">
+        android:background="@color/background_header">
 
         <ImageButton
             android:id="@+id/backButton"
@@ -23,20 +23,28 @@
             android:importantForAccessibility="no"
             android:src="@drawable/ic_back_arrow_black" />
 
-        <View
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profileContainer"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="55dp"
-            android:background="@drawable/ic_circle" />
+            android:layout_marginTop="40dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="55dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/primary_blue">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
-            android:src="@drawable/ic_person" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profilePicture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_person"
+                android:scaleType="centerCrop"/>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </RelativeLayout>
 
@@ -46,25 +54,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="@string/usuario_01"
+        android:textColor="@color/text_primary"
         android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvUbicacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="1dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/buenos_aires_argentina"
-        android:textSize="14sp" />
+        android:text=""
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
 
     <!-- Account Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:background="@drawable/ic_rounded_card"
+        android:background="@drawable/bg_dialog_rounded2"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -72,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cuenta"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -84,19 +97,22 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_person" />
+                android:src="@drawable/ic_person"
+                app:tint="@color/text_secondary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:text="@string/informacion_personal" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_right_arrow" />
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,20 +128,23 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_mail" />
+                android:src="@drawable/ic_mail"
+                app:tint="@color/text_secondary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:text="@string/cambiar_mail" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_right_arrow" />
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
@@ -135,7 +154,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/ic_rounded_card"
+        android:background="@drawable/bg_dialog_rounded2"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -143,6 +162,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/aplicacion"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -156,20 +176,23 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_bell" />
+                android:src="@drawable/ic_bell"
+                app:tint="@color/text_secondary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:text="@string/notificaciones" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_right_arrow" />
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
 
         <LinearLayout
@@ -186,48 +209,58 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_lock" />
+                android:src="@drawable/ic_lock"
+                app:tint="@color/text_secondary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:text="@string/seguridad" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_right_arrow" />
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_Apariencia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_palette" />
+                android:src="@drawable/ic_palette"
+                app:tint="@color/text_secondary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="@color/text_primary"
                 android:text="@string/apariencia" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_right_arrow" />
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Cerrar sesión - pegado al fondo -->
+    <!-- Cerrar sesión -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -235,7 +268,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/ic_rounded_card"
+        android:background="@drawable/bg_dialog_rounded2"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -254,7 +287,7 @@
                 android:layout_height="24dp"
                 android:importantForAccessibility="no"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="#F44336" />
+                app:tint="@color/danger_red" />
 
             <TextView
                 android:layout_width="0dp"
@@ -262,7 +295,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:text="@string/cerrar_sesion"
-                android:textColor="#F44336"
+                android:textColor="@color/danger_red"
                 android:textSize="14sp" />
         </LinearLayout>
 

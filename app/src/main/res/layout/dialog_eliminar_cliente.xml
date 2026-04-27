@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/surface_primary"
     app:cardCornerRadius="20dp"
     app:cardElevation="8dp"
     app:cardUseCompatPadding="true">
@@ -37,12 +37,11 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="54dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="Cancelar"
                 android:textAllCaps="false"
                 android:textColor="@color/primary_blue"
-                app:rippleColor="#26286DFF"
                 app:strokeColor="@color/primary_blue" />
 
             <com.google.android.material.button.MaterialButton
@@ -52,8 +51,8 @@
                 android:layout_weight="1"
                 android:text="Eliminar"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:backgroundTint="#F04438"
+                android:textColor="@color/always_white"
+                app:backgroundTint="@color/danger_red"
                 app:elevation="0dp" />
 
         </LinearLayout>

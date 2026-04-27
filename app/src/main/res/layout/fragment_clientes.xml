@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_blue"
+    android:background="@color/background_header"
     tools:context=".fragments.ClientesFragment">
 
     <!-- ══════════════════════════════
@@ -24,7 +24,7 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="Gestión de Clientes"
-            android:textColor="@color/white"
+            android:textColor="@color/always_white"
             android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,7 +63,7 @@
                 android:hint="Buscar cliente..."
                 android:inputType="text"
                 android:paddingVertical="12dp"
-                android:textColor="@color/text_primary" />
+                android:background="@drawable/bg_dialog_rounded"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón filtro por estado -->
@@ -74,7 +74,7 @@
             android:layout_marginEnd="16dp"
             android:clickable="true"
             android:focusable="true"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/surface_secondary"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="@id/til_search"
@@ -286,7 +286,7 @@
                 android:text="Agregar cliente"
                 android:textAllCaps="false"
                 android:textColor="@color/primary_blue"
-                app:backgroundTint="#E8F1FF"
+                app:backgroundTint="@color/primary_blue_surface"
                 app:icon="@android:drawable/ic_input_add"
                 app:iconPadding="8dp"
                 app:iconTint="@color/primary_blue" />
@@ -304,7 +304,7 @@
             app:backgroundTint="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white" />
+            app:tint="@color/always_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

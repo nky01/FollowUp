@@ -73,7 +73,6 @@ class InicioFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        actualizarSaludo()
         cargarDatos()
     }
 
@@ -87,7 +86,6 @@ class InicioFragment : Fragment() {
         rvSeguimientos = view.findViewById(R.id.rv_seguimientos)
         rvVentasRecientes = view.findViewById(R.id.rv_ventas_recientes)
         configurarImagenPerfil(view)
-        actualizarSaludo()
         setupChartStyle()
     }
 // Configura el estilo del gráfico de barras
@@ -175,18 +173,7 @@ class InicioFragment : Fragment() {
 
     private fun configurarImagenPerfil(view: View) {
         val prefs = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val ivProfile = view.findViewById<CircleImageView>(R.id.iv_profile_picture)
         val uriString = prefs.getString("profile_image_uri", null)
-        uriString?.let {
-            try {
-                ivProfile.setImageURI(it.toUri())
-            } catch (_: Exception) {
-                ivProfile.setImageResource(android.R.color.darker_gray)
-            }
-        }
-        ivProfile.setOnClickListener {
-            startActivity(Intent(requireContext(), Configuracion::class.java))
-        }
     }
 
     private fun setupRecyclerViews() {

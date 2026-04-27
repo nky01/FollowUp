@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 // Contenedor de datos del Activity
 
@@ -56,6 +57,8 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 // Corrutinas
 
+import androidx.appcompat.app.AppCompatDelegate
+
 /* ----------------------------------------------------------------------------------------
                                    ACTIVITY PRINCIPAL
 ---------------------------------------------------------------------------------------- */
@@ -86,6 +89,9 @@ class PrincipalActivity : AppCompatActivity() {
 
     private lateinit var txtName: TextView
     // Nombre del usuario en el header del menú lateral
+
+    private lateinit var profileImageDrawer: de.hdodenhof.circleimageview.CircleImageView
+    // Contenedor de imagen del menú lateral
 
     /* ----------------------------------------------------------------------------------------
                                             SERVICIOS
@@ -130,23 +136,39 @@ class PrincipalActivity : AppCompatActivity() {
     ---------------------------------------------------------------------------------------- */
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         setContentView(R.layout.activity_principal)
-        
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, systemBars.top, 0, 0)
+
+            findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.content_container)
+                .setPadding(0, systemBars.top, 0, 0)
+
             insets
         }
-        
+
+
+        val prefs = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
+        val isDark = prefs.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         setupUI()
         initComponents()
         syncUserNameIfNeeded()
         initListeners()
         initDefaultFragment()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cargarFotoPerfilDrawer()
     }
 
     private fun syncUserNameIfNeeded() {
@@ -162,12 +184,6 @@ class PrincipalActivity : AppCompatActivity() {
 
                 sharedPreferences.edit {
                     putString("USER_NAME", nombre)
-                }
-
-                // Refresh the greeting in InicioFragment if it's currently visible
-                val fragment = supportFragmentManager.findFragmentById(R.id.frame_container)
-                if (fragment is InicioFragment) {
-                    fragment.actualizarSaludo()
                 }
 
             } catch (e: Exception) {
@@ -217,8 +233,14 @@ class PrincipalActivity : AppCompatActivity() {
         val headerView = navigationView.getHeaderView(0)
         txtName = headerView.findViewById(R.id.txtName)
 
+        // ---------- Imagen del Drawer ----- */
+        profileImageDrawer = headerView.findViewById(R.id.profilePicture)
+
         // ---------- Cargar Nombre de Usuario ----- */
         cargarNombreUsuario()
+
+        // ---------- Cargar Imagen del Drawer ----- */
+        cargarFotoPerfilDrawer()
 
     }
 
@@ -401,10 +423,31 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
     /* ----------------------------------------------------------------------------------------
-                              VISIBILIDAD DEL BOTTOM NAV
+                                 VISIBILIDAD DEL BOTTOM NAV
     ---------------------------------------------------------------------------------------- */
 
     private fun showBottomNavigation(visible: Boolean) {
         bottomNavigationView.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                    CARGAR FOTO DE PERFIL
+    ---------------------------------------------------------------------------------------- */
+
+    private fun cargarFotoPerfilDrawer() {
+
+        val uriString = sharedPreferences.getString("PROFILE_IMAGE_URI", null)
+
+        if (uriString != null) {
+            val uri = android.net.Uri.parse(uriString)
+
+            com.bumptech.glide.Glide.with(this)
+                .load(uri)
+                .placeholder(R.drawable.ic_person)
+                .error(R.drawable.ic_person)
+                .into(profileImageDrawer)
+        } else {
+            profileImageDrawer.setImageResource(R.drawable.ic_person)
+        }
     }
 }

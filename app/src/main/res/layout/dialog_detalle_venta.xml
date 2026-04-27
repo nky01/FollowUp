@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/background_content_top_rounded">
+    android:background="@drawable/bg_dialog_rounded">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -125,7 +125,7 @@
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp"
-                android:layout_marginHorizontal="24dp" android:background="#F2F4F7" />
+                android:layout_marginHorizontal="24dp" android:background="@color/surface_divider" />
 
             <!-- DATOS -->
             <LinearLayout
@@ -156,7 +156,8 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/surface_divider"/>
 
                 <!-- Pago realizado -->
                 <LinearLayout
@@ -179,7 +180,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_divider" />
 
                 <!-- Fecha de venta -->
                 <LinearLayout
@@ -202,7 +203,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_divider" />
 
                 <!-- Fecha de seguimiento -->
                 <LinearLayout
@@ -225,7 +226,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F2F4F7" />
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_divider" />
 
                 <!-- Descripción -->
                 <LinearLayout
@@ -271,28 +272,29 @@
                     android:textSize="14sp"
                     android:textColor="@color/text_primary"
                     app:cornerRadius="14dp"
-                    app:strokeColor="#D0D5DD"
+                    app:strokeColor="@color/surface_stroke"
                     app:strokeWidth="1.5dp"
                     app:icon="@drawable/ic_edit"
                     app:iconTint="@color/text_primary"
                     app:iconPadding="6dp"
-                    app:backgroundTint="@android:color/white" />
+                    app:backgroundTint="@color/surface_primary" />
 
                 <View android:layout_width="10dp" android:layout_height="1dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_detalle_venta_eliminar"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Eliminar"
                     android:textAllCaps="false"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/always_white"
                     app:cornerRadius="14dp"
-                    app:backgroundTint="#F04438"
+                    app:backgroundTint="@color/danger_red"
                     app:icon="@drawable/ic_delete"
-                    app:iconTint="@android:color/white"
+                    app:iconTint="@color/always_white"
                     app:iconPadding="6dp" />
 
             </LinearLayout>
@@ -311,9 +313,9 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary"
                 app:cornerRadius="14dp"
-                app:strokeColor="#D0D5DD"
+                app:strokeColor="@color/surface_stroke"
                 app:strokeWidth="1.5dp"
-                app:backgroundTint="@android:color/white" />
+                app:backgroundTint="@color/surface_primary" />
 
         </LinearLayout>
     </ScrollView>

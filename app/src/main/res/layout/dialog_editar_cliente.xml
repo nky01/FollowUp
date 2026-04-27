@@ -10,12 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/background_content_top_rounded"
+        android:background="@drawable/bg_dialog_rounded"
         android:paddingHorizontal="24dp"
         android:paddingTop="28dp"
         android:paddingBottom="24dp">
 
-        <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +33,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_nombre"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -61,7 +59,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_apellido"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -88,7 +85,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_telefono"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -115,7 +111,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_email"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -142,7 +137,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_direccion"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -169,7 +163,6 @@
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_cliente_descripcion"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -206,9 +199,9 @@
                 android:textAllCaps="false"
                 android:textColor="@color/text_primary"
                 app:cornerRadius="14dp"
-                app:strokeColor="#D0D5DD"
+                app:strokeColor="@color/surface_stroke"
                 app:strokeWidth="1.5dp"
-                app:backgroundTint="@android:color/white" />
+                app:backgroundTint="@color/surface_primary" />
 
             <View android:layout_width="10dp" android:layout_height="1dp" />
 
@@ -219,9 +212,9 @@
                 android:layout_weight="1"
                 android:text="Guardar"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white"
+                android:textColor="@color/always_white"
                 app:cornerRadius="14dp"
-                app:backgroundTint="#286DFF" />
+                app:backgroundTint="@color/primary_blue_dark" />
 
         </LinearLayout>
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/background_content_top_rounded">
+    android:background="@drawable/bg_dialog_rounded">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -168,22 +168,23 @@
                     android:text="Cancelar"
                     android:textAllCaps="false"
                     android:textColor="@color/text_primary"
-                    app:strokeColor="#D0D5DD"
+                    app:strokeColor="@color/surface_stroke"
                     app:strokeWidth="1.5dp"
                     app:cornerRadius="12dp"
-                    app:backgroundTint="@android:color/white" />
+                    app:backgroundTint="@color/surface_primary"  />
 
                 <View android:layout_width="10dp" android:layout_height="1dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_guardar_venta"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="48dp"
                     android:text="Guardar"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="#286DFF"
+                    android:textColor="@color/always_white"
+                    app:backgroundTint="@color/primary_blue_dark"
                     app:cornerRadius="12dp" />
 
             </LinearLayout>

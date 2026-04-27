@@ -25,6 +25,7 @@
             android:orientation="vertical"
             android:paddingTop="36dp"
             android:paddingBottom="16dp"
+            android:background="@color/surface_primary"
             android:gravity="center_horizontal">
 
             <!-- Número de venta -->
@@ -140,7 +141,7 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_toggle"
+            android:src="@drawable/ic_open"
             app:tint="#4A4A4A" />
 
     </com.google.android.material.card.MaterialCardView>

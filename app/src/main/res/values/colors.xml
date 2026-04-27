@@ -1,19 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    // Colores de Material Design para el tema de la app
+
+    <!-- ══════════════════════════════════════════════════════════
+                        COLORES BASE DEL SISTEMA
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="always_white">#FFFFFF</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <color name="primary_blue">#FF4087C4</color>
+    <color name="primary_blue_disabled">#FF8AB4D6</color>
+    <color name="primary_blue_surface">#FFE8F1FF</color>
+    <color name="primary_blue_dark">#FF286DFF</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                        COLORES DE TEXTO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="text_primary">#FF1E2939</color>
+    <color name="text_secondary">#FF6C757D</color>
+    <color name="text_hint">#FF999999</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DE FONDO / SUPERFICIE
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="surface_primary">#FFFFFFFF</color>
+    <color name="surface_secondary">#FFFFFFFF</color>    <!-- blanco en light, oscuro en night vía colors-night -->
+    <color name="surface_border">#FFE0E0E0</color>
+    <color name="surface_divider">#FFF2F4F7</color>
+    <color name="surface_stroke">#FFD0D5DD</color>
+
+    <!-- Fondo del header (azul en light, #242333 en night) -->
+    <color name="background_header">@color/primary_blue</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES SEMÁNTICOS DE ESTADO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="estado_nuevo_bg">#FFE8F1FF</color>
+    <color name="estado_nuevo_stroke">#FF286DFF</color>
+    <color name="estado_nuevo_text">#FF286DFF</color>
+
+    <color name="estado_pendiente_bg">#FFFFF4E5</color>
+    <color name="estado_pendiente_stroke">#FFF79009</color>
+    <color name="estado_pendiente_text">#FFF79009</color>
+
+    <color name="estado_realizado_bg">#FFE6F9F2</color>
+    <color name="estado_realizado_stroke">#FF12B76A</color>
+    <color name="estado_realizado_text">#FF12B76A</color>
+
+    <color name="estado_caducado_bg">#FFFCEAEA</color>
+    <color name="estado_caducado_stroke">#FFF04438</color>
+    <color name="estado_caducado_text">#FFF04438</color>
+
+    <color name="estado_no_asignado_bg">#FFF0F1F3</color>
+    <color name="estado_no_asignado_stroke">#FF98A2B3</color>
+    <color name="estado_no_asignado_text">#FF98A2B3</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DE ACCIÓN / BOTONES
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="wsp_green">#FF25D366</color>
+    <color name="wsp_green_surface">#FFF0FFF6</color>
+
+    <color name="danger_red">#FFF04438</color>
+    <color name="danger_red_surface">#FFFCEAEA</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    COLORES DEL GRÁFICO
+         ══════════════════════════════════════════════════════════ -->
+
+    <color name="chart_seguimiento_bg">#FFFFF3E0</color>
+    <color name="chart_seguimiento_icon">#FFF2994A</color>
+
+    <color name="chart_venta_bg">#FFE8F5E9</color>
+    <color name="chart_venta_icon">#FF27AE60</color>
+
+    <!-- ══════════════════════════════════════════════════════════
+                    LEGADO
+         ══════════════════════════════════════════════════════════ -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="primary_blue">#4087C4</color>
-    <color name="primary_blue_disabled">#8AB4D6</color>
-    <color name="text_primary">#1E2939</color>
-    <color name="text_secondary">#6C757D</color>
-    <color name="input_background">#F5F5F5</color>
-    <color name="input_border">#E0E0E0</color>
-    <color name="hint_color">#999999</color>
-    <color name="red">#F04438</color>
+    <color name="red">#FFF04438</color>
+
+    <color name="input_background">@color/surface_secondary</color>
+    <color name="hint_color">@color/text_hint</color>
+
+    <!-- ************************************************************************** -->
+
+    <!-- ══════════════════════════════════════════════════════════
+                Items
+     ══════════════════════════════════════════════════════════ -->
+
+    <color name="nav_item">#424242</color>
+    <color name="strokeBorder">#D0D5DD</color>
+
 </resources>

@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- ===================== -->
     <!-- CONTENIDO PRINCIPAL -->
-    <!-- ===================== -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background_header">
 
-        <!-- FRAGMENTS -->
         <FrameLayout
             android:id="@+id/frame_container"
             android:layout_width="match_parent"
@@ -20,36 +19,38 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
-        <!-- BOTTOM NAV -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:itemIconSize="32dp"
+            app:itemIconSize="26dp"
+            android:background="@color/surface_primary"
+            app:itemIconTint="@color/nav_item"
+            app:itemTextColor="@color/nav_item"
             app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/bottom_menu"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ===================== -->
-    <!-- MENÚ LATERAL (DRAWER) -->
-    <!-- ===================== -->
+    <!-- MENÚ LATERAL -->
     <LinearLayout
+        android:id="@+id/drawer_container"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        android:background="@color/surface_primary">
 
-        <!-- PARTE ARRIBA -->
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigationView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/surface_primary"
             app:headerLayout="@layout/drawer_header"
             app:menu="@menu/drawer_menu"/>
 
-        <!-- FOOTER FIJO ABAJO -->
         <TextView
             android:id="@+id/btnCerrarSesion"
             android:layout_width="match_parent"
@@ -57,9 +58,10 @@
             android:text="Cerrar sesión"
             android:padding="16dp"
             android:drawableStart="@drawable/ic_logout"
+            android:drawableTint="@color/danger_red"
             android:gravity="center_vertical"
-            android:background="#FFFFFF"
-            android:textColor="@android:color/black"/>
+            android:background="@color/surface_primary"
+            android:textColor="@color/danger_red"/>
 
     </LinearLayout>
 

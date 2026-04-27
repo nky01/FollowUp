@@ -21,6 +21,7 @@ import com.followup.R
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Venta
 import com.followup.presentation.settings.SessionManager
+import com.followup.ui.EstadoColorHelper
 import com.google.android.material.button.MaterialButton
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -127,10 +128,10 @@ class AgendaFragment : Fragment() {
                 // Resaltar hoy
                 if (data.date == LocalDate.now()) {
                     tvDay.setBackgroundResource(R.drawable.bg_avatar_circle)
-                    tvDay.setTextColor(Color.parseColor("#286DFF"))
+                    tvDay.setTextColor(requireContext().getColor(R.color.primary_blue))
                 } else {
                     tvDay.background = null
-                    tvDay.setTextColor(Color.parseColor("#1D2939"))
+                    tvDay.setTextColor(requireContext().getColor(R.color.text_primary))
                 }
 
                 // Punto indicador de ventas
@@ -317,9 +318,7 @@ class AgendaFragment : Fragment() {
             holder.tvDesc.text    = venta.descripcion.ifEmpty { "Sin descripción" }
 
             // Color dinámico del badge de estado
-            val color = if (venta.estado == "Pago caducado") "#F04438" else "#F79009"
-            holder.tvEstado.backgroundTintList =
-                ColorStateList.valueOf(Color.parseColor(color))
+            EstadoColorHelper.aplicarBadgeVenta(holder.itemView.context, holder.tvEstado, venta.estado)
 
             holder.btnWsp.setOnClickListener  { onWspClick(venta) }
             holder.btnMail.setOnClickListener { onMailClick(venta) }
