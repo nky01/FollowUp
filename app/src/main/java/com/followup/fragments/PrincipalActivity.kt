@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 // Contenedor de datos del Activity
 
@@ -138,9 +139,12 @@ class PrincipalActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_principal)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, systemBars.top, 0, 0)
+
+            findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.content_container)
+                .setPadding(0, systemBars.top, 0, 0)
+
             insets
         }
 

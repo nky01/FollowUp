@@ -128,10 +128,10 @@ class AgendaFragment : Fragment() {
                 // Resaltar hoy
                 if (data.date == LocalDate.now()) {
                     tvDay.setBackgroundResource(R.drawable.bg_avatar_circle)
-                    tvDay.setTextColor(Color.parseColor("#286DFF"))
+                    tvDay.setTextColor(requireContext().getColor(R.color.primary_blue))
                 } else {
                     tvDay.background = null
-                    tvDay.setTextColor(Color.parseColor("#1D2939"))
+                    tvDay.setTextColor(requireContext().getColor(R.color.text_primary))
                 }
 
                 // Punto indicador de ventas
