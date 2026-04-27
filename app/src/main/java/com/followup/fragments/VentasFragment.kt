@@ -2,7 +2,10 @@ package com.followup.fragments
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,6 +41,12 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
+import android.os.Environment
+import android.provider.MediaStore
+import java.io.File
+import java.io.FileOutputStream
 
 class VentasFragment : Fragment() {
 
@@ -89,13 +98,13 @@ class VentasFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_ventas, container, false)
-        
+
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
-        
+
         return view
     }
 
@@ -129,6 +138,10 @@ class VentasFragment : Fragment() {
             override fun onDeleteClick(venta: Venta)  = mostrarDialogoEliminar(venta)
             override fun onEditClick(venta: Venta)    = mostrarDialogoEditar(venta)
             override fun onDetalleClick(venta: Venta) = mostrarDialogDetalle(venta)
+
+            override fun onExportPdfClick(venta: Venta) {
+                generarPdf(venta)
+            }
         })
         recyclerVentas.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerVentas.clipChildren  = false
@@ -567,5 +580,138 @@ class VentasFragment : Fragment() {
             fabMenuContainer.visibility = View.GONE
         }.start()
         fabMain.setImageResource(android.R.drawable.ic_input_add)
+    }
+
+    private fun generarPdf(venta: Venta) {
+        val pdfDocument = PdfDocument()
+
+        val pageInfo = PdfDocument.PageInfo.Builder(600, 900, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+
+        val paint = Paint()
+        val softLine = Paint().apply {
+            color = Color.parseColor("#E5E7EB")
+            strokeWidth = 1f
+        }
+
+        var y = 60
+
+        val logo = BitmapFactory.decodeResource(resources, R.mipmap.logo_and_name)
+        val scaledLogo = Bitmap.createScaledBitmap(logo, 200, 60, false)
+        canvas.drawBitmap(scaledLogo, 200f, 20f, null)
+
+        y += 80
+
+        val estadoColor = if (venta.pagoTotal >= venta.montoTotal) "#12B76A" else "#F79009"
+
+        paint.color = Color.parseColor(estadoColor)
+        paint.textSize = 14f
+        paint.isFakeBoldText = true
+        paint.textAlign = Paint.Align.CENTER
+
+        canvas.drawText(venta.estado.uppercase(), 300f, y.toFloat(), paint)
+
+        y += 50
+
+        paint.color = Color.BLACK
+        paint.textSize = 36f
+        paint.isFakeBoldText = true
+
+        canvas.drawText("$${venta.montoTotal}", 300f, y.toFloat(), paint)
+
+        y += 20
+
+        paint.textSize = 14f
+        paint.isFakeBoldText = false
+        canvas.drawText("Total pagado", 300f, y.toFloat(), paint)
+
+        y += 60
+
+        canvas.drawLine(80f, y.toFloat(), 520f, y.toFloat(), softLine)
+
+        y += 40
+
+        paint.textAlign = Paint.Align.LEFT
+        paint.textSize = 14f
+
+        canvas.drawText("Cliente", 80f, y.toFloat(), paint)
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(venta.nombreCliente, 520f, y.toFloat(), paint)
+
+        y += 30
+
+        paint.textAlign = Paint.Align.LEFT
+        canvas.drawText("Fecha", 80f, y.toFloat(), paint)
+
+        val fecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            .format(Date(venta.fechaVenta))
+
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(fecha, 520f, y.toFloat(), paint)
+
+        y += 30
+
+        paint.textAlign = Paint.Align.LEFT
+        canvas.drawText("ID operación", 80f, y.toFloat(), paint)
+
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText("#${venta.id}", 520f, y.toFloat(), paint)
+
+        y += 40
+
+        // Línea suave
+        canvas.drawLine(80f, y.toFloat(), 520f, y.toFloat(), softLine)
+
+        y += 40
+
+        // 💸 DESGLOSE
+        paint.textAlign = Paint.Align.LEFT
+        canvas.drawText("Monto total", 80f, y.toFloat(), paint)
+
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText("$${venta.montoTotal}", 520f, y.toFloat(), paint)
+
+        y += 30
+
+        paint.textAlign = Paint.Align.LEFT
+        canvas.drawText("Pagado", 80f, y.toFloat(), paint)
+
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText("$${venta.pagoTotal}", 520f, y.toFloat(), paint)
+
+        y += 80
+
+        paint.textAlign = Paint.Align.CENTER
+        paint.textSize = 12f
+        canvas.drawText("Comprobante generado por FollowUp", 300f, y.toFloat(), paint)
+
+        pdfDocument.finishPage(page)
+
+        try {
+            val resolver = requireContext().contentResolver
+
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, "comprobante_${venta.id}.pdf")
+                put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+
+            val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+
+            uri?.let {
+                val outputStream = resolver.openOutputStream(it)
+                pdfDocument.writeTo(outputStream!!)
+                outputStream.close()
+
+                Toast.makeText(requireContext(), "Comprobante listo!", Toast.LENGTH_LONG).show()
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Error al generar PDF", Toast.LENGTH_SHORT).show()
+        }
+
+        pdfDocument.close()
     }
 }
