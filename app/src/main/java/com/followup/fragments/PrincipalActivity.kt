@@ -90,6 +90,9 @@ class PrincipalActivity : AppCompatActivity() {
     private lateinit var txtName: TextView
     // Nombre del usuario en el header del menú lateral
 
+    private lateinit var profileImageDrawer: de.hdodenhof.circleimageview.CircleImageView
+    // Contenedor de imagen del menú lateral
+
     /* ----------------------------------------------------------------------------------------
                                             SERVICIOS
     ---------------------------------------------------------------------------------------- */
@@ -133,8 +136,8 @@ class PrincipalActivity : AppCompatActivity() {
     ---------------------------------------------------------------------------------------- */
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_principal)
@@ -148,6 +151,7 @@ class PrincipalActivity : AppCompatActivity() {
             insets
         }
 
+
         val prefs = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
         val isDark = prefs.getBoolean("dark_mode", false)
         AppCompatDelegate.setDefaultNightMode(
@@ -160,6 +164,11 @@ class PrincipalActivity : AppCompatActivity() {
         syncUserNameIfNeeded()
         initListeners()
         initDefaultFragment()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cargarFotoPerfilDrawer()
     }
 
     private fun syncUserNameIfNeeded() {
@@ -224,8 +233,14 @@ class PrincipalActivity : AppCompatActivity() {
         val headerView = navigationView.getHeaderView(0)
         txtName = headerView.findViewById(R.id.txtName)
 
+        // ---------- Imagen del Drawer ----- */
+        profileImageDrawer = headerView.findViewById(R.id.profilePicture)
+
         // ---------- Cargar Nombre de Usuario ----- */
         cargarNombreUsuario()
+
+        // ---------- Cargar Imagen del Drawer ----- */
+        cargarFotoPerfilDrawer()
 
     }
 
@@ -408,10 +423,31 @@ class PrincipalActivity : AppCompatActivity() {
     }
 
     /* ----------------------------------------------------------------------------------------
-                              VISIBILIDAD DEL BOTTOM NAV
+                                 VISIBILIDAD DEL BOTTOM NAV
     ---------------------------------------------------------------------------------------- */
 
     private fun showBottomNavigation(visible: Boolean) {
         bottomNavigationView.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    /* ----------------------------------------------------------------------------------------
+                                    CARGAR FOTO DE PERFIL
+    ---------------------------------------------------------------------------------------- */
+
+    private fun cargarFotoPerfilDrawer() {
+
+        val uriString = sharedPreferences.getString("PROFILE_IMAGE_URI", null)
+
+        if (uriString != null) {
+            val uri = android.net.Uri.parse(uriString)
+
+            com.bumptech.glide.Glide.with(this)
+                .load(uri)
+                .placeholder(R.drawable.ic_person)
+                .error(R.drawable.ic_person)
+                .into(profileImageDrawer)
+        } else {
+            profileImageDrawer.setImageResource(R.drawable.ic_person)
+        }
     }
 }

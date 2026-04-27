@@ -186,7 +186,7 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_toggle"
+            android:src="@drawable/ic_open"
             app:tint="#4A4A4A" />
 
     </com.google.android.material.card.MaterialCardView>

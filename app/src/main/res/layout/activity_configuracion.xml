@@ -23,20 +23,28 @@
             android:importantForAccessibility="no"
             android:src="@drawable/ic_back_arrow_black" />
 
-        <View
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profileContainer"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
-            android:background="@drawable/ic_circle" />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="55dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/primary_blue">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/ic_person" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profilePicture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_person"
+                android:scaleType="centerCrop"/>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </RelativeLayout>
 
@@ -53,13 +61,15 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvUbicacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="1dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/buenos_aires_argentina"
+        android:text=""
         android:textColor="@color/text_secondary"
-        android:textSize="14sp" />
+        android:textSize="13sp" />
 
     <!-- Account Section -->
     <LinearLayout
