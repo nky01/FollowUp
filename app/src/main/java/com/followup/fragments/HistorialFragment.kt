@@ -24,6 +24,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class HistorialFragment : Fragment() {
 
@@ -251,8 +252,15 @@ class HistorialFragment : Fragment() {
         val dao     = db.clienteDao()
         val cliente = dao.obtenerPorId(clienteId) ?: return
 
-        val ahora = System.currentTimeMillis()
-        db.ventaDao().marcarVentasCaducadas(clienteId, userMail, ahora)
+        // ✅ Usar inicio del día — caducado solo si fechaSeguimiento < hoy (no el mismo día)
+        val inicioDehoy = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        db.ventaDao().marcarVentasCaducadas(clienteId, userMail, inicioDehoy)
 
         val caducadas  = dao.contarVentasCaducadas(clienteId, userMail)
         val pendientes = dao.contarVentasPendientes(clienteId, userMail)
@@ -263,6 +271,7 @@ class HistorialFragment : Fragment() {
             return
         }
 
+        val ahora = System.currentTimeMillis()
         val (nuevoEstado, fechaCambio) = when {
             caducadas  > 0 -> EstadoCliente.PAGO_CADUCADO  to null
             pendientes > 0 -> EstadoCliente.PAGO_PENDIENTE to null
