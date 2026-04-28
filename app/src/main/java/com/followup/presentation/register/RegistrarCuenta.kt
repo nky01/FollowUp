@@ -4,9 +4,6 @@ package com.followup.presentation.register
                                            IMPORTS
 ---------------------------------------------------------------------------------------- */
 
-import android.content.Context
-// Permite acceder a recursos del sistema (SharedPreferences, etc.)
-
 import android.os.Bundle
 // Contenedor de datos del Activity
 
@@ -65,6 +62,8 @@ import kotlinx.coroutines.launch
 // Iniciar corrutinas
 
 import kotlinx.coroutines.withContext
+import androidx.core.content.edit
+
 // Cambiar de hilo
 
 /* ----------------------------------------------------------------------------------------
@@ -231,7 +230,6 @@ class RegistrarCuenta : AppCompatActivity() {
         if (email.isEmpty()) {
             tilEmail.error = "El email es obligatorio"
             esValido = false
-
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Formato de email inválido"
             esValido = false
@@ -240,10 +238,12 @@ class RegistrarCuenta : AppCompatActivity() {
         if (password.isEmpty()) {
             tilPassword.error = "La contraseña es obligatoria"
             esValido = false
-
-        } else if (password.length < 6) {
-            tilPassword.error = "Mínimo 6 caracteres"
-            esValido = false
+        } else {
+            val errorContrasenia = validarContrasenia(password)
+            if (errorContrasenia != null) {
+                tilPassword.error = errorContrasenia
+                esValido = false
+            }
         }
 
         if (confirmPassword != password) {
@@ -254,8 +254,27 @@ class RegistrarCuenta : AppCompatActivity() {
         return esValido
     }
 
-    private fun limpiarErrores() {
+    private fun validarContrasenia(password: String): String? {
+        val errores = mutableListOf<String>()
 
+        if (password.length < 8) {
+            errores.add("mínimo 8 caracteres")
+        }
+        if (!password.any { it.isLetter() }) {
+            errores.add("al menos una letra")
+        }
+        if (!password.any { it.isDigit() }) {
+            errores.add("al menos un número")
+        }
+        if (!password.any { !it.isLetterOrDigit() }) {
+            errores.add("al menos un carácter especial (!@#$...)")
+        }
+
+        return if (errores.isEmpty()) null
+        else "La contraseña debe tener: ${errores.joinToString(", ")}"
+    }
+
+    private fun limpiarErrores() {
         tilName.error = null
         tilEmail.error = null
         tilPassword.error = null
@@ -275,11 +294,8 @@ class RegistrarCuenta : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
 
                 if (task.isSuccessful) {
-
                     onRegisterSuccess(nombre, emailLower, password)
-
                 } else {
-
                     manejarErrorRegistro(task.exception?.message)
                 }
             }
@@ -335,11 +351,11 @@ class RegistrarCuenta : AppCompatActivity() {
 
     private fun guardarNombreEnPrefs(nombre: String) {
 
-        val prefs = getSharedPreferences("FollowUp_prefs", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("FollowUp_prefs", MODE_PRIVATE)
 
-        prefs.edit()
-            .putString("USER_NAME", nombre)
-            .apply()
+        prefs.edit {
+            putString("USER_NAME", nombre)
+        }
     }
 
     /* ----------------------------------------------------------------------------------------
