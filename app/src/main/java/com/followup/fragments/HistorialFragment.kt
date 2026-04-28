@@ -6,10 +6,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,6 +61,7 @@ class HistorialFragment : Fragment() {
         initComponents(view)
         setupRecyclerView()
         initListeners()
+        setupMenuButton(view)
         cargarDatos()
         seleccionarPill(pillTodos)
     }
@@ -281,5 +285,13 @@ class HistorialFragment : Fragment() {
         if (cliente.estado == nuevoEstado && cliente.fechaCambioEstado == fechaCambio) return
 
         dao.update(cliente.copy(estado = nuevoEstado, fechaCambioEstado = fechaCambio))
+    }
+
+    private fun setupMenuButton(view: View) {
+        val btnMenu = view.findViewById<ImageButton>(R.id.btnMenu)
+        btnMenu.setOnClickListener {
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.main)
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 }

@@ -76,4 +76,9 @@
     <string name="error_envio_link">Error al enviar el enlace. Intenta de nuevo.</string>
     <string name="clientes">Clientes</string>
     <string name="ventas">Ventas</string>
+    <string name="abrir_menu">Abrir menú</string>
+    <string name="inicio">Inicio</string>
+    <string name="abrir_menu_desc">Abrir menú</string>
+    <string name="gestion_de_clientes_title">Gestión de Clientes</string>
+    <string name="buscar_cliente_hint">Buscar cliente...</string>
 </resources>

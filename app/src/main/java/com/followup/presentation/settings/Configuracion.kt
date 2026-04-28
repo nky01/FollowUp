@@ -18,6 +18,7 @@ import com.followup.presentation.login.Bienvenida
 import com.google.firebase.auth.FirebaseAuth
 import androidx.core.content.edit
 import com.bumptech.glide.Glide
+import androidx.core.net.toUri
 
 class Configuracion : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
@@ -50,7 +51,7 @@ class Configuracion : AppCompatActivity() {
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // algunos dispositivos no lo permiten
                 }
 
@@ -62,9 +63,9 @@ class Configuracion : AppCompatActivity() {
                     .into(profileImage)
 
                 // Guardar URI
-                sharedPreferences.edit()
-                    .putString("PROFILE_IMAGE_URI", uri.toString())
-                    .apply()
+                sharedPreferences.edit {
+                    putString("PROFILE_IMAGE_URI", uri.toString())
+                }
             }
         }
 
@@ -85,7 +86,7 @@ class Configuracion : AppCompatActivity() {
 
         if (savedUri != null) {
             Glide.with(this)
-                .load(android.net.Uri.parse(savedUri))
+                .load(savedUri.toUri())
                 .placeholder(R.drawable.ic_person)
                 .error(R.drawable.ic_person)
                 .into(profileImage)
@@ -191,7 +192,7 @@ class Configuracion : AppCompatActivity() {
                         tv.text = "Argentina"
                     }
 
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     tv.text = "Argentina"
                 }
 
@@ -219,7 +220,7 @@ class Configuracion : AppCompatActivity() {
         switchDark.isChecked = isDark
 
         switchDark.setOnCheckedChangeListener { _, isChecked ->
-            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+            sharedPreferences.edit { putBoolean("dark_mode", isChecked) }
             androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
                 if (isChecked) androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
                 else androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO

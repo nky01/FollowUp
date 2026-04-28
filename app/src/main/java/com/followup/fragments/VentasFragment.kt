@@ -3,7 +3,6 @@ package com.followup.fragments
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.ContentValues
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -13,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -20,6 +20,8 @@ import android.widget.Toast
 import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -45,8 +47,9 @@ import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
 import android.provider.MediaStore
-import java.io.File
-import java.io.FileOutputStream
+import androidx.core.view.isVisible
+import androidx.core.graphics.scale
+import androidx.core.graphics.toColorInt
 
 class VentasFragment : Fragment() {
 
@@ -114,6 +117,7 @@ class VentasFragment : Fragment() {
         initComponents(view)
         initAdapter()
         initListeners()
+        setupMenuButton(view)
         cargarVentas()
     }
 
@@ -165,7 +169,7 @@ class VentasFragment : Fragment() {
         // Dropdown de estados
         btnFiltroEstado.setOnClickListener {
             dropdownEstadosVenta.visibility =
-                if (dropdownEstadosVenta.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                if (dropdownEstadosVenta.isVisible) View.GONE else View.VISIBLE
         }
 
         requireView().findViewById<TextView>(R.id.filtro_venta_todos).setOnClickListener {
@@ -460,7 +464,7 @@ class VentasFragment : Fragment() {
     ======================================================================================== */
 
     private fun mostrarDialogoEliminar(venta: Venta) {
-        val view   = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eliminar_cliente, null)
+        val view   = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eliminar_cliente,  null)
         val dialog = Dialog(requireContext())
         dialog.setContentView(view)
         dialog.window?.apply {
@@ -591,21 +595,21 @@ class VentasFragment : Fragment() {
 
         val paint = Paint()
         val softLine = Paint().apply {
-            color = Color.parseColor("#E5E7EB")
+            color = "#E5E7EB".toColorInt()
             strokeWidth = 1f
         }
 
         var y = 60
 
         val logo = BitmapFactory.decodeResource(resources, R.mipmap.logo_and_name)
-        val scaledLogo = Bitmap.createScaledBitmap(logo, 200, 60, false)
+        val scaledLogo = logo.scale(200, 60, false)
         canvas.drawBitmap(scaledLogo, 200f, 20f, null)
 
         y += 80
 
         val estadoColor = if (venta.pagoTotal >= venta.montoTotal) "#12B76A" else "#F79009"
 
-        paint.color = Color.parseColor(estadoColor)
+        paint.color = estadoColor.toColorInt()
         paint.textSize = 14f
         paint.isFakeBoldText = true
         paint.textAlign = Paint.Align.CENTER
@@ -713,5 +717,13 @@ class VentasFragment : Fragment() {
         }
 
         pdfDocument.close()
+    }
+
+    private fun setupMenuButton(view: View) {
+        val btnMenu = view.findViewById<ImageButton>(R.id.btnMenu)
+        btnMenu.setOnClickListener {
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.main)
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 }

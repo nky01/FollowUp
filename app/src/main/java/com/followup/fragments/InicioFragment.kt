@@ -1,19 +1,18 @@
 package com.followup.fragments
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,11 +21,8 @@ import com.followup.R
 import com.followup.data.adapter.SeguimientoHomeAdapter
 import com.followup.data.database.AppDatabase
 import com.followup.data.entity.Venta
-import com.followup.presentation.settings.Configuracion
 import com.followup.presentation.settings.SessionManager
-import de.hdodenhof.circleimageview.CircleImageView
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -188,6 +184,15 @@ class InicioFragment : Fragment() {
     private fun initListeners(view: View) {
         setupNavegacionRapida(view)
         setupToggles(view)
+        setupMenuButton(view)
+    }
+
+    private fun setupMenuButton(view: View) {
+        val btnMenu = view.findViewById<ImageButton>(R.id.btnMenu)
+        btnMenu.setOnClickListener {
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.main)
+            drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+        }
     }
 
     private fun setupNavegacionRapida(view: View) {

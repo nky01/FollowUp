@@ -4,17 +4,18 @@ package com.followup.fragments
                                            IMPORTS
 ---------------------------------------------------------------------------------------- */
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.*
 import android.widget.*
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,13 +29,14 @@ import com.followup.data.entity.EstadoCliente
 import com.followup.presentation.settings.SessionManager
 import com.followup.ui.EstadoColorHelper
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import androidx.core.view.isVisible
+import androidx.core.net.toUri
 
 class ClientesFragment : Fragment() {
 
@@ -91,6 +93,7 @@ class ClientesFragment : Fragment() {
         initViews(view)
         initRecycler()
         initListeners()
+        setupMenuButton(view)
         cargarClientes()
     }
 
@@ -152,7 +155,7 @@ class ClientesFragment : Fragment() {
         // Botón que abre/cierra el dropdown
         btnFiltroEstado.setOnClickListener {
             dropdownEstados.visibility =
-                if (dropdownEstados.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                if (dropdownEstados.isVisible) View.GONE else View.VISIBLE
         }
 
         // Opciones del dropdown
@@ -288,6 +291,7 @@ class ClientesFragment : Fragment() {
      * Se abre al presionar el botón flotante del borde inferior derecho del item.
      * Por ahora muestra los datos básicos del cliente.
      */
+    @SuppressLint("SetTextI18n")
     private fun mostrarDialogDetalle(cliente: Cliente) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_detalle_cliente, null)
 
@@ -345,14 +349,14 @@ class ClientesFragment : Fragment() {
         // — WhatsApp
         dialogView.findViewById<View>(R.id.btn_wsp).setOnClickListener {
             val numero = cliente.telefono.replace(Regex("[^0-9]"), "") // limpia caracteres
-            val uri = Uri.parse("https://wa.me/$numero")
+            val uri = "https://wa.me/$numero".toUri()
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
 
         // — Email
         dialogView.findViewById<View>(R.id.btn_mail).setOnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:${cliente.email}")
+                data = "mailto:${cliente.email}".toUri()
             }
             startActivity(Intent.createChooser(intent, "Enviar email"))
         }
@@ -426,8 +430,22 @@ class ClientesFragment : Fragment() {
     }
 
     /* ========================================================================================
-                                    DIÁLOGO: EDITAR CLIENTE
-       ======================================================================================== */
+                                     DIÁLOGO: EDITAR CLIENTE
+        ======================================================================================== */
+
+    private fun obtenerViewsEditar(view: View) = EditarClienteViews(
+        nombre      = view.findViewById(R.id.tiet_cliente_nombre),
+        apellido    = view.findViewById(R.id.tiet_cliente_apellido),
+        telefono    = view.findViewById(R.id.tiet_cliente_telefono),
+        email       = view.findViewById(R.id.tiet_cliente_email),
+        direccion   = view.findViewById(R.id.tiet_cliente_direccion),
+        descripcion = view.findViewById(R.id.tiet_cliente_descripcion),
+        tilNombre   = view.findViewById(R.id.til_cliente_nombre),
+        tilTelefono = view.findViewById(R.id.til_cliente_telefono),
+        tilEmail    = view.findViewById(R.id.til_cliente_email),
+        btnGuardar  = view.findViewById(R.id.btn_guardar_cliente),
+        btnCancelar = view.findViewById(R.id.btn_cancelar_cliente)
+    )
 
     private fun mostrarDialogEditar(cliente: Cliente) {
         val view = layoutInflater.inflate(R.layout.dialog_editar_cliente, null)
@@ -497,6 +515,7 @@ class ClientesFragment : Fragment() {
                                     DIÁLOGO: ELIMINAR CLIENTE
        ======================================================================================== */
 
+    @SuppressLint("SetTextI18n")
     private fun mostrarDialogEliminar(cliente: Cliente) {
         val view = layoutInflater.inflate(R.layout.dialog_eliminar_cliente, null)
 
@@ -630,17 +649,11 @@ class ClientesFragment : Fragment() {
         btnCancelar = dialog.findViewById(R.id.btn_cancelar_cliente)
     )
 
-    private fun obtenerViewsEditar(view: View) = EditarClienteViews(
-        nombre      = view.findViewById(R.id.tiet_cliente_nombre),
-        apellido    = view.findViewById(R.id.tiet_cliente_apellido),
-        telefono    = view.findViewById(R.id.tiet_cliente_telefono),
-        email       = view.findViewById(R.id.tiet_cliente_email),
-        direccion   = view.findViewById(R.id.tiet_cliente_direccion),
-        descripcion = view.findViewById(R.id.tiet_cliente_descripcion),
-        tilNombre   = view.findViewById(R.id.til_cliente_nombre),
-        tilTelefono = view.findViewById(R.id.til_cliente_telefono),
-        tilEmail    = view.findViewById(R.id.til_cliente_email),
-        btnGuardar  = view.findViewById(R.id.btn_guardar_cliente),
-        btnCancelar = view.findViewById(R.id.btn_cancelar_cliente)
-    )
+    private fun setupMenuButton(view: View) {
+        val btnMenu = view.findViewById<ImageButton>(R.id.btnMenu)
+        btnMenu.setOnClickListener {
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.main)
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
 }
