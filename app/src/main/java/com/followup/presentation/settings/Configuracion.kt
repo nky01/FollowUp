@@ -124,7 +124,7 @@ class Configuracion : AppCompatActivity() {
             }
         })
 
-        /* Localización */
+        /* Localización
         val tvUbicacion = findViewById<TextView>(R.id.tvUbicacion)
 
         if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -142,9 +142,10 @@ class Configuracion : AppCompatActivity() {
                 100
             )
         }
-
+        */
     }
 
+    /*
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -161,6 +162,7 @@ class Configuracion : AppCompatActivity() {
             }
         }
     }
+
 
     @SuppressLint("MissingPermission")
     private fun obtenerUbicacionYMostrar(tv: TextView) {
@@ -203,6 +205,7 @@ class Configuracion : AppCompatActivity() {
             tv.text = "Argentina"
         }
     }
+    */
 
     private fun mostrarDialogApariencia() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_apariencia, null)

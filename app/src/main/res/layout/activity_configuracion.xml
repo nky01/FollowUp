@@ -75,11 +75,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/usuario_01"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <!-- Localizacion
             <TextView
                 android:id="@+id/tvUbicacion"
                 android:layout_width="wrap_content"
@@ -90,6 +92,7 @@
                 android:text=""
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
+             -->
 
             <!-- Account Section -->
             <LinearLayout
