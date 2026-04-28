@@ -14,25 +14,39 @@
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Botón volver atrás -->
+        <ImageButton
+            android:id="@+id/btn_volver_atras"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back_arrow_black"
+            android:contentDescription="Volver atrás"
+            app:tint="@color/always_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:gravity="center_vertical|start"
             android:text="Estadísticas"
             android:textColor="@color/always_white"
             android:textSize="26sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/btn_volver_atras"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toEndOf="@id/btn_volver_atras"
+            app:layout_constraintTop_toTopOf="@id/btn_volver_atras" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

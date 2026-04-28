@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -99,6 +100,11 @@ class EstadisticasFragment : Fragment() {
 
         tvClienteMasCaducadas = view.findViewById(R.id.tv_cliente_mas_caducadas)
         tvClienteMasCaducadasCount = view.findViewById(R.id.tv_cliente_mas_caducadas_count)
+
+        // Botón volver atrás
+        view.findViewById<ImageButton>(R.id.btn_volver_atras).setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     /* ========================================================================================

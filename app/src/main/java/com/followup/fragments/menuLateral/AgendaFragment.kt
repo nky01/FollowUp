@@ -70,6 +70,12 @@ class AgendaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sessionManager = SessionManager(requireContext())
         calendarView = view.findViewById(R.id.calendarView)
+
+        // Botón volver atrás
+        view.findViewById<android.widget.ImageButton>(R.id.btn_volver_atras).setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         cargarEventos()
     }
 

@@ -7,30 +7,44 @@
     android:background="@color/background_header">
 
     <!-- HEADER -->
+    <ImageButton
+        android:id="@+id/btn_volver_atras"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_back_arrow_black"
+        android:contentDescription="Volver atrás"
+        app:tint="@color/always_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/title_agenda"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical|start"
         android:text="Agenda"
         android:textColor="@color/always_white"
         android:textSize="26sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btn_volver_atras"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/btn_volver_atras"
+        app:layout_constraintTop_toTopOf="@id/btn_volver_atras" />
 
     <!-- CONTENIDO -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_container"
-        android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/background_content_top_rounded"
         android:paddingTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_agenda">
+        app:layout_constraintTop_toBottomOf="@id/btn_volver_atras">
 
         <com.kizitonwose.calendar.view.CalendarView
             android:id="@+id/calendarView"
