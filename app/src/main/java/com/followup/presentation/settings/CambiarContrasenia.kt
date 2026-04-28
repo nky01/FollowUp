@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -50,7 +49,7 @@ class CambiarContrasenia : AppCompatActivity() {
         val userEmail = sharedPreferences.getString("USER_MAIL", "")
         tvEmail.text = userEmail
 
-        findViewById<LinearLayout>(R.id.btnEnviarLink).setOnClickListener {
+        findViewById<View>(R.id.btnEnviarLink).setOnClickListener {
             sendPasswordResetLink()
         }
     }
@@ -70,7 +69,7 @@ class CambiarContrasenia : AppCompatActivity() {
                 progressBar.visibility = View.GONE
 
                 if (task.isSuccessful) {
-                    Toast.makeText(this, R.string.link_enviado, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Revisa tu casilla de correo", Toast.LENGTH_LONG).show()
                     finish()
                 } else {
                     Toast.makeText(this, R.string.error_envio_link, Toast.LENGTH_SHORT).show()

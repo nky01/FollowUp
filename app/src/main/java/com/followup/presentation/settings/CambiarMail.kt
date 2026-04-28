@@ -174,7 +174,7 @@ class CambiarMail : AppCompatActivity() {
                         }
                     }
                     btnEnviarMail.isEnabled = true
-                    btnEnviarMail.text = "Enviar enlace de verificación"
+                    btnEnviarMail.text = "Enviar mail"
                 }
             }
     }

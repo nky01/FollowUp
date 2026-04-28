@@ -50,7 +50,7 @@
     <string name="confirmar_contrasenia_boton">Confirmar Contraseña</string>
     <string name="cambiar_mail_titulo">Cambiar mail</string>
     <string name="ingres_tu_contrase_a_actual_para_confirmar_tu_identidad">Ingresá tu contraseña actual para confirmar tu identidad.</string>
-    <string name="enviar_enlace_de_verificacion_btn">Enviar enlace de verificación</string>
+    <string name="enviar_mail_btn">Enviar mail</string>
     <string name="editar_venta">Editar Venta</string>
     <string name="monto_total">Monto total</string>
     <string name="pago_total">Pago total</string>
@@ -81,4 +81,8 @@
     <string name="abrir_menu_desc">Abrir menú</string>
     <string name="gestion_de_clientes_title">Gestión de Clientes</string>
     <string name="buscar_cliente_hint">Buscar cliente...</string>
+    <string name="confirmar_btn">Confirmar</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="enviar_mail">Enviar mail</string>
+    <string name="contrasenia_hint">Contraseña</string>
 </resources>

@@ -94,16 +94,22 @@
             android:background="#F5F5F5"
             android:layout_marginBottom="32dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEnviarLink"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="@string/enviar_link_cambio_contrasenia"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:backgroundTint="@color/primary_blue" />
-
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEnviarLink"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="@string/enviar_link_cambio_contrasenia"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        app:backgroundTint="@color/primary_blue"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Progress indicator -->
     <ProgressBar
