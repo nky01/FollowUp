@@ -164,6 +164,19 @@ class PrincipalActivity : AppCompatActivity() {
         syncUserNameIfNeeded()
         initListeners()
         initDefaultFragment()
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            val fragment = supportFragmentManager.findFragmentById(R.id.frame_container)
+
+            when (fragment) {
+                is InicioFragment,
+                is ClientesFragment,
+                is VentasFragment,
+                is HistorialFragment -> showBottomNavigation(true)
+
+                else -> showBottomNavigation(false)
+            }
+        }
     }
 
     override fun onResume() {
