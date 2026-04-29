@@ -347,10 +347,31 @@ class ClientesFragment : Fragment() {
             .setOnClickListener { dialog.dismiss() }
 
         // — WhatsApp
-        dialogView.findViewById<View>(R.id.btn_wsp).setOnClickListener {
-            val numero = cliente.telefono.replace(Regex("[^0-9]"), "") // limpia caracteres
-            val uri = "https://wa.me/$numero".toUri()
-            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        val btnWsp = dialogView.findViewById<View>(R.id.btn_wsp)
+
+        btnWsp.setOnClickListener {
+
+            var numero = cliente.telefono.replace(Regex("[^0-9]"), "")
+
+            numero = when {
+                numero.startsWith("549") -> numero
+                numero.startsWith("54")  -> "9$numero"
+                numero.startsWith("0")   -> "549${numero.drop(1)}"
+                numero.length == 10      -> "549$numero"
+                else                     -> "549$numero"
+            }
+
+            val mensaje = "Hola ${cliente.nombre}! Cómo estas?"
+            val mensajeCodificado = java.net.URLEncoder.encode(mensaje, "UTF-8")
+
+            val uri = "https://wa.me/$numero?text=$mensajeCodificado".toUri()
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "No tenes WhatsApp instalado", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // — Email
