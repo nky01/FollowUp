@@ -42,7 +42,6 @@ class VentasAdapter(
         private val progressPago: ProgressBar = itemView.findViewById(R.id.progressPago)
         private val tvFecha: TextView = itemView.findViewById(R.id.tvFecha)
         private val btnDetalle: MaterialCardView = itemView.findViewById(R.id.btnVerDetalleVenta)
-        private val btnPdf: MaterialButton = itemView.findViewById(R.id.btnExportPdf)
 
         fun bind(venta: Venta) {
 
@@ -61,13 +60,6 @@ class VentasAdapter(
                 itemView.context,
                 EstadoColorHelper.badgeBgColorResVenta(venta.estado)
             )
-
-            btnPdf.visibility =
-                if (venta.pagoTotal >= venta.montoTotal) View.VISIBLE else View.GONE
-
-            btnPdf.setOnClickListener {
-                listener.onExportPdfClick(venta)
-            }
 
             btnDetalle.setOnClickListener {
                 listener.onDetalleClick(venta)

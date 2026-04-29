@@ -103,17 +103,6 @@
                 android:textColor="@color/hint_color"
                 tools:text="Seguimiento: 30/04/2026" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnExportPdf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PDF"
-                android:textSize="10sp"
-                android:layout_marginTop="8dp"
-                android:visibility="gone"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#12B76A"
-                android:textColor="@android:color/white"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

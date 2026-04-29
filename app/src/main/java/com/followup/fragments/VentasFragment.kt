@@ -506,33 +506,47 @@ class VentasFragment : Fragment() {
         dialog.setContentView(R.layout.dialog_detalle_venta)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_id).text       = "Venta #${venta.id}"
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_cliente).text   = venta.nombreCliente
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_estado).text    = venta.estado
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_monto).text     = "$${DecimalFormat("#,##0.00").format(venta.montoTotal)}"
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_pago).text      = "$${DecimalFormat("#,##0.00").format(venta.pagoTotal)}"
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_fecha).text     = dateFormatter.format(Date(venta.fechaVenta))
+        // Datos básicos
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_id).text         = "Venta #${venta.id}"
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_cliente).text     = venta.nombreCliente
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_estado).text      = venta.estado
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_monto).text       = "$${DecimalFormat("#,##0.00").format(venta.montoTotal)}"
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_pago).text        = "$${DecimalFormat("#,##0.00").format(venta.pagoTotal)}"
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_fecha).text       = dateFormatter.format(Date(venta.fechaVenta))
         dialog.findViewById<TextView>(R.id.tv_detalle_venta_seguimiento).text = dateFormatter.format(Date(venta.fechaSeguimiento))
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_descripcion).text = venta.descripcion
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_descripcion).text = venta.descripcion.ifEmpty { "Sin descripción" }
 
+        // Progreso de pago
         val porcentaje = ((venta.pagoTotal / venta.montoTotal) * 100).toInt().coerceIn(0, 100)
-        dialog.findViewById<TextView>(R.id.tv_detalle_venta_porcentaje).text = "$porcentaje%"
+        dialog.findViewById<TextView>(R.id.tv_detalle_venta_porcentaje).text  = "$porcentaje%"
         dialog.findViewById<ProgressBar>(R.id.progress_detalle_pago).progress = porcentaje
 
+        // Badge de estado con color dinámico
         EstadoColorHelper.aplicarBadgeVenta(
             requireContext(),
             dialog.findViewById(R.id.tv_detalle_venta_estado),
             venta.estado
         )
 
-        dialog.findViewById<View>(R.id.btn_cerrar_detalle_venta).setOnClickListener { dialog.dismiss() }
+        // Botón PDF — solo visible si está pagado
+        val btnPdf = dialog.findViewById<View>(R.id.btn_detalle_venta_pdf)
+        btnPdf.visibility = if (venta.estado == "Pagado") View.VISIBLE else View.GONE
+        btnPdf.setOnClickListener {
+            dialog.dismiss()
+            generarPdf(venta)
+        }
+
+        // Botones de acción
+        dialog.findViewById<View>(R.id.btn_detalle_venta_editar).setOnClickListener {
+            dialog.dismiss()
+            mostrarDialogoEditar(venta)
+        }
         dialog.findViewById<View>(R.id.btn_detalle_venta_eliminar).setOnClickListener {
             dialog.dismiss()
             mostrarDialogoEliminar(venta)
         }
-        dialog.findViewById<View>(R.id.btn_detalle_venta_editar).setOnClickListener {
+        dialog.findViewById<View>(R.id.btn_cerrar_detalle_venta).setOnClickListener {
             dialog.dismiss()
-            mostrarDialogoEditar(venta)
         }
 
         dialog.show()
